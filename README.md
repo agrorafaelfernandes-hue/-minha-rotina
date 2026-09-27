@@ -146,3 +146,12 @@ Depois:
 - Botão “Marcar como lido”.
 - Cache local da liturgia do dia para funcionar melhor quando a conexão oscilar.
 - Se a fonte não responder e não houver cache, o app informa claramente que não conseguiu confirmar a leitura em vez de inventar conteúdo.
+
+
+## V21 — Evolução
+- Filtros de 7 dias, 30 dias e histórico geral.
+- Indicadores de aderência média, treinos, estudo e leitura.
+- Gráficos simples de consistência e hidratação.
+- Métricas de alimentação, orações e Evangelho lido.
+- Sequência atual baseada em dias com pelo menos 60% da rotina concluída.
+- Evolução de peso com último registro e variação no período.

@@ -287,6 +287,30 @@ input,select,textarea{min-height:44px}
 .gospel-source{margin-top:8px;font-size:9px;color:var(--muted)}
 </style>
 
+
+<style id="v21-evolution">
+.evo-range{display:flex;gap:7px;margin-bottom:10px;overflow-x:auto}
+.evo-range button{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;font-size:10px;font-weight:800}
+.evo-range button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.evo-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.evo-summary>div{background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px}
+.evo-summary b{display:block;font-size:16px}
+.evo-summary span{font-size:9px;color:var(--muted)}
+.evo-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:10px}
+.evo-card h3{margin:0 0 8px;font-size:13px}
+.evo-chart{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:10px}
+.evo-bar-wrap{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;height:100%}
+.evo-bar{width:100%;max-width:28px;border-radius:7px 7px 3px 3px;background:var(--accent);min-height:2px}
+.evo-bar.alt{background:#7f98d1}.evo-bar.orange{background:#d7975b}
+.evo-label{font-size:8px;color:var(--muted)}
+.evo-kpi-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.evo-mini{background:#f8fafb;border-radius:13px;padding:10px}
+.evo-mini b{display:block;font-size:14px}
+.evo-mini span{font-size:9px;color:var(--muted)}
+.evo-streak{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#f8faf9;border-radius:13px;padding:10px;margin-top:8px}
+@media(max-width:760px){.evo-summary{grid-template-columns:repeat(2,1fr)}}
+</style>
+
 </head>
 <body>
 <div class="app" id="authScreen">
@@ -309,7 +333,7 @@ input,select,textarea{min-height:44px}
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V20 · Cloud</div>
+<div class="status offline" id="syncStatus">V21 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -637,7 +661,70 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 </div>
 <div class="library-grid" id="libraryGrid"></div>
 </section>
-<section class="panel" id="evolucao"><div class="section-title"><h2>Evolução</h2><span>Semana atual</span></div><div class="kpis" id="kpis"></div></section>
+
+<section class="panel" id="evolucao">
+  <div class="section-title"><h2>Evolução</h2><span>Consistência e tendência</span></div>
+
+  <div class="evo-range">
+    <button class="active" data-evo-range="7" onclick="setEvolutionRange(7,this)">7 dias</button>
+    <button data-evo-range="30" onclick="setEvolutionRange(30,this)">30 dias</button>
+    <button data-evo-range="all" onclick="setEvolutionRange('all',this)">Geral</button>
+  </div>
+
+  <div class="evo-summary">
+    <div><b id="evoAdherence">0%</b><span>Aderência média</span></div>
+    <div><b id="evoWorkoutCount">0</b><span>Treinos</span></div>
+    <div><b id="evoStudyMinutes">0 min</b><span>Estudo</span></div>
+    <div><b id="evoPages">0 pág.</b><span>Leitura</span></div>
+  </div>
+
+  <div class="evo-card">
+    <h3>Consistência diária</h3>
+    <div id="evoConsistencyChart" class="evo-chart"></div>
+  </div>
+
+  <div class="evo-card">
+    <h3>Água</h3>
+    <div class="evo-kpi-row">
+      <div class="evo-mini"><b id="evoWaterAvg">0,0 L</b><span>Média diária</span></div>
+      <div class="evo-mini"><b id="evoWaterGoal">0%</b><span>Dias na meta de 3 L</span></div>
+    </div>
+    <div id="evoWaterChart" class="evo-chart"></div>
+  </div>
+
+  <div class="evo-card">
+    <h3>Treino, leitura e estudo</h3>
+    <div class="evo-kpi-row">
+      <div class="evo-mini"><b id="evoWorkoutWeek">0</b><span>Treinos no período</span></div>
+      <div class="evo-mini"><b id="evoReadAvg">0</b><span>Páginas/dia</span></div>
+      <div class="evo-mini"><b id="evoStudyAvg">0 min</b><span>Estudo/dia</span></div>
+      <div class="evo-mini"><b id="evoMealsGoal">0%</b><span>Dias com 3 refeições</span></div>
+    </div>
+  </div>
+
+  <div class="evo-card">
+    <h3>Rotina espiritual</h3>
+    <div class="evo-kpi-row">
+      <div class="evo-mini"><b id="evoPrayerAvg">0%</b><span>Orações concluídas</span></div>
+      <div class="evo-mini"><b id="evoGospelRead">0%</b><span>Evangelho lido</span></div>
+    </div>
+    <div class="evo-streak">
+      <div><span style="font-size:18px">🔥</span></div>
+      <div style="flex:1"><strong>Sequência atual</strong><div style="font-size:9px;color:var(--muted)">Dias com ao menos 60% da rotina concluída</div></div>
+      <b id="evoStreak">0 dias</b>
+    </div>
+  </div>
+
+  <div class="evo-card">
+    <h3>Peso</h3>
+    <div class="evo-kpi-row">
+      <div class="evo-mini"><b id="evoWeightLatest">—</b><span>Último registro</span></div>
+      <div class="evo-mini"><b id="evoWeightChange">—</b><span>Variação no período</span></div>
+    </div>
+    <div id="evoWeightChart" class="evo-chart"></div>
+  </div>
+</section>
+
 <section class="panel" id="backup">
 <div class="section-title"><h2>Dados &amp; Backup</h2><span>Segurança dos registros</span></div>
 <div class="card">
@@ -758,7 +845,8 @@ function showPanel(id){
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
   const el=document.getElementById(id); if(el) el.classList.add("active");
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.target===id));
-  if(id==="treinos") renderWorkouts(); if(id==="biblioteca") renderLibrary(); if(id==="alimentacao") renderFood(); if(id==="oracoes"){ renderPrayers(); loadDailyGospel(false); }
+  if(id==="treinos") renderWorkouts(); if(id==="biblioteca") renderLibrary();
+ renderEvolution(); if(id==="alimentacao") renderFood(); if(id==="oracoes"){ renderPrayers(); loadDailyGospel(false); }
 }
 function registerMeal(){
   const d=day();
@@ -1382,6 +1470,127 @@ function syncBookHome(){
   set("currentBookProgress",`${b.currentPage||0} de ${b.totalPages||0} páginas · ${bookPct(b)}%`);
 }
 
+
+let evolutionRange=7;
+
+function parseDayKey(k){
+  const [y,m,d]=k.split("-").map(Number);
+  return new Date(y,m-1,d);
+}
+function getEvolutionDays(){
+  const entries=Object.entries(state.days||{}).map(([date,data])=>({date,data,dateObj:parseDayKey(date)}))
+    .sort((a,b)=>a.dateObj-b.dateObj);
+  if(evolutionRange==="all") return entries;
+  const cutoff=new Date();
+  cutoff.setHours(0,0,0,0);
+  cutoff.setDate(cutoff.getDate()-(Number(evolutionRange)-1));
+  return entries.filter(x=>x.dateObj>=cutoff);
+}
+function dayAdherence(d){
+  const checks=[
+    Math.min(1,Number(d.water||0)/3),
+    Math.min(1,Number(d.mealsCount||0)/3),
+    (d.workout&&d.workout!=="Descanso")?1:0,
+    Math.min(1,Number(d.pages||0)/10),
+    Math.min(1,Number(d.studyMinutes||0)/30),
+    [d.prayerMorning,d.prayerAngelus,d.prayerNight].filter(Boolean).length/3,
+    d.gospelRead?1:0
+  ];
+  return Math.round(checks.reduce((a,b)=>a+b,0)/checks.length*100);
+}
+function shortDateLabel(dateStr){
+  const d=parseDayKey(dateStr);
+  return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}`;
+}
+function setEvolutionRange(range,btn){
+  evolutionRange=range;
+  document.querySelectorAll("[data-evo-range]").forEach(x=>x.classList.remove("active"));
+  if(btn) btn.classList.add("active");
+  renderEvolution();
+}
+function renderBars(hostId,items,valueFn,maxVal,className=""){
+  const host=document.getElementById(hostId);
+  if(!host) return;
+  if(!items.length){
+    host.innerHTML='<div class="library-empty" style="width:100%">Sem registros no período.</div>';
+    return;
+  }
+  host.innerHTML=items.map(it=>{
+    const v=Math.max(0,Number(valueFn(it)||0));
+    const pct=maxVal?Math.max(2,Math.min(100,v/maxVal*100)):2;
+    return `<div class="evo-bar-wrap"><div class="evo-bar ${className}" style="height:${pct}%"></div><span class="evo-label">${shortDateLabel(it.date)}</span></div>`;
+  }).join("");
+}
+function calcStreak(items){
+  if(!items.length) return 0;
+  const byDate=new Map(items.map(x=>[x.date,dayAdherence(x.data)]));
+  let d=new Date(); d.setHours(0,0,0,0);
+  let streak=0;
+  for(let i=0;i<366;i++){
+    const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    if((byDate.get(key)||0)>=60){streak++;d.setDate(d.getDate()-1);}
+    else break;
+  }
+  return streak;
+}
+function renderEvolution(){
+  const items=getEvolutionDays();
+  const data=items.map(x=>x.data);
+  const n=data.length||1;
+  const avg=a=>a.length?a.reduce((s,v)=>s+v,0)/a.length:0;
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val};
+
+  const adherenceVals=data.map(dayAdherence);
+  set("evoAdherence",`${Math.round(avg(adherenceVals))}%`);
+
+  const workouts=data.filter(d=>d.workout&&d.workout!=="Descanso").length;
+  set("evoWorkoutCount",String(workouts));
+  set("evoWorkoutWeek",String(workouts));
+
+  const studyTotal=data.reduce((s,d)=>s+Number(d.studyMinutes||0),0);
+  set("evoStudyMinutes",`${Math.round(studyTotal)} min`);
+  set("evoStudyAvg",`${Math.round(studyTotal/n)} min`);
+
+  const pagesTotal=data.reduce((s,d)=>s+Number(d.pages||0),0);
+  set("evoPages",`${Math.round(pagesTotal)} pág.`);
+  set("evoReadAvg",String(Math.round(pagesTotal/n)));
+
+  const waters=data.map(d=>Number(d.water||0));
+  set("evoWaterAvg",`${avg(waters).toFixed(1).replace(".",",")} L`);
+  set("evoWaterGoal",`${Math.round(data.filter(d=>Number(d.water||0)>=3).length/n*100)}%`);
+
+  set("evoMealsGoal",`${Math.round(data.filter(d=>Number(d.mealsCount||0)>=3).length/n*100)}%`);
+
+  const prayerPct=data.map(d=>[d.prayerMorning,d.prayerAngelus,d.prayerNight].filter(Boolean).length/3*100);
+  set("evoPrayerAvg",`${Math.round(avg(prayerPct))}%`);
+  set("evoGospelRead",`${Math.round(data.filter(d=>d.gospelRead).length/n*100)}%`);
+  set("evoStreak",`${calcStreak(items)} dias`);
+
+  renderBars("evoConsistencyChart",items,it=>dayAdherence(it.data),100,"");
+  renderBars("evoWaterChart",items,it=>Number(it.data.water||0),3,"alt");
+
+  const weightItems=items.filter(it=>Number(it.data.weight||0)>0);
+  if(weightItems.length){
+    const weights=weightItems.map(it=>Number(it.data.weight));
+    const latest=weights[weights.length-1];
+    const change=latest-weights[0];
+    set("evoWeightLatest",`${latest.toFixed(1).replace(".",",")} kg`);
+    set("evoWeightChange",`${change>0?"+":""}${change.toFixed(1).replace(".",",")} kg`);
+    const min=Math.min(...weights),max=Math.max(...weights),span=Math.max(.1,max-min);
+    const host=document.getElementById("evoWeightChart");
+    if(host) host.innerHTML=weightItems.map((it,i)=>{
+      const v=weights[i];
+      const pct=15+((v-min)/span)*85;
+      return `<div class="evo-bar-wrap"><div class="evo-bar orange" style="height:${pct}%"></div><span class="evo-label">${shortDateLabel(it.date)}</span></div>`;
+    }).join("");
+  }else{
+    set("evoWeightLatest","—");
+    set("evoWeightChange","—");
+    const host=document.getElementById("evoWeightChart");
+    if(host) host.innerHTML='<div class="library-empty" style="width:100%">Sem registros de peso no período.</div>';
+  }
+}
+
 function render(){
  const d=day();
  const setValue=(id,val)=>{const el=document.getElementById(id); if(el) el.value=val;};
@@ -1566,6 +1775,8 @@ Object.assign(window,{
   renderPrayers,
   loadDailyGospel,
   toggleGospelRead,
+  setEvolutionRange,
+  renderEvolution,
   openMealForm,
   closeMealForm,
   pickMealPhoto,
