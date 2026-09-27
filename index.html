@@ -373,7 +373,7 @@ input,select,textarea{min-height:44px}
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V26 · Cloud</div>
+<div class="status offline" id="syncStatus">V27 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -400,7 +400,7 @@ input,select,textarea{min-height:44px}
 <button class="metric-box" onclick="showArea('agua')">
 <span class="metric-emoji">💧</span><b>Água</b><small id="homeWater">0,0 / 3,0 L</small><em id="homeWaterPct">0%</em>
 </button>
-<button class="metric-box" onclick="showPanel('alimentacao')">
+<button class="metric-box" data-open-panel="alimentacao">
 <span class="metric-emoji">🍴</span><b>Alimentação</b><small id="homeMeals">0 / 3</small><em id="homeMealsPct">0%</em>
 </button>
 <button class="metric-box" onclick="showArea('treino')">
@@ -413,7 +413,7 @@ input,select,textarea{min-height:44px}
 <span class="metric-emoji">🎓</span><b>Estudo</b><small id="homeStudy">0 / 30 min</small><em id="homeStudyPct">0%</em>
 </button>
 </div>
-<button class="prayer-card" onclick="showPanel('oracoes')">
+<button class="prayer-card" data-open-panel="oracoes">
 <span class="prayer-icon">✝️</span>
 <span class="prayer-copy"><b>Orações</b><small>Comece seu dia com Deus.</small></span>
 <span class="prayer-status">✓</span>
@@ -421,7 +421,7 @@ input,select,textarea{min-height:44px}
 <div class="food-card">
 <div class="section-head">
 <div><span class="section-icon orange">🍴</span><b>Alimentação do dia</b><small id="foodHeadline">0 de 3 refeições registradas</small></div>
-<button onclick="showPanel('alimentacao')">›</button>
+<button data-open-panel="alimentacao">›</button>
 </div>
 <div class="macro-grid">
 <div><span>Proteína</span><b id="macroProtein">0/3</b></div>
@@ -466,11 +466,11 @@ input,select,textarea{min-height:44px}
 <div class="areas-title"><b>Áreas da Rotina</b><small>Acesse os detalhes de cada área</small></div>
 <div class="areas-grid">
 <button onclick="showArea('agua')">💧<span>Água</span></button>
-<button onclick="showPanel('alimentacao')">🍴<span>Alimentação</span></button>
+<button data-open-panel="alimentacao">🍴<span>Alimentação</span></button>
 <button onclick="showArea('treino')">🏋️<span>Treino</span></button>
 <button onclick="showPanel('biblioteca')">📖<span>Leitura</span></button>
 <button onclick="showArea('estudo')">🎓<span>Estudo</span></button>
-<button onclick="showPanel('oracoes')">✝️<span>Orações</span></button>
+<button data-open-panel="oracoes">✝️<span>Orações</span></button>
 <button id="historyOpenBtnHome" type="button">🗓️<span>Histórico</span></button>
 </div>
 </div>
@@ -480,11 +480,11 @@ input,select,textarea{min-height:44px}
 <div class="section-title"><h2>Áreas da Rotina</h2><span>Detalhes por área</span></div>
 <div class="areas-grid large">
 <button onclick="showArea('agua')">💧<span>Água</span></button>
-<button onclick="showPanel('alimentacao')">🍴<span>Alimentação</span></button>
+<button data-open-panel="alimentacao">🍴<span>Alimentação</span></button>
 <button onclick="showArea('treino')">🏋️<span>Treino</span></button>
 <button onclick="showPanel('biblioteca')">📖<span>Leitura</span></button>
 <button onclick="showArea('estudo')">🎓<span>Estudo</span></button>
-<button onclick="showPanel('oracoes')">✝️<span>Orações</span></button>
+<button data-open-panel="oracoes">✝️<span>Orações</span></button>
 <button id="historyOpenBtnAreas" type="button">🗓️<span>Histórico</span></button>
 </div>
 </section>
@@ -931,16 +931,24 @@ function showPanel(id){
   if(!el) return;
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
   el.classList.add("active");
-  window.scrollTo({top:0,behavior:"instant"});
+  try{window.scrollTo({top:0,behavior:"instant"});}catch(e){window.scrollTo(0,0);}
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.target===id));
-  if(id==="treinos") renderWorkouts();
-  if(id==="biblioteca") renderLibrary();
-  if(id==="evolucao") renderEvolution();
-  if(id==="historico") renderHistory();
-  if(id==="backup") renderBackupStatus();
-  if(id==="conta") renderBackupStatus();
-  if(id==="alimentacao") renderFood();
-  if(id==="oracoes"){ renderPrayers(); loadDailyGospel(false); }
+
+  try{
+    if(id==="treinos") renderWorkouts();
+    if(id==="biblioteca") renderLibrary();
+    if(id==="evolucao") renderEvolution();
+    if(id==="historico") renderHistory();
+    if(id==="backup") renderBackupStatus();
+    if(id==="conta") renderBackupStatus();
+    if(id==="alimentacao") renderFood();
+    if(id==="oracoes"){
+      renderPrayers();
+      loadDailyGospel(false);
+    }
+  }catch(err){
+    console.error("Falha ao renderizar painel",id,err);
+  }
 }
 function registerMeal(){
   const d=day();
@@ -1880,6 +1888,13 @@ document.querySelectorAll("[data-evo-range]").forEach(btn=>{
   btn.addEventListener("click",()=>{
     const raw=btn.dataset.evoRange;
     setEvolutionRange(raw==="all" ? "all" : Number(raw));
+  });
+});
+
+document.querySelectorAll("[data-open-panel]").forEach(el=>{
+  el.addEventListener("click",()=>{
+    const target=el.dataset.openPanel;
+    if(target) showPanel(target);
   });
 });
 

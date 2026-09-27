@@ -197,3 +197,10 @@ Depois:
 - Antes de importar, preserva automaticamente uma cópia local do estado anterior.
 - Sincronização manual informa sucesso ou erro com mais clareza.
 - Fotos das refeições continuam locais e não entram no backup JSON nesta versão.
+
+
+## V27 — Correção de navegação Alimentação/Orações
+- Remove onclick inline de todos os atalhos para Alimentação e Orações.
+- Adiciona listeners diretos via data-open-panel.
+- showPanel agora abre o painel antes de qualquer renderização e isola erros de render para não bloquear a navegação.
+- Mantém todos os recursos da V26.
