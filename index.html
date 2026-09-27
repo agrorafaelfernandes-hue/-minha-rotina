@@ -177,7 +177,7 @@ input,select,textarea{min-height:44px}
 <div id="mainApp" class="app hidden">
   <div class="topbar">
     <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-    <div id="syncStatus" class="status offline">V13 · Cloud</div>
+    <div id="syncStatus" class="status offline">V14 · Cloud</div>
   </div>
 
   
@@ -505,24 +505,34 @@ function renderApprovedHome(){
 
 function render(){
  const d=day();
- document.getElementById("workout").value=d.workout||"";
- document.getElementById("cardio").value=d.cardio||"";
- document.getElementById("waterText").textContent=(d.water||0).toFixed(1);
- document.getElementById("pages").value=d.pages||"";
- document.getElementById("studyTopic").value=d.studyTopic||"";
- document.getElementById("weight").value=d.weight||"";
- document.getElementById("screenTime").value=d.screenTime||"";
- document.getElementById("instagramTime").value=d.instagramTime||"";
- document.getElementById("note").value=d.note||"";
- document.querySelectorAll(".toggle").forEach(t=>t.classList.toggle("on",!!d[t.dataset.key]));
- renderKpis(); renderTodayProgress(); renderWeekSummary(); renderApprovedHome();
+ const setValue=(id,val)=>{const el=document.getElementById(id); if(el) el.value=val;};
+ const setText=(id,val)=>{const el=document.getElementById(id); if(el) el.textContent=val;};
+ setValue("workout",d.workout||"");
+ setValue("cardio",d.cardio||"");
+ setText("waterText",(d.water||0).toFixed(1));
+ setValue("pages",d.pages||"");
+ setValue("studyTopic",d.studyTopic||"");
+ setValue("weight",d.weight||"");
+ setValue("screenTime",d.screenTime||"");
+ setValue("instagramTime",d.instagramTime||"");
+ setValue("note",d.note||"");
+ document.querySelectorAll(".toggle").forEach(t=>{
+   if(t.dataset.key) t.classList.toggle("on",!!d[t.dataset.key]);
+ });
+ renderKpis();
+ renderTodayProgress();
+ renderWeekSummary();
+ renderApprovedHome();
 }
 ["workout","cardio","pages","studyTopic","weight","screenTime","instagramTime","note"].forEach(id=>{
- document.getElementById(id).addEventListener("input",e=>{day()[id]=e.target.value;persist()});
+ const el=document.getElementById(id);
+ if(el) el.addEventListener("input",e=>{day()[id]=e.target.value;persist()});
 });
-document.querySelectorAll(".toggle").forEach(t=>t.addEventListener("click",()=>{day()[t.dataset.key]=!day()[t.dataset.key];persist()}));
-document.getElementById("plusWater").onclick=()=>{day().water=Math.min(6,(day().water||0)+.5);persist()};
-document.getElementById("minusWater").onclick=()=>{day().water=Math.max(0,(day().water||0)-.5);persist()};
+document.querySelectorAll(".toggle[data-key]").forEach(t=>t.addEventListener("click",()=>{day()[t.dataset.key]=!day()[t.dataset.key];persist()}));
+const plusWaterBtn=document.getElementById("plusWater");
+if(plusWaterBtn) plusWaterBtn.onclick=()=>{day().water=Math.min(6,(day().water||0)+.5);persist()};
+const minusWaterBtn=document.getElementById("minusWater");
+if(minusWaterBtn) minusWaterBtn.onclick=()=>{day().water=Math.max(0,(day().water||0)-.5);persist()};
 
 function renderWorkouts(){
  const c=document.getElementById("workouts");c.innerHTML="";

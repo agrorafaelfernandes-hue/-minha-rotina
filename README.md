@@ -92,3 +92,11 @@ Depois:
 - Leitura preparada para evoluir para biblioteca.
 - Estudo unificado.
 - Orações com checklist diário.
+
+
+## V14 — correção de runtime/login
+- Corrigido erro JavaScript causado por campos removidos da Home V13.
+- Listeners de elementos antigos agora são opcionais.
+- Login volta a responder normalmente.
+- Mantido integralmente o layout aprovado da V13.
+- Cache atualizado para V14.
