@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<meta name="theme-color" content="#173f37"/>
-<link rel="manifest" href="manifest.json"/>
-<link rel="apple-touch-icon" href="icon-192.png"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<meta content="#173f37" name="theme-color"/>
+<link href="manifest.json" rel="manifest"/>
+<link href="icon-192.png" rel="apple-touch-icon"/>
 <title>Minha Rotina — V3</title>
 <style>
 :root{
@@ -48,7 +49,6 @@ button{border:0;border-radius:12px;padding:10px 12px;font-weight:700;cursor:poin
 .hidden{display:none!important}
 @media(max-width:760px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}.exercise-grid{grid-template-columns:1fr 1fr}.exercise-grid input:last-child{grid-column:1/-1}}
 </style>
-
 <style id="v12-ui">
 :root{
   --bg:#f5f7f9; --card:#fff; --text:#172033; --muted:#6b7280;
@@ -111,8 +111,6 @@ input,select,textarea{min-height:44px}
   .exercise-grid input:last-child{grid-column:1/-1}
 }
 </style>
-
-
 <style id="v13-approved-layout">
 .hero-photo{
   background:
@@ -153,8 +151,6 @@ input,select,textarea{min-height:44px}
   .areas-grid{grid-template-columns:repeat(6,1fr)}
 }
 </style>
-
-
 <style id="v15-library">
 .library-toolbar{
   display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:10px;
@@ -206,261 +202,232 @@ input,select,textarea{min-height:44px}
   .book-form .full{grid-column:auto}
 }
 </style>
-
 </head>
 <body>
-<div id="authScreen" class="app">
-  <div class="auth-wrap card">
-    <h2>Minha Rotina</h2>
-    <p class="muted">Entre para sincronizar seus registros entre dispositivos. Sem configuração de nuvem, o app continua funcionando localmente.</p>
-    <div id="cloudNotice" class="notice" style="margin-bottom:12px">
+<div class="app" id="authScreen">
+<div class="auth-wrap card">
+<h2>Minha Rotina</h2>
+<p class="muted">Entre para sincronizar seus registros entre dispositivos. Sem configuração de nuvem, o app continua funcionando localmente.</p>
+<div class="notice" id="cloudNotice" style="margin-bottom:12px">
       Supabase conectado. Entre ou crie sua conta para sincronizar os registros entre dispositivos.
     </div>
-    <input id="email" type="email" placeholder="E-mail" style="margin-bottom:8px"/>
-    <input id="password" type="password" placeholder="Senha" style="margin-bottom:8px"/>
-    <div style="display:flex;gap:8px">
-      <button class="primary" id="loginBtn">Entrar</button>
-      <button id="signupBtn">Criar conta</button>
-    </div>
-    <button id="localBtn" class="soft" style="margin-top:10px;width:100%">Continuar em modo local</button>
-    <div id="authMsg" class="muted" style="margin-top:10px"></div>
-  </div>
+<input id="email" placeholder="E-mail" style="margin-bottom:8px" type="email"/>
+<input id="password" placeholder="Senha" style="margin-bottom:8px" type="password"/>
+<div style="display:flex;gap:8px">
+<button class="primary" id="loginBtn">Entrar</button>
+<button id="signupBtn">Criar conta</button>
 </div>
-
-<div id="mainApp" class="app hidden">
-  <div class="topbar">
-    <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-    <div id="syncStatus" class="status offline">V15 · Cloud</div>
-  </div>
-
-  
-<section id="hoje" class="panel active">
-  <div class="hero hero-photo">
-    <div class="hero-overlay">
-      <h2>Hoje</h2>
-      <p>Consistência primeiro.<br>Perfeição depois.</p>
-    </div>
-  </div>
-
-  <div class="verse-card">
-    <div>
-      <strong>“Tudo posso naquele que me fortalece.”</strong>
-      <span>Filipenses 4,13</span>
-    </div>
-    <div class="verse-icon">☀️</div>
-  </div>
-
-  <div class="today-progress">
-    <div class="today-progress-head">
-      <b>Progresso do dia</b>
-      <span id="todayProgressText">0%</span>
-    </div>
-    <div class="today-progress-track"><span id="todayProgressBar" style="width:0%"></span></div>
-  </div>
-
-  <div class="metric-strip">
-    <button class="metric-box" onclick="showArea('agua')">
-      <span class="metric-emoji">💧</span><b>Água</b><small id="homeWater">0,0 / 3,0 L</small><em id="homeWaterPct">0%</em>
-    </button>
-    <button class="metric-box" onclick="showArea('alimentacao')">
-      <span class="metric-emoji">🍴</span><b>Alimentação</b><small id="homeMeals">0 / 3</small><em id="homeMealsPct">0%</em>
-    </button>
-    <button class="metric-box" onclick="showArea('treino')">
-      <span class="metric-emoji">🏋️</span><b>Treino</b><small id="homeWorkout">0 / 1</small><em id="homeWorkoutPct">0%</em>
-    </button>
-    <button class="metric-box" onclick="showPanel('biblioteca')">
-      <span class="metric-emoji">📖</span><b>Leitura</b><small id="homeReading">0 / 70</small><em id="homeReadingPct">0%</em>
-    </button>
-    <button class="metric-box" onclick="showArea('estudo')">
-      <span class="metric-emoji">🎓</span><b>Estudo</b><small id="homeStudy">0 / 30 min</small><em id="homeStudyPct">0%</em>
-    </button>
-  </div>
-
-  <button class="prayer-card" onclick="showArea('oracoes')">
-    <span class="prayer-icon">✝️</span>
-    <span class="prayer-copy"><b>Orações</b><small>Comece seu dia com Deus.</small></span>
-    <span class="prayer-status">✓</span>
-  </button>
-
-  <div class="food-card">
-    <div class="section-head">
-      <div><span class="section-icon orange">🍴</span><b>Alimentação do dia</b><small id="foodHeadline">0 de 3 refeições registradas</small></div>
-      <button onclick="showArea('alimentacao')">›</button>
-    </div>
-    <div class="macro-grid">
-      <div><span>Proteína</span><b id="macroProtein">0/3</b></div>
-      <div><span>Carboidrato</span><b id="macroCarb">0/3</b></div>
-      <div><span>Vegetais</span><b id="macroVeg">0/3</b></div>
-      <div><span>Gorduras</span><b id="macroFat">0/3</b></div>
-    </div>
-    <button class="wide-action" onclick="registerMeal()">＋ Registrar refeição</button>
-  </div>
-
-  <div class="two-col">
-    <div class="compact-card workout-summary">
-      <div class="section-head">
-        <div><span class="section-icon blue">🏋️</span><b>Treino de hoje</b><small id="workoutSummaryText">Selecione o treino</small></div>
-      </div>
-      <div class="compact-list" id="workoutPreview">
-        <span>Agachamento</span><span>Leg Press</span><span>Cadeira Extensora</span><span>+ mais 3 exercícios</span>
-      </div>
-      <button class="soft-action" onclick="showArea('treino')">Iniciar treino</button>
-    </div>
-
-    <div class="compact-card reading-summary">
-      <div class="section-head">
-        <div><span class="section-icon teal">📖</span><b>Leitura atual</b></div>
-        <button onclick="showPanel('biblioteca')">›</button>
-      </div>
-      <div class="book-mini">
-        <div class="book-cover">LIVRO</div>
-        <div><b id="currentBookTitle">Livro atual</b><small id="currentBookAuthor">Autor</small><span id="currentBookProgress">0 de 0 páginas</span></div>
-      </div>
-      <button class="soft-action" onclick="quickReadCurrentBook()">+10 páginas</button>
-    </div>
-  </div>
-
-  <div class="study-card">
-    <div><span class="section-icon purple">🎓</span></div>
-    <div class="study-main">
-      <b>Estudo</b>
-      <span id="studyHomeProgress">0 / 30 minutos</span>
-      <small id="studyHomeTopic">Tema de hoje: —</small>
-    </div>
-    <button class="soft-action" onclick="showArea('estudo')">Iniciar estudo</button>
-  </div>
-
-  <div class="areas-drawer">
-    <div class="areas-title"><b>Áreas da Rotina</b><small>Acesse os detalhes de cada área</small></div>
-    <div class="areas-grid">
-      <button onclick="showArea('agua')">💧<span>Água</span></button>
-      <button onclick="showArea('alimentacao')">🍴<span>Alimentação</span></button>
-      <button onclick="showArea('treino')">🏋️<span>Treino</span></button>
-      <button onclick="showPanel('biblioteca')">📖<span>Leitura</span></button>
-      <button onclick="showArea('estudo')">🎓<span>Estudo</span></button>
-      <button onclick="showArea('oracoes')">✝️<span>Orações</span></button>
-    </div>
-  </div>
-</section>
-
-
-  <section id="treinos" class="panel"><div class="section-title"><h2>Treinos A/B/C/D</h2><span>Registrar carga e repetições</span></div><div id="workouts"></div></section>
-  
-<section id="areas" class="panel">
-  <div class="section-title"><h2>Áreas da Rotina</h2><span>Detalhes por área</span></div>
-  <div class="areas-grid large">
-    <button onclick="showArea('agua')">💧<span>Água</span></button>
-    <button onclick="showArea('alimentacao')">🍴<span>Alimentação</span></button>
-    <button onclick="showArea('treino')">🏋️<span>Treino</span></button>
-    <button onclick="showPanel('biblioteca')">📖<span>Leitura</span></button>
-    <button onclick="showArea('estudo')">🎓<span>Estudo</span></button>
-    <button onclick="showArea('oracoes')">✝️<span>Orações</span></button>
-  </div>
-</section>
-
-<section id="areaDetail" class="panel">
-  <div class="section-title">
-    <h2 id="areaTitle">Área</h2>
-    <button onclick="showPanel('areas')">Voltar</button>
-  </div>
-  <div id="areaContent"></div>
-</section>
-
-<section id="biblioteca" class="panel">
-  <div class="section-title">
-    <h2>Biblioteca</h2>
-    <button class="primary" onclick="openBookForm()">+ Livro</button>
-  </div>
-
-  <div id="currentReadingHero"></div>
-
-  <div id="bookFormWrap" class="hidden">
-    <div class="book-form">
-      <h3 id="bookFormTitle">Adicionar livro</h3>
-      <div class="book-form-grid">
-        <input id="bookTitleInput" placeholder="Título do livro">
-        <input id="bookAuthorInput" placeholder="Autor">
-        <input id="bookPagesInput" type="number" min="1" placeholder="Total de páginas">
-        <input id="bookCurrentInput" type="number" min="0" placeholder="Página atual">
-        <select id="bookStatusInput">
-          <option value="lendo">Lendo</option>
-          <option value="quero_ler">Quero ler</option>
-          <option value="concluido">Concluído</option>
-          <option value="pausado">Pausado</option>
-        </select>
-        <input id="bookRatingInput" type="number" min="0" max="5" step="1" placeholder="Nota 0–5">
-        <input id="bookStartDateInput" type="date" placeholder="Data de início">
-        <input id="bookEndDateInput" type="date" placeholder="Data de conclusão">
-        <input id="bookCoverInput" class="full" placeholder="URL da capa (opcional)">
-        <textarea id="bookNotesInput" class="full" placeholder="Observações, aprendizados, frases..."></textarea>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button class="primary" onclick="saveBook()">Salvar</button>
-        <button onclick="closeBookForm()">Cancelar</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="library-toolbar">
-    <button class="library-tab active" data-book-filter="lendo" onclick="setBookFilter('lendo',this)">Lendo</button>
-    <button class="library-tab" data-book-filter="quero_ler" onclick="setBookFilter('quero_ler',this)">Quero ler</button>
-    <button class="library-tab" data-book-filter="concluido" onclick="setBookFilter('concluido',this)">Concluídos</button>
-    <button class="library-tab" data-book-filter="pausado" onclick="setBookFilter('pausado',this)">Pausados</button>
-    <button class="library-tab" data-book-filter="todos" onclick="setBookFilter('todos',this)">Todos</button>
-  </div>
-
-  <div id="libraryGrid" class="library-grid"></div>
-</section>
-
-<section id="evolucao" class="panel"><div class="section-title"><h2>Evolução</h2><span>Semana atual</span></div><div class="kpis" id="kpis"></div></section>
-  <section id="backup" class="panel">
-    <div class="section-title"><h2>Dados & Backup</h2><span>Segurança dos registros</span></div>
-    <div class="card">
-      <p class="muted">Você pode exportar e importar seus dados locais. Quando o Supabase estiver configurado, a sincronização em nuvem será automática.</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="primary" id="exportBtn">Exportar JSON</button>
-        <label class="soft" style="display:inline-block;padding:10px 12px;border-radius:12px;font-weight:700;cursor:pointer">Importar JSON<input id="importFile" type="file" accept=".json" style="display:none"/></label>
-        <button id="syncBtn">Sincronizar agora</button>
-      </div>
-      <div id="backupMsg" class="muted" style="margin-top:10px"></div>
-    </div>
-  </section>
-  <section id="conta" class="panel">
-    <div class="section-title"><h2>Conta</h2><span>PWA + nuvem</span></div>
-    <div class="card">
-      <div id="accountInfo" class="muted">Modo local.</div>
-      <button id="installBtn" class="primary hidden" style="margin-top:12px">Instalar app</button>
-      <button id="logoutBtn" style="margin-top:12px">Sair</button>
-    </div>
-
-    <div class="card" style="margin-top:14px">
-      <h3>Configurar sincronização em nuvem</h3>
-      <p class="muted">Cole abaixo a URL do projeto e a chave <b>anon public</b> do Supabase. Esses dados ficam salvos apenas neste navegador.</p>
-      <input id="cloudUrl" placeholder="https://SEU-PROJETO.supabase.co" style="margin-bottom:8px"/>
-      <input id="cloudAnonKey" placeholder="Supabase anon public key" style="margin-bottom:8px"/>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="primary" id="saveCloudBtn">Salvar configuração</button>
-        <button id="clearCloudBtn">Remover configuração</button>
-      </div>
-      <div id="cloudConfigMsg" class="muted" style="margin-top:10px"></div>
-    </div>
-
-    <div class="card" style="margin-top:14px">
-      <h3>Instalar no iPhone</h3>
-      <p class="muted">Depois de publicar em HTTPS, abra o site no Safari, toque em Compartilhar e escolha <b>Adicionar à Tela de Início</b>.</p>
-    </div>
-  </section>
+<button class="soft" id="localBtn" style="margin-top:10px;width:100%">Continuar em modo local</button>
+<div class="muted" id="authMsg" style="margin-top:10px"></div>
 </div>
-
-
-<nav id="nav" class="bottom-nav hidden">
-  <button class="nav-btn active" data-target="hoje">Hoje</button>
-  <button class="nav-btn" data-target="areas">Áreas</button>
-  <button class="nav-btn" data-target="evolucao">Evolução</button>
-  <button class="nav-btn" data-target="conta">Conta</button>
+</div>
+<div class="app hidden" id="mainApp">
+<div class="topbar">
+<div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
+<div class="status offline" id="syncStatus">V16 · Cloud</div>
+</div>
+<section class="panel active" id="hoje">
+<div class="hero hero-photo">
+<div class="hero-overlay">
+<h2>Hoje</h2>
+<p>Consistência primeiro.<br/>Perfeição depois.</p>
+</div>
+</div>
+<div class="verse-card">
+<div>
+<strong>“Tudo posso naquele que me fortalece.”</strong>
+<span>Filipenses 4,13</span>
+</div>
+<div class="verse-icon">☀️</div>
+</div>
+<div class="today-progress">
+<div class="today-progress-head">
+<b>Progresso do dia</b>
+<span id="todayProgressText">0%</span>
+</div>
+<div class="today-progress-track"><span id="todayProgressBar" style="width:0%"></span></div>
+</div>
+<div class="metric-strip">
+<button class="metric-box" onclick="showArea('agua')">
+<span class="metric-emoji">💧</span><b>Água</b><small id="homeWater">0,0 / 3,0 L</small><em id="homeWaterPct">0%</em>
+</button>
+<button class="metric-box" onclick="showArea('alimentacao')">
+<span class="metric-emoji">🍴</span><b>Alimentação</b><small id="homeMeals">0 / 3</small><em id="homeMealsPct">0%</em>
+</button>
+<button class="metric-box" onclick="showArea('treino')">
+<span class="metric-emoji">🏋️</span><b>Treino</b><small id="homeWorkout">0 / 1</small><em id="homeWorkoutPct">0%</em>
+</button>
+<button class="metric-box" onclick="showPanel('biblioteca')">
+<span class="metric-emoji">📖</span><b>Leitura</b><small id="homeReading">0 / 70</small><em id="homeReadingPct">0%</em>
+</button>
+<button class="metric-box" onclick="showArea('estudo')">
+<span class="metric-emoji">🎓</span><b>Estudo</b><small id="homeStudy">0 / 30 min</small><em id="homeStudyPct">0%</em>
+</button>
+</div>
+<button class="prayer-card" onclick="showArea('oracoes')">
+<span class="prayer-icon">✝️</span>
+<span class="prayer-copy"><b>Orações</b><small>Comece seu dia com Deus.</small></span>
+<span class="prayer-status">✓</span>
+</button>
+<div class="food-card">
+<div class="section-head">
+<div><span class="section-icon orange">🍴</span><b>Alimentação do dia</b><small id="foodHeadline">0 de 3 refeições registradas</small></div>
+<button onclick="showArea('alimentacao')">›</button>
+</div>
+<div class="macro-grid">
+<div><span>Proteína</span><b id="macroProtein">0/3</b></div>
+<div><span>Carboidrato</span><b id="macroCarb">0/3</b></div>
+<div><span>Vegetais</span><b id="macroVeg">0/3</b></div>
+<div><span>Gorduras</span><b id="macroFat">0/3</b></div>
+</div>
+<button class="wide-action" onclick="registerMeal()">＋ Registrar refeição</button>
+</div>
+<div class="two-col">
+<div class="compact-card workout-summary">
+<div class="section-head">
+<div><span class="section-icon blue">🏋️</span><b>Treino de hoje</b><small id="workoutSummaryText">Selecione o treino</small></div>
+</div>
+<div class="compact-list" id="workoutPreview">
+<span>Agachamento</span><span>Leg Press</span><span>Cadeira Extensora</span><span>+ mais 3 exercícios</span>
+</div>
+<button class="soft-action" onclick="showArea('treino')">Iniciar treino</button>
+</div>
+<div class="compact-card reading-summary">
+<div class="section-head">
+<div><span class="section-icon teal">📖</span><b>Leitura atual</b></div>
+<button onclick="showPanel('biblioteca')">›</button>
+</div>
+<div class="book-mini">
+<div class="book-cover">LIVRO</div>
+<div><b id="currentBookTitle">Livro atual</b><small id="currentBookAuthor">Autor</small><span id="currentBookProgress">0 de 0 páginas</span></div>
+</div>
+<button class="soft-action" onclick="quickReadCurrentBook()">+10 páginas</button>
+</div>
+</div>
+<div class="study-card">
+<div><span class="section-icon purple">🎓</span></div>
+<div class="study-main">
+<b>Estudo</b>
+<span id="studyHomeProgress">0 / 30 minutos</span>
+<small id="studyHomeTopic">Tema de hoje: —</small>
+</div>
+<button class="soft-action" onclick="showArea('estudo')">Iniciar estudo</button>
+</div>
+<div class="areas-drawer">
+<div class="areas-title"><b>Áreas da Rotina</b><small>Acesse os detalhes de cada área</small></div>
+<div class="areas-grid">
+<button onclick="showArea('agua')">💧<span>Água</span></button>
+<button onclick="showArea('alimentacao')">🍴<span>Alimentação</span></button>
+<button onclick="showArea('treino')">🏋️<span>Treino</span></button>
+<button onclick="showPanel('biblioteca')">📖<span>Leitura</span></button>
+<button onclick="showArea('estudo')">🎓<span>Estudo</span></button>
+<button onclick="showArea('oracoes')">✝️<span>Orações</span></button>
+</div>
+</div>
+</section>
+<section class="panel" id="treinos"><div class="section-title"><h2>Treinos A/B/C/D</h2><span>Registrar carga e repetições</span></div><div id="workouts"></div></section>
+<section class="panel" id="areas">
+<div class="section-title"><h2>Áreas da Rotina</h2><span>Detalhes por área</span></div>
+<div class="areas-grid large">
+<button onclick="showArea('agua')">💧<span>Água</span></button>
+<button onclick="showArea('alimentacao')">🍴<span>Alimentação</span></button>
+<button onclick="showArea('treino')">🏋️<span>Treino</span></button>
+<button onclick="showPanel('biblioteca')">📖<span>Leitura</span></button>
+<button onclick="showArea('estudo')">🎓<span>Estudo</span></button>
+<button onclick="showArea('oracoes')">✝️<span>Orações</span></button>
+</div>
+</section>
+<section class="panel" id="areaDetail">
+<div class="section-title">
+<h2 id="areaTitle">Área</h2>
+<button onclick="showPanel('areas')">Voltar</button>
+</div>
+<div id="areaContent"></div>
+</section>
+<section class="panel" id="biblioteca">
+<div class="section-title">
+<h2>Biblioteca</h2>
+<button class="primary" onclick="openBookForm()">+ Livro</button>
+</div>
+<div id="currentReadingHero"></div>
+<div class="hidden" id="bookFormWrap">
+<div class="book-form">
+<h3 id="bookFormTitle">Adicionar livro</h3>
+<div class="book-form-grid">
+<input id="bookTitleInput" placeholder="Título do livro"/>
+<input id="bookAuthorInput" placeholder="Autor"/>
+<input id="bookPagesInput" min="1" placeholder="Total de páginas" type="number"/>
+<input id="bookCurrentInput" min="0" placeholder="Página atual" type="number"/>
+<select id="bookStatusInput">
+<option value="lendo">Lendo</option>
+<option value="quero_ler">Quero ler</option>
+<option value="concluido">Concluído</option>
+<option value="pausado">Pausado</option>
+</select>
+<input id="bookRatingInput" max="5" min="0" placeholder="Nota 0–5" step="1" type="number"/>
+<input id="bookStartDateInput" placeholder="Data de início" type="date"/>
+<input id="bookEndDateInput" placeholder="Data de conclusão" type="date"/>
+<input class="full" id="bookCoverInput" placeholder="URL da capa (opcional)"/>
+<textarea class="full" id="bookNotesInput" placeholder="Observações, aprendizados, frases..."></textarea>
+</div>
+<div style="display:flex;gap:8px;margin-top:10px">
+<button class="primary" onclick="saveBook()">Salvar</button>
+<button onclick="closeBookForm()">Cancelar</button>
+</div>
+</div>
+</div>
+<div class="library-toolbar">
+<button class="library-tab active" data-book-filter="lendo" onclick="setBookFilter('lendo',this)">Lendo</button>
+<button class="library-tab" data-book-filter="quero_ler" onclick="setBookFilter('quero_ler',this)">Quero ler</button>
+<button class="library-tab" data-book-filter="concluido" onclick="setBookFilter('concluido',this)">Concluídos</button>
+<button class="library-tab" data-book-filter="pausado" onclick="setBookFilter('pausado',this)">Pausados</button>
+<button class="library-tab" data-book-filter="todos" onclick="setBookFilter('todos',this)">Todos</button>
+</div>
+<div class="library-grid" id="libraryGrid"></div>
+</section>
+<section class="panel" id="evolucao"><div class="section-title"><h2>Evolução</h2><span>Semana atual</span></div><div class="kpis" id="kpis"></div></section>
+<section class="panel" id="backup">
+<div class="section-title"><h2>Dados &amp; Backup</h2><span>Segurança dos registros</span></div>
+<div class="card">
+<p class="muted">Você pode exportar e importar seus dados locais. Quando o Supabase estiver configurado, a sincronização em nuvem será automática.</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="primary" id="exportBtn">Exportar JSON</button>
+<label class="soft" style="display:inline-block;padding:10px 12px;border-radius:12px;font-weight:700;cursor:pointer">Importar JSON<input accept=".json" id="importFile" style="display:none" type="file"/></label>
+<button id="syncBtn">Sincronizar agora</button>
+</div>
+<div class="muted" id="backupMsg" style="margin-top:10px"></div>
+</div>
+</section>
+<section class="panel" id="conta">
+<div class="section-title"><h2>Conta</h2><span>PWA + nuvem</span></div>
+<div class="card">
+<div class="muted" id="accountInfo">Modo local.</div>
+<button class="primary hidden" id="installBtn" style="margin-top:12px">Instalar app</button>
+<button id="logoutBtn" style="margin-top:12px">Sair</button>
+</div>
+<div class="card" style="margin-top:14px">
+<h3>Configurar sincronização em nuvem</h3>
+<p class="muted">Cole abaixo a URL do projeto e a chave <b>anon public</b> do Supabase. Esses dados ficam salvos apenas neste navegador.</p>
+<input id="cloudUrl" placeholder="https://SEU-PROJETO.supabase.co" style="margin-bottom:8px">
+<input id="cloudAnonKey" placeholder="Supabase anon public key" style="margin-bottom:8px">
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="primary" id="saveCloudBtn">Salvar configuração</button>
+<button id="clearCloudBtn">Remover configuração</button>
+</div>
+<div class="muted" id="cloudConfigMsg" style="margin-top:10px"></div>
+</input></input></div>
+<div class="card" style="margin-top:14px">
+<h3>Instalar no iPhone</h3>
+<p class="muted">Depois de publicar em HTTPS, abra o site no Safari, toque em Compartilhar e escolha <b>Adicionar à Tela de Início</b>.</p>
+</div>
+</section>
+</div>
+<nav class="bottom-nav hidden" id="nav">
+<button class="nav-btn active" data-target="hoje">Hoje</button>
+<button class="nav-btn" data-target="areas">Áreas</button>
+<button class="nav-btn" data-target="evolucao">Evolução</button>
+<button class="nav-btn" data-target="conta">Conta</button>
 </nav>
-
-
 <script type="module">
 const savedCfg=JSON.parse(localStorage.getItem("rotinaCloudConfig")||"{}");
 const cfg={
@@ -925,6 +892,25 @@ if(supabase){
  if(data.session){user=data.session.user;enterApp(false);await loadCloud()}
 }
 render();
+
+
+// V16: bridge entre o módulo JavaScript e os botões inline da interface.
+Object.assign(window,{
+  showPanel,
+  showArea,
+  registerMeal,
+  quickWater,
+  quickRead,
+  quickReadCurrentBook,
+  openBookForm,
+  closeBookForm,
+  saveBook,
+  setBookFilter,
+  addPagesToBook,
+  deleteBook,
+  day,
+  persist
+});
 </script>
 </body>
 </html>

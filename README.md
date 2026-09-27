@@ -110,3 +110,10 @@ Depois:
 - Registro rápido de +10 páginas.
 - Conclusão automática ao atingir o total de páginas.
 - Dados da biblioteca sincronizados junto com o estado do usuário no Supabase.
+
+
+## V16 — correção dos botões da interface
+- Corrigida a abertura da Biblioteca e dos demais botões que usam ações inline.
+- O JavaScript continua como módulo, mas as funções necessárias agora são expostas explicitamente para a interface.
+- Mantida toda a Biblioteca da V15.
+- Cache atualizado para V16.
