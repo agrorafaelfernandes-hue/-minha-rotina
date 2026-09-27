@@ -239,3 +239,12 @@ Depois:
 - Progresso diário atualizado para usar os campos atuais: treino, água, refeições, páginas, estudo e oração.
 - Remove dependências legadas de English/Leadership no cálculo do progresso.
 - Auditoria confirma ausência de onclick/onchange inline.
+
+
+## V32 — Otimização de desempenho
+- Persistência deixa de redesenhar todas as telas a cada toque.
+- Atualiza somente Home/componentes leves e o painel atualmente aberto.
+- Evolução, Histórico, Biblioteca e Alimentação só são renderizados quando necessários.
+- Evangelho deixa de fazer tentativa de rede a cada alteração de água, leitura, estudo etc.; carrega apenas ao abrir Orações.
+- Corrige também o botão Editar livro, que ainda era gerado com onclick inline.
+- Adiciona content-visibility aos painéis inativos para reduzir trabalho de layout no iPhone.

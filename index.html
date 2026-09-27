@@ -347,6 +347,12 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
   transform:scale(.985);
 }
 </style>
+
+<style id="v32-performance">
+.panel{content-visibility:auto;contain-intrinsic-size:700px}
+.panel.active{content-visibility:visible}
+</style>
+
 </head>
 <body>
 <div class="app" id="authScreen">
@@ -369,7 +375,7 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V31 · Cloud</div>
+<div class="status offline" id="syncStatus">V32 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -834,7 +840,12 @@ D:[["Desenvolvimento máquina","3×8–12"],["Elevação lateral máquina","3×1
 };
 
 function day(){return state.days[today]}
-function persist(){localStorage.setItem("rotinaV3",JSON.stringify(state));markLocalSaved();render(); if(mode==="cloud") queueCloudSave();}
+function persist(){
+  localStorage.setItem("rotinaV3",JSON.stringify(state));
+  markLocalSaved();
+  renderFast();
+  if(mode==="cloud") queueCloudSave();
+}
 let saveTimer;
 function queueCloudSave(){clearTimeout(saveTimer);saveTimer=setTimeout(syncCloud,700)}
 
@@ -902,20 +913,21 @@ function renderWeekSummary(){
 function showPanel(id){
   const el=document.getElementById(id);
   if(!el) return;
+
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
   el.classList.add("active");
+
   try{window.scrollTo({top:0,behavior:"instant"});}catch(e){window.scrollTo(0,0);}
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.target===id));
 
   try{
     if(id==="treinos") renderWorkouts();
-    if(id==="biblioteca") renderLibrary();
-    if(id==="evolucao") renderEvolution();
-    if(id==="historico") renderHistory();
-    if(id==="backup") renderBackupStatus();
-    if(id==="conta") renderBackupStatus();
-    if(id==="alimentacao") renderFood();
-    if(id==="oracoes"){
+    else if(id==="biblioteca") renderLibrary();
+    else if(id==="evolucao") renderEvolution();
+    else if(id==="historico") renderHistory();
+    else if(id==="backup" || id==="conta") renderBackupStatus();
+    else if(id==="alimentacao") renderFood();
+    else if(id==="oracoes"){
       renderPrayers();
       Promise.resolve(loadDailyGospel(false)).catch(err=>console.error("Evangelho",err));
     }
@@ -1543,7 +1555,7 @@ function renderCurrentReadingHero(){
       <div class="book-progress"><span style="width:${bookPct(b)}%"></span></div>
       <div class="book-actions">
         <button class="primary" data-book-add-pages="${b.id}" data-pages="10">+10 páginas</button>
-        <button onclick="openBookForm('${b.id}')">Editar</button>
+        <button data-book-edit="${b.id}">Editar</button>
       </div>
     </div>
   </div>`;
@@ -1571,7 +1583,7 @@ function renderLibrary(){
         ${b.rating?`<div class="stars">${starsText(b.rating)}</div>`:""}
         <div class="book-actions">
           ${b.status==="lendo"?`<button class="primary" data-book-add-pages="${b.id}" data-pages="10">+10 pág.</button>`:""}
-          <button onclick="openBookForm('${b.id}')">Editar</button>
+          <button data-book-edit="${b.id}">Editar</button>
           <button data-book-delete="${b.id}">Excluir</button>
         </div>
       </div>
@@ -1876,32 +1888,54 @@ function renderEvolution(){
   }
 }
 
+function getActivePanelId(){
+  return document.querySelector(".panel.active")?.id || "hoje";
+}
+function renderActivePanel(){
+  const id=getActivePanelId();
+  try{
+    if(id==="treinos") renderWorkouts();
+    else if(id==="biblioteca") renderLibrary();
+    else if(id==="evolucao") renderEvolution();
+    else if(id==="historico") renderHistory();
+    else if(id==="backup" || id==="conta") renderBackupStatus();
+    else if(id==="alimentacao") renderFood();
+    else if(id==="oracoes") renderPrayers();
+    else if(id==="areaDetail"){
+      // Mantém a área dinâmica aberta atualizada sem reconstruir outras telas.
+    }
+  }catch(err){
+    console.error("Falha ao atualizar painel ativo",id,err);
+  }
+}
+function renderFast(){
+  const d=day();
+  const setValue=(id,val)=>{const el=document.getElementById(id); if(el && document.activeElement!==el) el.value=val;};
+  const setText=(id,val)=>{const el=document.getElementById(id); if(el) el.textContent=val;};
+
+  setValue("workout",d.workout||"");
+  setValue("cardio",d.cardio||"");
+  setText("waterText",Number(d.water||0).toFixed(1));
+  setValue("pages",d.pages||"");
+  setValue("studyTopic",d.studyTopic||"");
+  setValue("weight",d.weight||"");
+  setValue("screenTime",d.screenTime||"");
+  setValue("instagramTime",d.instagramTime||"");
+  setValue("note",d.note||"");
+
+  document.querySelectorAll(".toggle").forEach(t=>{
+    if(t.dataset.key) t.classList.toggle("on",!!d[t.dataset.key]);
+  });
+
+  // Somente componentes leves e visíveis em várias telas.
+  renderTodayProgress();
+  renderApprovedHome();
+  syncBookHome();
+  renderPrayers();
+  renderActivePanel();
+}
 function render(){
- const d=day();
- const setValue=(id,val)=>{const el=document.getElementById(id); if(el) el.value=val;};
- const setText=(id,val)=>{const el=document.getElementById(id); if(el) el.textContent=val;};
- setValue("workout",d.workout||"");
- setValue("cardio",d.cardio||"");
- setText("waterText",(d.water||0).toFixed(1));
- setValue("pages",d.pages||"");
- setValue("studyTopic",d.studyTopic||"");
- setValue("weight",d.weight||"");
- setValue("screenTime",d.screenTime||"");
- setValue("instagramTime",d.instagramTime||"");
- setValue("note",d.note||"");
- document.querySelectorAll(".toggle").forEach(t=>{
-   if(t.dataset.key) t.classList.toggle("on",!!d[t.dataset.key]);
- });
- renderKpis();
- renderTodayProgress();
- renderWeekSummary();
- renderApprovedHome();
- renderPrayers();
- Promise.resolve(loadDailyGospel(false)).catch(err=>console.error("Evangelho",err));
- renderFood();
- syncBookHome();
- renderLibrary();
- renderEvolution();
+  renderFast();
 }
 
 document.querySelectorAll("[data-evo-range]").forEach(btn=>{
@@ -1963,6 +1997,12 @@ document.addEventListener("click",async e=>{
   const addPages=e.target.closest("[data-book-add-pages]");
   if(addPages){
     addPagesToBook(addPages.dataset.bookAddPages, Number(addPages.dataset.pages||10));
+    return;
+  }
+
+  const editBookBtn=e.target.closest("[data-book-edit]");
+  if(editBookBtn){
+    openBookForm(editBookBtn.dataset.bookEdit);
     return;
   }
 
@@ -2230,7 +2270,7 @@ if(supabase){
  const {data}=await supabase.auth.getSession();
  if(data.session){user=data.session.user;enterApp(false);await loadCloud()}
 }
-render();
+renderFast();
 renderBackupStatus();
 
 
