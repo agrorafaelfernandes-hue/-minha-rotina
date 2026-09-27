@@ -154,6 +154,59 @@ input,select,textarea{min-height:44px}
 }
 </style>
 
+
+<style id="v15-library">
+.library-toolbar{
+  display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:10px;
+}
+.library-tab{
+  flex:0 0 auto; border:1px solid var(--line); background:#fff; color:var(--text);
+  border-radius:999px; padding:8px 12px; font-size:11px; font-weight:800;
+}
+.library-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.library-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.book-card{
+  background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px;
+  display:grid;grid-template-columns:66px 1fr;gap:9px;align-items:start;
+}
+.book-cover-real{
+  width:66px;height:96px;border-radius:7px;background:linear-gradient(160deg,#17324a,#2b5d74);
+  color:#fff;display:grid;place-items:center;text-align:center;font-size:9px;font-weight:800;padding:6px;
+  background-size:cover;background-position:center;overflow:hidden;
+}
+.book-card h4{margin:0 0 3px;font-size:12px}
+.book-card p{margin:0;color:var(--muted);font-size:10px;line-height:1.35}
+.book-progress{height:6px;background:#e8ebef;border-radius:999px;overflow:hidden;margin:7px 0}
+.book-progress span{display:block;height:100%;background:var(--accent)}
+.book-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.book-actions button{padding:6px 8px;font-size:9px;border-radius:9px}
+.library-empty{
+  background:#fff;border:1px dashed var(--line);border-radius:16px;padding:18px;text-align:center;color:var(--muted);font-size:12px
+}
+.book-form{
+  background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:10px;
+}
+.book-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.book-form textarea{min-height:80px}
+.book-form .full{grid-column:1/-1}
+.library-header-row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.current-reading-hero{
+  display:grid;grid-template-columns:78px 1fr;gap:12px;background:#fff;border:1px solid var(--line);
+  border-radius:18px;padding:12px;margin-bottom:10px
+}
+.current-reading-hero .cover{width:78px;height:112px;border-radius:8px;background:linear-gradient(160deg,#17324a,#2b5d74);
+  background-size:cover;background-position:center;color:white;display:grid;place-items:center;text-align:center;font-size:10px;padding:8px}
+.current-reading-hero h3{margin:0 0 3px;font-size:15px}
+.current-reading-hero p{margin:0;color:var(--muted);font-size:11px}
+.current-reading-hero .big-progress{font-size:11px;margin-top:8px}
+.stars{letter-spacing:1px;font-size:13px}
+@media(max-width:760px){
+  .library-grid{grid-template-columns:1fr}
+  .book-form-grid{grid-template-columns:1fr}
+  .book-form .full{grid-column:auto}
+}
+</style>
+
 </head>
 <body>
 <div id="authScreen" class="app">
@@ -177,7 +230,7 @@ input,select,textarea{min-height:44px}
 <div id="mainApp" class="app hidden">
   <div class="topbar">
     <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-    <div id="syncStatus" class="status offline">V14 · Cloud</div>
+    <div id="syncStatus" class="status offline">V15 · Cloud</div>
   </div>
 
   
@@ -215,7 +268,7 @@ input,select,textarea{min-height:44px}
     <button class="metric-box" onclick="showArea('treino')">
       <span class="metric-emoji">🏋️</span><b>Treino</b><small id="homeWorkout">0 / 1</small><em id="homeWorkoutPct">0%</em>
     </button>
-    <button class="metric-box" onclick="showArea('leitura')">
+    <button class="metric-box" onclick="showPanel('biblioteca')">
       <span class="metric-emoji">📖</span><b>Leitura</b><small id="homeReading">0 / 70</small><em id="homeReadingPct">0%</em>
     </button>
     <button class="metric-box" onclick="showArea('estudo')">
@@ -257,13 +310,13 @@ input,select,textarea{min-height:44px}
     <div class="compact-card reading-summary">
       <div class="section-head">
         <div><span class="section-icon teal">📖</span><b>Leitura atual</b></div>
-        <button onclick="showArea('leitura')">›</button>
+        <button onclick="showPanel('biblioteca')">›</button>
       </div>
       <div class="book-mini">
         <div class="book-cover">LIVRO</div>
         <div><b id="currentBookTitle">Livro atual</b><small id="currentBookAuthor">Autor</small><span id="currentBookProgress">0 de 0 páginas</span></div>
       </div>
-      <button class="soft-action" onclick="quickRead()">+10 páginas</button>
+      <button class="soft-action" onclick="quickReadCurrentBook()">+10 páginas</button>
     </div>
   </div>
 
@@ -283,7 +336,7 @@ input,select,textarea{min-height:44px}
       <button onclick="showArea('agua')">💧<span>Água</span></button>
       <button onclick="showArea('alimentacao')">🍴<span>Alimentação</span></button>
       <button onclick="showArea('treino')">🏋️<span>Treino</span></button>
-      <button onclick="showArea('leitura')">📖<span>Leitura</span></button>
+      <button onclick="showPanel('biblioteca')">📖<span>Leitura</span></button>
       <button onclick="showArea('estudo')">🎓<span>Estudo</span></button>
       <button onclick="showArea('oracoes')">✝️<span>Orações</span></button>
     </div>
@@ -299,7 +352,7 @@ input,select,textarea{min-height:44px}
     <button onclick="showArea('agua')">💧<span>Água</span></button>
     <button onclick="showArea('alimentacao')">🍴<span>Alimentação</span></button>
     <button onclick="showArea('treino')">🏋️<span>Treino</span></button>
-    <button onclick="showArea('leitura')">📖<span>Leitura</span></button>
+    <button onclick="showPanel('biblioteca')">📖<span>Leitura</span></button>
     <button onclick="showArea('estudo')">🎓<span>Estudo</span></button>
     <button onclick="showArea('oracoes')">✝️<span>Orações</span></button>
   </div>
@@ -312,6 +365,53 @@ input,select,textarea{min-height:44px}
   </div>
   <div id="areaContent"></div>
 </section>
+
+<section id="biblioteca" class="panel">
+  <div class="section-title">
+    <h2>Biblioteca</h2>
+    <button class="primary" onclick="openBookForm()">+ Livro</button>
+  </div>
+
+  <div id="currentReadingHero"></div>
+
+  <div id="bookFormWrap" class="hidden">
+    <div class="book-form">
+      <h3 id="bookFormTitle">Adicionar livro</h3>
+      <div class="book-form-grid">
+        <input id="bookTitleInput" placeholder="Título do livro">
+        <input id="bookAuthorInput" placeholder="Autor">
+        <input id="bookPagesInput" type="number" min="1" placeholder="Total de páginas">
+        <input id="bookCurrentInput" type="number" min="0" placeholder="Página atual">
+        <select id="bookStatusInput">
+          <option value="lendo">Lendo</option>
+          <option value="quero_ler">Quero ler</option>
+          <option value="concluido">Concluído</option>
+          <option value="pausado">Pausado</option>
+        </select>
+        <input id="bookRatingInput" type="number" min="0" max="5" step="1" placeholder="Nota 0–5">
+        <input id="bookStartDateInput" type="date" placeholder="Data de início">
+        <input id="bookEndDateInput" type="date" placeholder="Data de conclusão">
+        <input id="bookCoverInput" class="full" placeholder="URL da capa (opcional)">
+        <textarea id="bookNotesInput" class="full" placeholder="Observações, aprendizados, frases..."></textarea>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="primary" onclick="saveBook()">Salvar</button>
+        <button onclick="closeBookForm()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="library-toolbar">
+    <button class="library-tab active" data-book-filter="lendo" onclick="setBookFilter('lendo',this)">Lendo</button>
+    <button class="library-tab" data-book-filter="quero_ler" onclick="setBookFilter('quero_ler',this)">Quero ler</button>
+    <button class="library-tab" data-book-filter="concluido" onclick="setBookFilter('concluido',this)">Concluídos</button>
+    <button class="library-tab" data-book-filter="pausado" onclick="setBookFilter('pausado',this)">Pausados</button>
+    <button class="library-tab" data-book-filter="todos" onclick="setBookFilter('todos',this)">Todos</button>
+  </div>
+
+  <div id="libraryGrid" class="library-grid"></div>
+</section>
+
 <section id="evolucao" class="panel"><div class="section-title"><h2>Evolução</h2><span>Semana atual</span></div><div class="kpis" id="kpis"></div></section>
   <section id="backup" class="panel">
     <div class="section-title"><h2>Dados & Backup</h2><span>Segurança dos registros</span></div>
@@ -439,7 +539,7 @@ function showPanel(id){
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
   const el=document.getElementById(id); if(el) el.classList.add("active");
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.target===id));
-  if(id==="treinos") renderWorkouts();
+  if(id==="treinos") renderWorkouts(); if(id==="biblioteca") renderLibrary();
 }
 function registerMeal(){
   const d=day();
@@ -503,6 +603,171 @@ function renderApprovedHome(){
   set("studyHomeTopic",`Tema de hoje: ${d.studyTopic||"—"}`);
 }
 
+
+let bookFilter="lendo";
+let editingBookId=null;
+
+function ensureLibrary(){
+  if(!state.library) state.library=[];
+}
+function makeId(){
+  return "book_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,7);
+}
+function currentBook(){
+  ensureLibrary();
+  return state.library.find(b=>b.status==="lendo") || null;
+}
+function bookPct(book){
+  const total=Number(book.totalPages||0), cur=Number(book.currentPage||0);
+  if(!total) return 0;
+  return Math.max(0,Math.min(100,Math.round(cur/total*100)));
+}
+function starsText(n){
+  const x=Math.max(0,Math.min(5,Number(n||0)));
+  return "★".repeat(x)+"☆".repeat(5-x);
+}
+function openBookForm(bookId=null){
+  ensureLibrary();
+  editingBookId=bookId;
+  const book=bookId?state.library.find(b=>b.id===bookId):null;
+  document.getElementById("bookFormWrap").classList.remove("hidden");
+  document.getElementById("bookFormTitle").textContent=book?"Editar livro":"Adicionar livro";
+  document.getElementById("bookTitleInput").value=book?.title||"";
+  document.getElementById("bookAuthorInput").value=book?.author||"";
+  document.getElementById("bookPagesInput").value=book?.totalPages||"";
+  document.getElementById("bookCurrentInput").value=book?.currentPage||"";
+  document.getElementById("bookStatusInput").value=book?.status||"lendo";
+  document.getElementById("bookRatingInput").value=book?.rating||"";
+  document.getElementById("bookStartDateInput").value=book?.startDate||"";
+  document.getElementById("bookEndDateInput").value=book?.endDate||"";
+  document.getElementById("bookCoverInput").value=book?.coverUrl||"";
+  document.getElementById("bookNotesInput").value=book?.notes||"";
+}
+function closeBookForm(){
+  document.getElementById("bookFormWrap").classList.add("hidden");
+  editingBookId=null;
+}
+function saveBook(){
+  ensureLibrary();
+  const title=document.getElementById("bookTitleInput").value.trim();
+  if(!title){alert("Informe o título do livro.");return}
+  const book={
+    id:editingBookId||makeId(),
+    title,
+    author:document.getElementById("bookAuthorInput").value.trim(),
+    totalPages:Number(document.getElementById("bookPagesInput").value||0),
+    currentPage:Number(document.getElementById("bookCurrentInput").value||0),
+    status:document.getElementById("bookStatusInput").value,
+    rating:Number(document.getElementById("bookRatingInput").value||0),
+    startDate:document.getElementById("bookStartDateInput").value,
+    endDate:document.getElementById("bookEndDateInput").value,
+    coverUrl:document.getElementById("bookCoverInput").value.trim(),
+    notes:document.getElementById("bookNotesInput").value.trim(),
+    updatedAt:new Date().toISOString()
+  };
+  const idx=state.library.findIndex(b=>b.id===book.id);
+  if(idx>=0) state.library[idx]=book; else state.library.unshift(book);
+  if(book.status==="concluido" && !book.endDate) book.endDate=new Date().toISOString().slice(0,10);
+  persist();
+  closeBookForm();
+  renderLibrary();
+}
+function deleteBook(id){
+  if(!confirm("Excluir este livro da biblioteca?")) return;
+  state.library=(state.library||[]).filter(b=>b.id!==id);
+  persist();renderLibrary();
+}
+function setBookFilter(filter,btn){
+  bookFilter=filter;
+  document.querySelectorAll(".library-tab").forEach(x=>x.classList.remove("active"));
+  if(btn) btn.classList.add("active");
+  renderLibrary();
+}
+function addPagesToBook(id,qty){
+  ensureLibrary();
+  const b=state.library.find(x=>x.id===id);
+  if(!b) return;
+  b.currentPage=Math.max(0,Math.min(Number(b.totalPages||999999),Number(b.currentPage||0)+qty));
+  if(b.totalPages && b.currentPage>=b.totalPages){
+    b.status="concluido";
+    if(!b.endDate) b.endDate=new Date().toISOString().slice(0,10);
+  }
+  b.updatedAt=new Date().toISOString();
+  day().pages=Number(day().pages||0)+Math.max(0,qty);
+  persist();renderLibrary();
+}
+function quickReadCurrentBook(){
+  const b=currentBook();
+  if(!b){showPanel("biblioteca");return}
+  addPagesToBook(b.id,10);
+}
+function renderCurrentReadingHero(){
+  const host=document.getElementById("currentReadingHero");
+  if(!host) return;
+  const b=currentBook();
+  if(!b){
+    host.innerHTML=`<div class="library-empty">Nenhum livro em leitura agora.<br><button class="primary" style="margin-top:10px" onclick="openBookForm()">Adicionar livro</button></div>`;
+    return;
+  }
+  const coverStyle=b.coverUrl?`style="background-image:url('${b.coverUrl.replace(/'/g,"")}')"`:"";
+  host.innerHTML=`<div class="current-reading-hero">
+    <div class="cover" ${coverStyle}>${b.coverUrl?"":b.title}</div>
+    <div>
+      <h3>${b.title}</h3>
+      <p>${b.author||"Autor não informado"}</p>
+      <div class="big-progress">${b.currentPage||0} de ${b.totalPages||0} páginas · ${bookPct(b)}%</div>
+      <div class="book-progress"><span style="width:${bookPct(b)}%"></span></div>
+      <div class="book-actions">
+        <button class="primary" onclick="addPagesToBook('${b.id}',10)">+10 páginas</button>
+        <button onclick="openBookForm('${b.id}')">Editar</button>
+      </div>
+    </div>
+  </div>`;
+}
+function renderLibrary(){
+  ensureLibrary();
+  renderCurrentReadingHero();
+  const grid=document.getElementById("libraryGrid");
+  if(!grid) return;
+  const items=state.library.filter(b=>bookFilter==="todos"||b.status===bookFilter);
+  if(!items.length){
+    grid.innerHTML=`<div class="library-empty">Nenhum livro nesta categoria.</div>`;
+    return;
+  }
+  grid.innerHTML=items.map(b=>{
+    const coverStyle=b.coverUrl?`style="background-image:url('${b.coverUrl.replace(/'/g,"")}')"`:"";
+    const statusLabel={lendo:"Lendo",quero_ler:"Quero ler",concluido:"Concluído",pausado:"Pausado"}[b.status]||b.status;
+    return `<div class="book-card">
+      <div class="book-cover-real" ${coverStyle}>${b.coverUrl?"":b.title}</div>
+      <div>
+        <h4>${b.title}</h4>
+        <p>${b.author||"Autor não informado"}</p>
+        <p>${statusLabel}</p>
+        ${b.totalPages?`<div class="book-progress"><span style="width:${bookPct(b)}%"></span></div><p>${b.currentPage||0}/${b.totalPages} pág. · ${bookPct(b)}%</p>`:""}
+        ${b.rating?`<div class="stars">${starsText(b.rating)}</div>`:""}
+        <div class="book-actions">
+          ${b.status==="lendo"?`<button class="primary" onclick="addPagesToBook('${b.id}',10)">+10 pág.</button>`:""}
+          <button onclick="openBookForm('${b.id}')">Editar</button>
+          <button onclick="deleteBook('${b.id}')">Excluir</button>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+function syncBookHome(){
+  const b=currentBook();
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val};
+  if(!b){
+    set("currentBookTitle","Nenhum livro");
+    set("currentBookAuthor","Adicione um livro na Biblioteca");
+    set("currentBookProgress","0 de 0 páginas");
+    return;
+  }
+  set("currentBookTitle",b.title);
+  set("currentBookAuthor",b.author||"Autor não informado");
+  set("currentBookProgress",`${b.currentPage||0} de ${b.totalPages||0} páginas · ${bookPct(b)}%`);
+}
+
 function render(){
  const d=day();
  const setValue=(id,val)=>{const el=document.getElementById(id); if(el) el.value=val;};
@@ -523,6 +788,8 @@ function render(){
  renderTodayProgress();
  renderWeekSummary();
  renderApprovedHome();
+ syncBookHome();
+ renderLibrary();
 }
 ["workout","cardio","pages","studyTopic","weight","screenTime","instagramTime","note"].forEach(id=>{
  const el=document.getElementById(id);

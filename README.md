@@ -100,3 +100,13 @@ Depois:
 - Login volta a responder normalmente.
 - Mantido integralmente o layout aprovado da V13.
 - Cache atualizado para V14.
+
+
+## V15 — Biblioteca
+- Biblioteca pessoal integrada ao app.
+- Categorias: Lendo, Quero ler, Concluídos e Pausados.
+- Cadastro de título, autor, capa, páginas, datas, nota e observações.
+- Livro atual integrado à Home.
+- Registro rápido de +10 páginas.
+- Conclusão automática ao atingir o total de páginas.
+- Dados da biblioteca sincronizados junto com o estado do usuário no Supabase.
