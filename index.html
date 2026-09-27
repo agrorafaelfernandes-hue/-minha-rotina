@@ -202,7 +202,6 @@ input,select,textarea{min-height:44px}
   .book-form .full{grid-column:auto}
 }
 </style>
-
 <style id="v18-food-photo">
 .meal-list{display:grid;gap:8px;margin-top:10px}
 .meal-item{background:#fff;border:1px solid var(--line);border-radius:16px;padding:11px}
@@ -232,8 +231,6 @@ input,select,textarea{min-height:44px}
   .meal-form-grid .full{grid-column:auto}
 }
 </style>
-
-
 <style id="v19-prayers">
 .prayer-hero{
   background:linear-gradient(135deg,#fff8ee,#f4eadb);
@@ -261,8 +258,6 @@ input,select,textarea{min-height:44px}
 .prayer-intention{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:10px}
 .prayer-intention textarea{min-height:80px}
 </style>
-
-
 <style id="v20-gospel">
 .gospel-card{
   background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px;margin-bottom:10px
@@ -286,8 +281,6 @@ input,select,textarea{min-height:44px}
 .gospel-read.done{background:var(--accent);color:#fff}
 .gospel-source{margin-top:8px;font-size:9px;color:var(--muted)}
 </style>
-
-
 <style id="v21-evolution">
 .evo-range{display:flex;gap:7px;margin-bottom:10px;overflow-x:auto}
 .evo-range button{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;font-size:10px;font-weight:800}
@@ -310,8 +303,6 @@ input,select,textarea{min-height:44px}
 .evo-streak{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#f8faf9;border-radius:13px;padding:10px;margin-top:8px}
 @media(max-width:760px){.evo-summary{grid-template-columns:repeat(2,1fr)}}
 </style>
-
-
 <style id="v24-history">
 .history-controls{display:flex;gap:8px;align-items:center;margin-bottom:10px}
 .history-controls input[type="date"]{flex:1}
@@ -337,8 +328,6 @@ input,select,textarea{min-height:44px}
 .history-prayer span.done{background:#e8f5ec;color:#25683a}
 @media(max-width:760px){.history-grid{grid-template-columns:1fr 1fr}}
 </style>
-
-
 <style id="v26-account-backup">
 .account-status-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
 .account-mini{background:#f8faf9;border:1px solid var(--line);border-radius:14px;padding:10px}
@@ -350,7 +339,14 @@ input,select,textarea{min-height:44px}
 .backup-meta-row{display:flex;justify-content:space-between;gap:10px;font-size:10px}
 .backup-meta-row span{color:var(--muted)}
 </style>
-
+<style id="v30-touch">
+button,[data-open-panel],[data-open-area],[data-meal-action],[data-book-action],[data-prayer-toggle],[data-gospel-action]{
+  -webkit-tap-highlight-color:transparent;
+}
+button:active,[data-open-panel]:active,[data-open-area]:active{
+  transform:scale(.985);
+}
+</style>
 </head>
 <body>
 <div class="app" id="authScreen">
@@ -373,7 +369,7 @@ input,select,textarea{min-height:44px}
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V28 · Cloud</div>
+<div class="status offline" id="syncStatus">V31 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -397,19 +393,19 @@ input,select,textarea{min-height:44px}
 <div class="today-progress-track"><span id="todayProgressBar" style="width:0%"></span></div>
 </div>
 <div class="metric-strip">
-<button class="metric-box" onclick="showArea('agua')">
+<button class="metric-box" data-open-area="agua">
 <span class="metric-emoji">💧</span><b>Água</b><small id="homeWater">0,0 / 3,0 L</small><em id="homeWaterPct">0%</em>
 </button>
 <button class="metric-box" data-open-panel="alimentacao">
 <span class="metric-emoji">🍴</span><b>Alimentação</b><small id="homeMeals">0 / 3</small><em id="homeMealsPct">0%</em>
 </button>
-<button class="metric-box" onclick="showArea('treino')">
+<button class="metric-box" data-open-area="treino">
 <span class="metric-emoji">🏋️</span><b>Treino</b><small id="homeWorkout">0 / 1</small><em id="homeWorkoutPct">0%</em>
 </button>
-<button class="metric-box" onclick="showPanel('biblioteca')">
+<button class="metric-box" data-open-panel="biblioteca">
 <span class="metric-emoji">📖</span><b>Leitura</b><small id="homeReading">0 / 70</small><em id="homeReadingPct">0%</em>
 </button>
-<button class="metric-box" onclick="showArea('estudo')">
+<button class="metric-box" data-open-area="estudo">
 <span class="metric-emoji">🎓</span><b>Estudo</b><small id="homeStudy">0 / 30 min</small><em id="homeStudyPct">0%</em>
 </button>
 </div>
@@ -439,18 +435,18 @@ input,select,textarea{min-height:44px}
 <div class="compact-list" id="workoutPreview">
 <span>Agachamento</span><span>Leg Press</span><span>Cadeira Extensora</span><span>+ mais 3 exercícios</span>
 </div>
-<button class="soft-action" onclick="showArea('treino')">Iniciar treino</button>
+<button class="soft-action" data-open-area="treino">Iniciar treino</button>
 </div>
 <div class="compact-card reading-summary">
 <div class="section-head">
 <div><span class="section-icon teal">📖</span><b>Leitura atual</b></div>
-<button onclick="showPanel('biblioteca')">›</button>
+<button data-open-panel="biblioteca">›</button>
 </div>
 <div class="book-mini">
 <div class="book-cover">LIVRO</div>
 <div><b id="currentBookTitle">Livro atual</b><small id="currentBookAuthor">Autor</small><span id="currentBookProgress">0 de 0 páginas</span></div>
 </div>
-<button class="soft-action" onclick="quickReadCurrentBook()">+10 páginas</button>
+<button class="soft-action" data-book-action="quickread">+10 páginas</button>
 </div>
 </div>
 <div class="study-card">
@@ -460,16 +456,16 @@ input,select,textarea{min-height:44px}
 <span id="studyHomeProgress">0 / 30 minutos</span>
 <small id="studyHomeTopic">Tema de hoje: —</small>
 </div>
-<button class="soft-action" onclick="showArea('estudo')">Iniciar estudo</button>
+<button class="soft-action" data-open-area="estudo">Iniciar estudo</button>
 </div>
 <div class="areas-drawer">
 <div class="areas-title"><b>Áreas da Rotina</b><small>Acesse os detalhes de cada área</small></div>
 <div class="areas-grid">
-<button onclick="showArea('agua')">💧<span>Água</span></button>
+<button data-open-area="agua">💧<span>Água</span></button>
 <button data-open-panel="alimentacao">🍴<span>Alimentação</span></button>
-<button onclick="showArea('treino')">🏋️<span>Treino</span></button>
-<button onclick="showPanel('biblioteca')">📖<span>Leitura</span></button>
-<button onclick="showArea('estudo')">🎓<span>Estudo</span></button>
+<button data-open-area="treino">🏋️<span>Treino</span></button>
+<button data-open-panel="biblioteca">📖<span>Leitura</span></button>
+<button data-open-area="estudo">🎓<span>Estudo</span></button>
 <button data-open-panel="oracoes">✝️<span>Orações</span></button>
 <button id="historyOpenBtnHome" type="button">🗓️<span>Histórico</span></button>
 </div>
@@ -479,11 +475,11 @@ input,select,textarea{min-height:44px}
 <section class="panel" id="areas">
 <div class="section-title"><h2>Áreas da Rotina</h2><span>Detalhes por área</span></div>
 <div class="areas-grid large">
-<button onclick="showArea('agua')">💧<span>Água</span></button>
+<button data-open-area="agua">💧<span>Água</span></button>
 <button data-open-panel="alimentacao">🍴<span>Alimentação</span></button>
-<button onclick="showArea('treino')">🏋️<span>Treino</span></button>
-<button onclick="showPanel('biblioteca')">📖<span>Leitura</span></button>
-<button onclick="showArea('estudo')">🎓<span>Estudo</span></button>
+<button data-open-area="treino">🏋️<span>Treino</span></button>
+<button data-open-panel="biblioteca">📖<span>Leitura</span></button>
+<button data-open-area="estudo">🎓<span>Estudo</span></button>
 <button data-open-panel="oracoes">✝️<span>Orações</span></button>
 <button id="historyOpenBtnAreas" type="button">🗓️<span>Histórico</span></button>
 </div>
@@ -491,135 +487,116 @@ input,select,textarea{min-height:44px}
 <section class="panel" id="areaDetail">
 <div class="section-title">
 <h2 id="areaTitle">Área</h2>
-<button onclick="showPanel('areas')">Voltar</button>
+<button data-open-panel="areas">Voltar</button>
 </div>
 <div id="areaContent"></div>
 </section>
-
-
 <section class="panel" id="oracoes">
-  <div class="section-title">
-    <h2>Orações</h2>
-    <span>Rotina espiritual diária</span>
-  </div>
-
-  <div class="prayer-hero">
-    <small>Versículo do dia</small>
-    <blockquote id="dailyVerseText">“Tudo posso naquele que me fortalece.”</blockquote>
-    <cite id="dailyVerseRef">Filipenses 4,13</cite>
-  </div>
-
-  <div class="prayer-progress">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <b>Progresso das orações</b>
-      <span id="prayerProgressText">0/3</span>
-    </div>
-    <div class="prayer-progress-line"><span id="prayerProgressBar" style="width:0%"></span></div>
-  </div>
-
-  <div class="gospel-card">
-    <div class="gospel-head">
-      <div>
-        <span class="gospel-chip">📖 Evangelho do dia</span>
-        <h3 id="gospelReference" style="margin-top:7px">Carregando...</h3>
-        <small id="gospelLiturgicalDay">Buscando a liturgia de hoje</small>
-      </div>
-      <button onclick="loadDailyGospel(true)">Atualizar</button>
-    </div>
-
-    <div id="gospelStatus" class="gospel-status">Conectando à fonte da liturgia...</div>
-
-    <div class="gospel-box">
-      <b>Resumo curto</b>
-      <p id="gospelSummary">Aguardando o Evangelho do dia.</p>
-    </div>
-
-    <div class="gospel-box">
-      <b>Mensagem central</b>
-      <p id="gospelMessage">Aguardando o Evangelho do dia.</p>
-    </div>
-
-    <div class="gospel-box">
-      <b>Aplicação prática</b>
-      <p id="gospelApplication">Aguardando o Evangelho do dia.</p>
-    </div>
-
-    <details style="margin-top:10px">
-      <summary style="font-size:11px;font-weight:800;cursor:pointer">Ler o texto do Evangelho</summary>
-      <div id="gospelText" class="gospel-text">O texto será carregado quando houver conexão.</div>
-    </details>
-
-    <div class="gospel-actions">
-      <button id="gospelReadBtn" class="gospel-read" onclick="toggleGospelRead()">Marcar como lido</button>
-    </div>
-    <div class="gospel-source" id="gospelSource">Fonte: liturgia diária online.</div>
-  </div>
-
-  <div class="prayer-list">
-    <div class="prayer-item">
-      <div class="prayer-item-head">
-        <div class="prayer-item-title">
-          <span>🌅</span>
-          <div><h3>Oração da manhã</h3><p>Começar o dia com gratidão, proteção e discernimento.</p></div>
-        </div>
-        <button id="prayerMorningBtn" class="prayer-check" onclick="togglePrayer('prayerMorning')">✓</button>
-      </div>
-      <div class="prayer-text">
+<div class="section-title">
+<h2>Orações</h2>
+<span>Rotina espiritual diária</span>
+</div>
+<div class="prayer-hero">
+<small>Versículo do dia</small>
+<blockquote id="dailyVerseText">“Tudo posso naquele que me fortalece.”</blockquote>
+<cite id="dailyVerseRef">Filipenses 4,13</cite>
+</div>
+<div class="prayer-progress">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<b>Progresso das orações</b>
+<span id="prayerProgressText">0/3</span>
+</div>
+<div class="prayer-progress-line"><span id="prayerProgressBar" style="width:0%"></span></div>
+</div>
+<div class="gospel-card">
+<div class="gospel-head">
+<div>
+<span class="gospel-chip">📖 Evangelho do dia</span>
+<h3 id="gospelReference" style="margin-top:7px">Carregando...</h3>
+<small id="gospelLiturgicalDay">Buscando a liturgia de hoje</small>
+</div>
+<button data-gospel-action="reload">Atualizar</button>
+</div>
+<div class="gospel-status" id="gospelStatus">Conectando à fonte da liturgia...</div>
+<div class="gospel-box">
+<b>Resumo curto</b>
+<p id="gospelSummary">Aguardando o Evangelho do dia.</p>
+</div>
+<div class="gospel-box">
+<b>Mensagem central</b>
+<p id="gospelMessage">Aguardando o Evangelho do dia.</p>
+</div>
+<div class="gospel-box">
+<b>Aplicação prática</b>
+<p id="gospelApplication">Aguardando o Evangelho do dia.</p>
+</div>
+<details style="margin-top:10px">
+<summary style="font-size:11px;font-weight:800;cursor:pointer">Ler o texto do Evangelho</summary>
+<div class="gospel-text" id="gospelText">O texto será carregado quando houver conexão.</div>
+</details>
+<div class="gospel-actions">
+<button class="gospel-read" data-gospel-action="toggle-read" id="gospelReadBtn">Marcar como lido</button>
+</div>
+<div class="gospel-source" id="gospelSource">Fonte: liturgia diária online.</div>
+</div>
+<div class="prayer-list">
+<div class="prayer-item">
+<div class="prayer-item-head">
+<div class="prayer-item-title">
+<span>🌅</span>
+<div><h3>Oração da manhã</h3><p>Começar o dia com gratidão, proteção e discernimento.</p></div>
+</div>
+<button class="prayer-check" data-prayer-toggle="prayerMorning" id="prayerMorningBtn">✓</button>
+</div>
+<div class="prayer-text">
         Senhor, obrigado pela vida e por este novo dia. Conduza minhas decisões, proteja minha família e meus deslocamentos, dê-me saúde, serenidade, sabedoria para liderar e humildade para ouvir. Que eu possa fazer o bem às pessoas que encontrar hoje. Amém.
       </div>
-    </div>
-
-    <div class="prayer-item">
-      <div class="prayer-item-head">
-        <div class="prayer-item-title">
-          <span>☀️</span>
-          <div><h3>Angelus</h3><p>Uma pausa no meio do dia para recordar a presença de Deus.</p></div>
-        </div>
-        <button id="prayerAngelusBtn" class="prayer-check" onclick="togglePrayer('prayerAngelus')">✓</button>
-      </div>
-      <div class="prayer-text">
+</div>
+<div class="prayer-item">
+<div class="prayer-item-head">
+<div class="prayer-item-title">
+<span>☀️</span>
+<div><h3>Angelus</h3><p>Uma pausa no meio do dia para recordar a presença de Deus.</p></div>
+</div>
+<button class="prayer-check" data-prayer-toggle="prayerAngelus" id="prayerAngelusBtn">✓</button>
+</div>
+<div class="prayer-text">
         O Anjo do Senhor anunciou a Maria, e ela concebeu do Espírito Santo. Ave Maria... Eis aqui a serva do Senhor; faça-se em mim segundo a vossa palavra. Ave Maria... E o Verbo se fez carne e habitou entre nós. Ave Maria...
       </div>
-    </div>
-
-    <div class="prayer-item">
-      <div class="prayer-item-head">
-        <div class="prayer-item-title">
-          <span>🌙</span>
-          <div><h3>Oração da noite</h3><p>Agradecer o dia e entregar a Deus o que ficou pendente.</p></div>
-        </div>
-        <button id="prayerNightBtn" class="prayer-check" onclick="togglePrayer('prayerNight')">✓</button>
-      </div>
-      <div class="prayer-text">
+</div>
+<div class="prayer-item">
+<div class="prayer-item-head">
+<div class="prayer-item-title">
+<span>🌙</span>
+<div><h3>Oração da noite</h3><p>Agradecer o dia e entregar a Deus o que ficou pendente.</p></div>
+</div>
+<button class="prayer-check" data-prayer-toggle="prayerNight" id="prayerNightBtn">✓</button>
+</div>
+<div class="prayer-text">
         Senhor, obrigado por este dia. Perdoa minhas falhas, acolhe minhas preocupações e concede descanso ao meu corpo e à minha mente. Protege minha família durante a noite e prepara meu coração para um novo dia. Amém.
       </div>
-    </div>
-  </div>
-
-  <div class="prayer-intention">
-    <b>Intenção de hoje</b>
-    <textarea id="prayerIntentionInput" placeholder="Por quem ou por qual intenção você quer rezar hoje?"></textarea>
-    <button class="primary" style="margin-top:8px;width:100%" onclick="savePrayerIntention()">Salvar intenção</button>
-  </div>
+</div>
+</div>
+<div class="prayer-intention">
+<b>Intenção de hoje</b>
+<textarea id="prayerIntentionInput" placeholder="Por quem ou por qual intenção você quer rezar hoje?"></textarea>
+<button class="primary" data-prayer-action="save-intention" style="margin-top:8px;width:100%">Salvar intenção</button>
+</div>
 </section>
-
 <section class="panel" id="alimentacao">
 <div class="section-title">
 <h2>Alimentação</h2>
 <button class="primary" data-meal-action="open">+ Refeição</button>
 </div>
-
 <div class="food-summary-grid">
 <div><b id="foodMealsCount">0/3</b><span>Refeições</span></div>
 <div><b id="foodProteinCount">0/3</b><span>Proteína</span></div>
 <div><b id="foodVegCount">0/3</b><span>Vegetais</span></div>
 <div><b id="foodWaterLink">0,0 L</b><span>Água</span></div>
 </div>
-
 <div class="food-note">
 Registro simples e flexível para acompanhar a qualidade das refeições, sem contar calorias.
 </div>
-
 <div class="hidden" id="mealFormWrap" style="margin-top:10px">
 <div class="meal-form">
 <h3>Registrar refeição</h3>
@@ -630,25 +607,22 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 <option value="Jantar">Jantar</option>
 <option value="Lanche">Lanche</option>
 </select>
-<input id="mealTimeInput" type="time">
-
+<input id="mealTimeInput" type="time"/>
 <div class="full choice-row">
-<label><input id="mealProteinInput" type="checkbox"> Proteína</label>
-<label><input id="mealCarbInput" type="checkbox"> Carboidrato</label>
-<label><input id="mealVegInput" type="checkbox"> Vegetais</label>
-<label><input id="mealFatInput" type="checkbox"> Gordura boa</label>
+<label><input id="mealProteinInput" type="checkbox"/> Proteína</label>
+<label><input id="mealCarbInput" type="checkbox"/> Carboidrato</label>
+<label><input id="mealVegInput" type="checkbox"/> Vegetais</label>
+<label><input id="mealFatInput" type="checkbox"/> Gordura boa</label>
 </div>
-
 <div class="full photo-picker">
 <div class="photo-preview" id="mealPhotoPreview">Sem foto</div>
 <div class="photo-actions">
-<input class="hidden" id="mealPhotoInput" type="file" accept="image/*" capture="environment">
-<button type="button" data-meal-action="photo">📷 Adicionar foto</button>
-<button type="button" data-meal-action="clear-photo">Remover foto</button>
+<input accept="image/*" capture="environment" class="hidden" id="mealPhotoInput" type="file"/>
+<button data-meal-action="photo" type="button">📷 Adicionar foto</button>
+<button data-meal-action="clear-photo" type="button">Remover foto</button>
 <div class="photo-note">Opcional. A foto é comprimida para economizar espaço.</div>
 </div>
 </div>
-
 <textarea class="full" id="mealDescInput" placeholder="O que você comeu? Ex.: arroz, feijão, frango grelhado e salada"></textarea>
 <textarea class="full" id="mealNoteInput" placeholder="Observação opcional"></textarea>
 </div>
@@ -658,168 +632,148 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 </div>
 </div>
 </div>
-
 <div class="meal-list" id="mealList"></div>
 </section>
-
 <section class="panel" id="biblioteca">
 <div class="section-title">
 <h2>Biblioteca</h2>
-<button class="primary" onclick="openBookForm()">+ Livro</button>
+<button class="primary" data-book-action="open">+ Livro</button>
 </div>
 <div id="currentReadingHero"></div>
 <div class="hidden" id="bookFormWrap">
 <div class="book-form">
 <h3 id="bookFormTitle">Adicionar livro</h3>
 <div class="book-form-grid">
-<input id="bookTitleInput" placeholder="Título do livro"/>
-<input id="bookAuthorInput" placeholder="Autor"/>
-<input id="bookPagesInput" min="1" placeholder="Total de páginas" type="number"/>
-<input id="bookCurrentInput" min="0" placeholder="Página atual" type="number"/>
+<input id="bookTitleInput" placeholder="Título do livro">
+<input id="bookAuthorInput" placeholder="Autor">
+<input id="bookPagesInput" min="1" placeholder="Total de páginas" type="number">
+<input id="bookCurrentInput" min="0" placeholder="Página atual" type="number">
 <select id="bookStatusInput">
 <option value="lendo">Lendo</option>
 <option value="quero_ler">Quero ler</option>
 <option value="concluido">Concluído</option>
 <option value="pausado">Pausado</option>
 </select>
-<input id="bookRatingInput" max="5" min="0" placeholder="Nota 0–5" step="1" type="number"/>
-<input id="bookStartDateInput" placeholder="Data de início" type="date"/>
+<input id="bookRatingInput" max="5" min="0" placeholder="Nota 0–5" step="1" type="number">
+<input id="bookStartDateInput" placeholder="Data de início" type="date">
 <input id="bookEndDateInput" placeholder="Data de conclusão" type="date"/>
 <input class="full" id="bookCoverInput" placeholder="URL da capa (opcional)"/>
 <textarea class="full" id="bookNotesInput" placeholder="Observações, aprendizados, frases..."></textarea>
-</div>
+</input></input></input></input></input></input></div>
 <div style="display:flex;gap:8px;margin-top:10px">
-<button class="primary" onclick="saveBook()">Salvar</button>
-<button onclick="closeBookForm()">Cancelar</button>
+<button class="primary" data-book-action="save">Salvar</button>
+<button data-book-action="close">Cancelar</button>
 </div>
 </div>
 </div>
 <div class="library-toolbar">
-<button class="library-tab active" data-book-filter="lendo" onclick="setBookFilter('lendo',this)">Lendo</button>
-<button class="library-tab" data-book-filter="quero_ler" onclick="setBookFilter('quero_ler',this)">Quero ler</button>
-<button class="library-tab" data-book-filter="concluido" onclick="setBookFilter('concluido',this)">Concluídos</button>
-<button class="library-tab" data-book-filter="pausado" onclick="setBookFilter('pausado',this)">Pausados</button>
-<button class="library-tab" data-book-filter="todos" onclick="setBookFilter('todos',this)">Todos</button>
+<button class="library-tab active" data-book-filter="lendo">Lendo</button>
+<button class="library-tab" data-book-filter="quero_ler">Quero ler</button>
+<button class="library-tab" data-book-filter="concluido">Concluídos</button>
+<button class="library-tab" data-book-filter="pausado">Pausados</button>
+<button class="library-tab" data-book-filter="todos">Todos</button>
 </div>
 <div class="library-grid" id="libraryGrid"></div>
 </section>
-
 <section class="panel" id="evolucao">
-  <div class="section-title"><h2>Evolução</h2><span>Consistência e tendência</span></div>
-
-  <div class="evo-range">
-    <button class="active" data-evo-range="7" >7 dias</button>
-    <button data-evo-range="30" >30 dias</button>
-    <button data-evo-range="all" >Geral</button>
-  </div>
-
-  <div id="evoPeriodLabel" style="font-size:10px;color:var(--muted);margin:-2px 0 10px">Período: últimos 7 dias</div>
-  <div class="evo-summary">
-    <div><b id="evoAdherence">0%</b><span>Aderência média</span></div>
-    <div><b id="evoWorkoutCount">0</b><span>Treinos</span></div>
-    <div><b id="evoStudyMinutes">0 min</b><span>Estudo</span></div>
-    <div><b id="evoPages">0 pág.</b><span>Leitura</span></div>
-  </div>
-
-  <div class="evo-card">
-    <h3>Consistência diária</h3>
-    <div id="evoConsistencyChart" class="evo-chart"></div>
-  </div>
-
-  <div class="evo-card">
-    <h3>Água</h3>
-    <div class="evo-kpi-row">
-      <div class="evo-mini"><b id="evoWaterAvg">0,0 L</b><span>Média diária</span></div>
-      <div class="evo-mini"><b id="evoWaterGoal">0%</b><span>Dias na meta de 3 L</span></div>
-    </div>
-    <div id="evoWaterChart" class="evo-chart"></div>
-  </div>
-
-  <div class="evo-card">
-    <h3>Treino, leitura e estudo</h3>
-    <div class="evo-kpi-row">
-      <div class="evo-mini"><b id="evoWorkoutWeek">0</b><span>Treinos no período</span></div>
-      <div class="evo-mini"><b id="evoReadAvg">0</b><span>Páginas/dia</span></div>
-      <div class="evo-mini"><b id="evoStudyAvg">0 min</b><span>Estudo/dia</span></div>
-      <div class="evo-mini"><b id="evoMealsGoal">0%</b><span>Dias com 3 refeições</span></div>
-    </div>
-  </div>
-
-  <div class="evo-card">
-    <h3>Rotina espiritual</h3>
-    <div class="evo-kpi-row">
-      <div class="evo-mini"><b id="evoPrayerAvg">0%</b><span>Orações concluídas</span></div>
-      <div class="evo-mini"><b id="evoGospelRead">0%</b><span>Evangelho lido</span></div>
-    </div>
-    <div class="evo-streak">
-      <div><span style="font-size:18px">🔥</span></div>
-      <div style="flex:1"><strong>Sequência atual</strong><div style="font-size:9px;color:var(--muted)">Dias com ao menos 60% da rotina concluída</div></div>
-      <b id="evoStreak">0 dias</b>
-    </div>
-  </div>
-
-  <div class="evo-card">
-    <h3>Peso</h3>
-    <div class="evo-kpi-row">
-      <div class="evo-mini"><b id="evoWeightLatest">—</b><span>Último registro</span></div>
-      <div class="evo-mini"><b id="evoWeightChange">—</b><span>Variação no período</span></div>
-    </div>
-    <div id="evoWeightChart" class="evo-chart"></div>
-  </div>
+<div class="section-title"><h2>Evolução</h2><span>Consistência e tendência</span></div>
+<div class="evo-range">
+<button class="active" data-evo-range="7">7 dias</button>
+<button data-evo-range="30">30 dias</button>
+<button data-evo-range="all">Geral</button>
+</div>
+<div id="evoPeriodLabel" style="font-size:10px;color:var(--muted);margin:-2px 0 10px">Período: últimos 7 dias</div>
+<div class="evo-summary">
+<div><b id="evoAdherence">0%</b><span>Aderência média</span></div>
+<div><b id="evoWorkoutCount">0</b><span>Treinos</span></div>
+<div><b id="evoStudyMinutes">0 min</b><span>Estudo</span></div>
+<div><b id="evoPages">0 pág.</b><span>Leitura</span></div>
+</div>
+<div class="evo-card">
+<h3>Consistência diária</h3>
+<div class="evo-chart" id="evoConsistencyChart"></div>
+</div>
+<div class="evo-card">
+<h3>Água</h3>
+<div class="evo-kpi-row">
+<div class="evo-mini"><b id="evoWaterAvg">0,0 L</b><span>Média diária</span></div>
+<div class="evo-mini"><b id="evoWaterGoal">0%</b><span>Dias na meta de 3 L</span></div>
+</div>
+<div class="evo-chart" id="evoWaterChart"></div>
+</div>
+<div class="evo-card">
+<h3>Treino, leitura e estudo</h3>
+<div class="evo-kpi-row">
+<div class="evo-mini"><b id="evoWorkoutWeek">0</b><span>Treinos no período</span></div>
+<div class="evo-mini"><b id="evoReadAvg">0</b><span>Páginas/dia</span></div>
+<div class="evo-mini"><b id="evoStudyAvg">0 min</b><span>Estudo/dia</span></div>
+<div class="evo-mini"><b id="evoMealsGoal">0%</b><span>Dias com 3 refeições</span></div>
+</div>
+</div>
+<div class="evo-card">
+<h3>Rotina espiritual</h3>
+<div class="evo-kpi-row">
+<div class="evo-mini"><b id="evoPrayerAvg">0%</b><span>Orações concluídas</span></div>
+<div class="evo-mini"><b id="evoGospelRead">0%</b><span>Evangelho lido</span></div>
+</div>
+<div class="evo-streak">
+<div><span style="font-size:18px">🔥</span></div>
+<div style="flex:1"><strong>Sequência atual</strong><div style="font-size:9px;color:var(--muted)">Dias com ao menos 60% da rotina concluída</div></div>
+<b id="evoStreak">0 dias</b>
+</div>
+</div>
+<div class="evo-card">
+<h3>Peso</h3>
+<div class="evo-kpi-row">
+<div class="evo-mini"><b id="evoWeightLatest">—</b><span>Último registro</span></div>
+<div class="evo-mini"><b id="evoWeightChange">—</b><span>Variação no período</span></div>
+</div>
+<div class="evo-chart" id="evoWeightChart"></div>
+</div>
 </section>
-
-
 <section class="panel" id="backup">
-  <div class="section-title"><h2>Dados &amp; Backup</h2><span>Segurança dos registros</span></div>
-
-  <div class="card">
-    <h3>Estado dos dados</h3>
-    <div class="backup-meta">
-      <div class="backup-meta-row"><span>Registros diários</span><b id="backupDaysCount">0</b></div>
-      <div class="backup-meta-row"><span>Livros cadastrados</span><b id="backupBooksCount">0</b></div>
-      <div class="backup-meta-row"><span>Último salvamento local</span><b id="backupLocalTime">—</b></div>
-      <div class="backup-meta-row"><span>Última sincronização na nuvem</span><b id="backupCloudTime">—</b></div>
-    </div>
-
-    <div class="backup-actions">
-      <button class="primary" id="exportBtn">Exportar backup JSON</button>
-      <label class="soft" style="display:inline-block;padding:10px 12px;border-radius:12px;font-weight:700;cursor:pointer">
+<div class="section-title"><h2>Dados &amp; Backup</h2><span>Segurança dos registros</span></div>
+<div class="card">
+<h3>Estado dos dados</h3>
+<div class="backup-meta">
+<div class="backup-meta-row"><span>Registros diários</span><b id="backupDaysCount">0</b></div>
+<div class="backup-meta-row"><span>Livros cadastrados</span><b id="backupBooksCount">0</b></div>
+<div class="backup-meta-row"><span>Último salvamento local</span><b id="backupLocalTime">—</b></div>
+<div class="backup-meta-row"><span>Última sincronização na nuvem</span><b id="backupCloudTime">—</b></div>
+</div>
+<div class="backup-actions">
+<button class="primary" id="exportBtn">Exportar backup JSON</button>
+<label class="soft" style="display:inline-block;padding:10px 12px;border-radius:12px;font-weight:700;cursor:pointer">
         Importar backup
         <input accept=".json,application/json" id="importFile" style="display:none" type="file"/>
-      </label>
-      <button id="syncBtn">Sincronizar agora</button>
-    </div>
-
-    <div class="backup-warning">
+</label>
+<button id="syncBtn">Sincronizar agora</button>
+</div>
+<div class="backup-warning">
       O backup JSON inclui os dados da rotina, biblioteca e histórico. As fotos das refeições continuam armazenadas somente neste aparelho nesta versão.
     </div>
-    <div class="muted" id="backupMsg" style="margin-top:10px"></div>
-  </div>
+<div class="muted" id="backupMsg" style="margin-top:10px"></div>
+</div>
 </section>
-
-
 <section class="panel" id="historico">
-  <div class="section-title">
-    <h2>Histórico diário</h2>
-    <span>Veja o que foi registrado em cada dia</span>
-  </div>
-
-  <div class="history-controls">
-    <button id="historyPrevBtn" type="button">‹</button>
-    <input id="historyDateInput" type="date">
-    <button id="historyNextBtn" type="button">›</button>
-  </div>
-
-  <div id="historyContent"></div>
+<div class="section-title">
+<h2>Histórico diário</h2>
+<span>Veja o que foi registrado em cada dia</span>
+</div>
+<div class="history-controls">
+<button id="historyPrevBtn" type="button">‹</button>
+<input id="historyDateInput" type="date"/>
+<button id="historyNextBtn" type="button">›</button>
+</div>
+<div id="historyContent"></div>
 </section>
-
 <section class="panel" id="conta">
 <div class="section-title"><h2>Conta</h2><span>PWA + nuvem</span></div>
 <div class="card">
 <div class="muted" id="accountInfo">Modo local.</div>
 <div class="account-status-grid">
-  <div class="account-mini"><b id="accountModeLabel">Local</b><span>Modo atual</span></div>
-  <div class="account-mini"><b id="accountSyncLabel">—</b><span>Último sync</span></div>
+<div class="account-mini"><b id="accountModeLabel">Local</b><span>Modo atual</span></div>
+<div class="account-mini"><b id="accountSyncLabel">—</b><span>Último sync</span></div>
 </div>
 <button class="primary hidden" id="installBtn" style="margin-top:12px">Instalar app</button>
 <button id="logoutBtn" style="margin-top:12px">Sair</button>
@@ -827,14 +781,14 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 <div class="card" style="margin-top:14px">
 <h3>Configurar sincronização em nuvem</h3>
 <p class="muted">Cole abaixo a URL do projeto e a chave <b>anon public</b> do Supabase. Esses dados ficam salvos apenas neste navegador.</p>
-<input id="cloudUrl" placeholder="https://SEU-PROJETO.supabase.co" style="margin-bottom:8px">
-<input id="cloudAnonKey" placeholder="Supabase anon public key" style="margin-bottom:8px">
+<input id="cloudUrl" placeholder="https://SEU-PROJETO.supabase.co" style="margin-bottom:8px"/>
+<input id="cloudAnonKey" placeholder="Supabase anon public key" style="margin-bottom:8px"/>
 <div style="display:flex;gap:8px;flex-wrap:wrap">
 <button class="primary" id="saveCloudBtn">Salvar configuração</button>
 <button id="clearCloudBtn">Remover configuração</button>
 </div>
 <div class="muted" id="cloudConfigMsg" style="margin-top:10px"></div>
-</input></input></div>
+</div>
 <div class="card" style="margin-top:14px">
 <h3>Dados &amp; Backup</h3>
 <p class="muted">Exporte seus registros, importe um backup ou force uma sincronização com a nuvem.</p>
@@ -885,25 +839,44 @@ let saveTimer;
 function queueCloudSave(){clearTimeout(saveTimer);saveTimer=setTimeout(syncCloud,700)}
 
 
-function quickWater(){ day().water=Math.min(6,(day().water||0)+0.5); persist(); }
-function quickRead(){ day().pages=Number(day().pages||0)+10; persist(); }
+
+function changeWater(delta){
+  const d=day();
+  const current=Number(d.water||0);
+  d.water=Math.max(0,Math.min(6,Math.round((current+Number(delta||0))*10)/10));
+  persist();
+}
+function saveStudyArea(){
+  const minutesEl=document.getElementById("studyMinutesArea");
+  const topicEl=document.getElementById("studyTopicArea");
+  const d=day();
+  d.studyMinutes=Math.max(0,Number(minutesEl?.value||0));
+  d.studyTopic=(topicEl?.value||"").trim();
+  persist();
+  showArea("estudo");
+}
+
+function quickWater(amount=0.5){ changeWater(Number(amount)||0.5); }
+function quickRead(amount=10){ day().pages=Math.max(0,Number(day().pages||0)+(Number(amount)||10)); persist(); }
 function quickEnglish(){ day().english=!day().english; persist(); }
 function quickLeadership(){ day().leadership=!day().leadership; persist(); }
 
 function renderTodayProgress(){
   const v=day();
+  const prayersDone=[v.prayerMorning,v.prayerAngelus,v.prayerNight].filter(Boolean).length;
   const checks=[
-    !!v.workout,
+    !!(v.workout&&v.workout!=="Descanso"),
     Number(v.water||0)>=3,
-    !!(v.meals&&v.protein&&v.veg),
+    Number(v.mealsCount||0)>=3,
     Number(v.pages||0)>=10,
-    !!(v.english||v.leadership)
+    Number(v.studyMinutes||0)>=30,
+    prayersDone>=1
   ];
   const pct=Math.round(checks.filter(Boolean).length/checks.length*100);
-  const txt=document.getElementById("todayProgressText");
+  const text=document.getElementById("todayProgressText");
   const bar=document.getElementById("todayProgressBar");
-  if(txt) txt.textContent=pct+"%";
-  if(bar) bar.style.width=pct+"%";
+  if(text) text.textContent=`${pct}%`;
+  if(bar) bar.style.width=`${pct}%`;
 }
 
 function renderWeekSummary(){
@@ -944,7 +917,7 @@ function showPanel(id){
     if(id==="alimentacao") renderFood();
     if(id==="oracoes"){
       renderPrayers();
-      loadDailyGospel(false);
+      Promise.resolve(loadDailyGospel(false)).catch(err=>console.error("Evangelho",err));
     }
   }catch(err){
     console.error("Falha ao renderizar painel",id,err);
@@ -962,23 +935,47 @@ function registerMeal(){
 }
 function showArea(area){
   const titleMap={agua:"Água",alimentacao:"Alimentação",treino:"Treino",leitura:"Leitura",estudo:"Estudo",oracoes:"Orações"};
-  document.getElementById("areaTitle").textContent=titleMap[area]||"Área";
+  const title=document.getElementById("areaTitle");
+  if(title) title.textContent=titleMap[area]||"Área";
+
+  // Áreas com telas próprias
+  if(area==="alimentacao"){ showPanel("alimentacao"); return; }
+  if(area==="leitura"){ showPanel("biblioteca"); return; }
+  if(area==="oracoes"){ showPanel("oracoes"); return; }
+
   const d=day();
-  let html="";
+  let content="";
+
   if(area==="agua"){
-    html=`<div class="area-card"><h3>Água</h3><p><b>${(d.water||0).toFixed(1)} L</b> de 3,0 L</p><div class="row"><button onclick="day().water=Math.max(0,(day().water||0)-0.5);persist()">−0,5 L</button><button class="primary" onclick="quickWater()">+0,5 L</button></div></div>`;
-  }else if(area==="alimentacao"){
-    html=`<div class="area-card"><h3>Alimentação</h3><p>${d.mealsCount||0} de 3 refeições registradas</p><div class="row"><span>Proteína</span><b>${d.proteinCount||0}/3</b></div><div class="row"><span>Carboidrato</span><b>${d.carbCount||0}/3</b></div><div class="row"><span>Vegetais</span><b>${d.vegCount||0}/3</b></div><div class="row"><span>Gorduras</span><b>${d.fatCount||0}/3</b></div><button class="primary" style="width:100%;margin-top:10px" data-meal-action="open">Registrar refeição</button></div>`;
+    content=`
+      <div class="area-card">
+        <h3>Água</h3>
+        <p><b>${Number(d.water||0).toFixed(1).replace(".",",")} L</b> de 3,0 L</p>
+        <div class="row">
+          <button data-area-action="water-minus">−0,5 L</button>
+          <button class="primary" data-area-action="water-plus">+0,5 L</button>
+        </div>
+      </div>`;
   }else if(area==="treino"){
-    html=`<div class="area-card"><h3>Treino</h3><p>Selecione o treino do dia e registre cargas e repetições.</p><button class="primary" onclick="showPanel('treinos')">Abrir ficha de treino</button></div>`;
-  }else if(area==="leitura"){
-    html=`<div class="area-card"><h3>Leitura</h3><p><b>${d.bookTitle||"Livro atual"}</b></p><p>${d.pages||0} páginas registradas hoje.</p><button class="primary" onclick="quickRead()">+10 páginas</button><div class="row"><span>Biblioteca</span><button onclick="alert('Biblioteca será a próxima etapa desta versão.')">Abrir</button></div></div>`;
+    content=`
+      <div class="area-card">
+        <h3>Treino</h3>
+        <p>Selecione o treino do dia e registre cargas e repetições.</p>
+        <button class="primary" data-open-panel="treinos">Abrir ficha de treino</button>
+      </div>`;
   }else if(area==="estudo"){
-    html=`<div class="area-card"><h3>Estudo</h3><p>${d.studyMinutes||0} / 30 min</p><input id="studyMinutesArea" type="number" min="0" placeholder="Minutos estudados" value="${d.studyMinutes||""}"><input id="studyTopicArea" placeholder="Tema de hoje" value="${d.studyTopic||""}" style="margin-top:8px"><button class="primary" style="margin-top:8px;width:100%" onclick="day().studyMinutes=document.getElementById('studyMinutesArea').value;day().studyTopic=document.getElementById('studyTopicArea').value;persist();showArea('estudo')">Salvar estudo</button></div>`;
-  }else if(area==="oracoes"){
-    html=`<div class="area-card"><h3>Orações</h3><div class="row"><span>Oração da manhã</span><div class="toggle ${d.prayerMorning?'on':''}" onclick="day().prayerMorning=!day().prayerMorning;persist();showArea('oracoes')"></div></div><div class="row"><span>Angelus</span><div class="toggle ${d.prayerAngelus?'on':''}" onclick="day().prayerAngelus=!day().prayerAngelus;persist();showArea('oracoes')"></div></div><div class="row"><span>Oração da noite</span><div class="toggle ${d.prayerNight?'on':''}" onclick="day().prayerNight=!day().prayerNight;persist();showArea('oracoes')"></div></div><div class="verse-card" style="margin-top:10px"><div><strong>“O Senhor é o meu pastor, nada me faltará.”</strong><span>Salmo 23,1</span></div><div class="verse-icon">☀️</div></div></div>`;
+    content=`
+      <div class="area-card">
+        <h3>Estudo</h3>
+        <p>${Number(d.studyMinutes||0)} / 30 min</p>
+        <input id="studyMinutesArea" type="number" min="0" inputmode="numeric" placeholder="Minutos estudados" value="${d.studyMinutes||""}">
+        <input id="studyTopicArea" placeholder="Tema de hoje" value="${d.studyTopic||""}" style="margin-top:8px">
+        <button class="primary" style="margin-top:8px;width:100%" data-area-action="study-save">Salvar estudo</button>
+      </div>`;
   }
-  document.getElementById("areaContent").innerHTML=html;
+
+  const host=document.getElementById("areaContent");
+  if(host) host.innerHTML=content;
   showPanel("areaDetail");
 }
 function renderApprovedHome(){
@@ -1373,7 +1370,14 @@ function recalcMeals(d=day()){
 async function deleteMeal(id){
   const d=day(); ensureMeals();
   const found=d.mealEntries.find(x=>x.id===id);
-  if(found?.photoKey){try{await removeMealPhoto(found.photoKey);}catch(e){}}
+  if(!found) return;
+
+  const ok=confirm("Excluir esta refeição?");
+  if(!ok) return;
+
+  if(found?.photoKey){
+    try{await removeMealPhoto(found.photoKey);}catch(e){}
+  }
   d.mealEntries=d.mealEntries.filter(x=>x.id!==id);
   recalcMeals(d);
   persist();
@@ -1418,7 +1422,7 @@ function renderFood(){
       ${m.description?`<p style="font-size:11px;margin:7px 0 0">${m.description}</p>`:""}
       <div class="meal-tags">${tags}</div>
       ${m.note?`<p style="font-size:10px;color:var(--muted);margin:7px 0 0">${m.note}</p>`:""}
-      <button style="margin-top:8px" onclick="deleteMeal('${m.id}')">Excluir</button>
+      <button style="margin-top:8px" data-meal-delete="${m.id}">Excluir</button>
     </div>`;
   }).join("");
   hydrateMealPhotos();
@@ -1526,7 +1530,7 @@ function renderCurrentReadingHero(){
   if(!host) return;
   const b=currentBook();
   if(!b){
-    host.innerHTML=`<div class="library-empty">Nenhum livro em leitura agora.<br><button class="primary" style="margin-top:10px" onclick="openBookForm()">Adicionar livro</button></div>`;
+    host.innerHTML=`<div class="library-empty">Nenhum livro em leitura agora.<br><button class="primary" style="margin-top:10px" data-book-action="open">Adicionar livro</button></div>`;
     return;
   }
   const coverStyle=b.coverUrl?`style="background-image:url('${b.coverUrl.replace(/'/g,"")}')"`:"";
@@ -1538,7 +1542,7 @@ function renderCurrentReadingHero(){
       <div class="big-progress">${b.currentPage||0} de ${b.totalPages||0} páginas · ${bookPct(b)}%</div>
       <div class="book-progress"><span style="width:${bookPct(b)}%"></span></div>
       <div class="book-actions">
-        <button class="primary" onclick="addPagesToBook('${b.id}',10)">+10 páginas</button>
+        <button class="primary" data-book-add-pages="${b.id}" data-pages="10">+10 páginas</button>
         <button onclick="openBookForm('${b.id}')">Editar</button>
       </div>
     </div>
@@ -1566,9 +1570,9 @@ function renderLibrary(){
         ${b.totalPages?`<div class="book-progress"><span style="width:${bookPct(b)}%"></span></div><p>${b.currentPage||0}/${b.totalPages} pág. · ${bookPct(b)}%</p>`:""}
         ${b.rating?`<div class="stars">${starsText(b.rating)}</div>`:""}
         <div class="book-actions">
-          ${b.status==="lendo"?`<button class="primary" onclick="addPagesToBook('${b.id}',10)">+10 pág.</button>`:""}
+          ${b.status==="lendo"?`<button class="primary" data-book-add-pages="${b.id}" data-pages="10">+10 pág.</button>`:""}
           <button onclick="openBookForm('${b.id}')">Editar</button>
-          <button onclick="deleteBook('${b.id}')">Excluir</button>
+          <button data-book-delete="${b.id}">Excluir</button>
         </div>
       </div>
     </div>`;
@@ -1893,7 +1897,7 @@ function render(){
  renderWeekSummary();
  renderApprovedHome();
  renderPrayers();
- loadDailyGospel(false);
+ Promise.resolve(loadDailyGospel(false)).catch(err=>console.error("Evangelho",err));
  renderFood();
  syncBookHome();
  renderLibrary();
@@ -1907,22 +1911,106 @@ document.querySelectorAll("[data-evo-range]").forEach(btn=>{
   });
 });
 
-document.querySelectorAll("[data-open-panel]").forEach(el=>{
-  el.addEventListener("click",()=>{
-    const target=el.dataset.openPanel;
-    if(target) showPanel(target);
-  });
-});
-
 document.addEventListener("click",async e=>{
-  const trigger=e.target.closest("[data-meal-action]");
-  if(!trigger) return;
-  const action=trigger.dataset.mealAction;
-  if(action==="open") openMealForm();
-  else if(action==="close") closeMealForm();
-  else if(action==="photo") pickMealPhoto();
-  else if(action==="clear-photo") clearMealPhoto();
-  else if(action==="save") await saveMeal();
+  const panelBtn=e.target.closest("[data-open-panel]");
+  if(panelBtn){
+    const target=panelBtn.dataset.openPanel;
+    if(target) showPanel(target);
+    return;
+  }
+
+  const areaBtn=e.target.closest("[data-open-area]");
+  if(areaBtn){
+    const target=areaBtn.dataset.openArea;
+    if(target) showArea(target);
+    return;
+  }
+
+  const mealAction=e.target.closest("[data-meal-action]");
+  if(mealAction){
+    const action=mealAction.dataset.mealAction;
+    if(action==="open") openMealForm();
+    else if(action==="close") closeMealForm();
+    else if(action==="photo") pickMealPhoto();
+    else if(action==="clear-photo") clearMealPhoto();
+    else if(action==="save") await saveMeal();
+    return;
+  }
+
+  const mealDelete=e.target.closest("[data-meal-delete]");
+  if(mealDelete){
+    const id=mealDelete.dataset.mealDelete;
+    if(id) await deleteMeal(id);
+    return;
+  }
+
+  const bookAction=e.target.closest("[data-book-action]");
+  if(bookAction){
+    const action=bookAction.dataset.bookAction;
+    if(action==="open") openBookForm();
+    else if(action==="close") closeBookForm();
+    else if(action==="save") saveBook();
+    else if(action==="quickread") quickReadCurrentBook();
+    return;
+  }
+
+  const bookFilter=e.target.closest("[data-book-filter]");
+  if(bookFilter){
+    setBookFilter(bookFilter.dataset.bookFilter);
+    return;
+  }
+
+  const addPages=e.target.closest("[data-book-add-pages]");
+  if(addPages){
+    addPagesToBook(addPages.dataset.bookAddPages, Number(addPages.dataset.pages||10));
+    return;
+  }
+
+  const deleteBookBtn=e.target.closest("[data-book-delete]");
+  if(deleteBookBtn){
+    deleteBook(deleteBookBtn.dataset.bookDelete);
+    return;
+  }
+
+  const prayerToggle=e.target.closest("[data-prayer-toggle]");
+  if(prayerToggle){
+    togglePrayer(prayerToggle.dataset.prayerToggle);
+    return;
+  }
+
+  const prayerAction=e.target.closest("[data-prayer-action]");
+  if(prayerAction){
+    if(prayerAction.dataset.prayerAction==="save-intention") savePrayerIntention();
+    return;
+  }
+
+  const gospelAction=e.target.closest("[data-gospel-action]");
+  if(gospelAction){
+    if(gospelAction.dataset.gospelAction==="reload") loadDailyGospel(true);
+    else if(gospelAction.dataset.gospelAction==="toggle-read") toggleGospelRead();
+    return;
+  }
+
+  const areaAction=e.target.closest("[data-area-action]");
+  if(areaAction){
+    const action=areaAction.dataset.areaAction;
+    if(action==="water-plus"){ changeWater(0.5); showArea("agua"); }
+    else if(action==="water-minus"){ changeWater(-0.5); showArea("agua"); }
+    else if(action==="study-save") saveStudyArea();
+    return;
+  }
+
+  const waterBtn=e.target.closest("[data-quick-water]");
+  if(waterBtn){
+    quickWater(Number(waterBtn.dataset.quickWater||0.5));
+    return;
+  }
+
+  const readBtn=e.target.closest("[data-quick-read]");
+  if(readBtn){
+    quickRead(Number(readBtn.dataset.quickRead||10));
+    return;
+  }
 });
 
 ["historyOpenBtnAreas","historyOpenBtnHome"].forEach(id=>{

@@ -211,3 +211,31 @@ Depois:
 - Usa listener delegado para todos os botões de alimentação, inclusive os renderizados dinamicamente.
 - openMealForm força a exibição do formulário e rola a tela até ele.
 - Mantém fotos, dados e sincronização da versão anterior.
+
+
+## V29 — Correção para excluir refeição
+- Remove onclick inline do botão Excluir.
+- Usa listener delegado para excluir refeições renderizadas dinamicamente.
+- Adiciona confirmação antes da exclusão.
+- Remove também a foto local associada à refeição quando existir.
+
+
+## V30 — Pacote de estabilidade
+- Consolida correções de navegação e ações em um pacote maior.
+- Alimentação: abrir, salvar, foto e excluir via listener delegado.
+- Biblioteca: abrir formulário, salvar, filtrar, adicionar páginas e excluir livro sem depender de onclick inline.
+- Orações: checklist, intenção e ações do Evangelho por listeners diretos.
+- Navegação de áreas e painéis centralizada.
+- Confirmação antes de excluir livros e refeições.
+- Tratamento defensivo do carregamento do Evangelho.
+- Ajustes de resposta ao toque no iPhone.
+- Mantém Histórico, Evolução e Backup da V26+.
+
+
+## V31 — Auditoria das áreas Água, Leitura e Estudos
+- Água: abertura da área, +0,5 L, -0,5 L, atualização do indicador e persistência.
+- Leitura: atalhos passam diretamente para a Biblioteca; incremento de páginas aceita valores corretamente.
+- Estudos: formulário de minutos e tema salvo por listener direto, sem onclick inline.
+- Progresso diário atualizado para usar os campos atuais: treino, água, refeições, páginas, estudo e oração.
+- Remove dependências legadas de English/Leadership no cálculo do progresso.
+- Auditoria confirma ausência de onclick/onchange inline.
