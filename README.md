@@ -171,3 +171,12 @@ Depois:
 - Corrige chamada indevida de renderEvolution ao abrir qualquer painel.
 - Adiciona rótulo visível do período selecionado para facilitar a validação.
 - Mantém a V22 como base de cálculo e tratamento das datas.
+
+
+## V24 — Histórico diário
+- Nova área Histórico diário.
+- Navegação por data com seletor e botões de dia anterior/próximo.
+- Resumo de água, refeições, leitura, estudo, treino e peso.
+- Lista das refeições do dia com foto local quando disponível.
+- Exibe oração da manhã, Angelus, oração da noite, Evangelho lido e intenção do dia.
+- Mostra observações registradas no dia.

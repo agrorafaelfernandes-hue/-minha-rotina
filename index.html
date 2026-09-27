@@ -311,6 +311,33 @@ input,select,textarea{min-height:44px}
 @media(max-width:760px){.evo-summary{grid-template-columns:repeat(2,1fr)}}
 </style>
 
+
+<style id="v24-history">
+.history-controls{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+.history-controls input[type="date"]{flex:1}
+.history-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:10px}
+.history-card h3{margin:0 0 8px;font-size:13px}
+.history-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.history-mini{background:#f8faf9;border-radius:13px;padding:10px}
+.history-mini b{display:block;font-size:14px}
+.history-mini span{font-size:9px;color:var(--muted)}
+.history-section{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.history-section:first-child{margin-top:0;padding-top:0;border-top:none}
+.history-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin:7px 0}
+.history-row span{font-size:10px;color:var(--muted)}
+.history-row b{font-size:11px;text-align:right}
+.history-empty{background:#fff;border:1px dashed var(--line);border-radius:18px;padding:18px;text-align:center;color:var(--muted);font-size:11px}
+.history-meal{padding:9px 0;border-top:1px solid var(--line)}
+.history-meal:first-child{border-top:none}
+.history-meal-photo{width:72px;height:72px;object-fit:cover;border-radius:10px;margin-top:7px;background:#f4f5f6}
+.history-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.history-tag{font-size:8px;padding:4px 6px;border-radius:999px;background:#f3f5f7}
+.history-prayer{display:flex;gap:6px;flex-wrap:wrap}
+.history-prayer span{font-size:9px;padding:5px 7px;border-radius:999px;background:#f3f5f7}
+.history-prayer span.done{background:#e8f5ec;color:#25683a}
+@media(max-width:760px){.history-grid{grid-template-columns:1fr 1fr}}
+</style>
+
 </head>
 <body>
 <div class="app" id="authScreen">
@@ -333,7 +360,7 @@ input,select,textarea{min-height:44px}
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V23 · Cloud</div>
+<div class="status offline" id="syncStatus">V24 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -445,6 +472,8 @@ input,select,textarea{min-height:44px}
 <button onclick="showArea('estudo')">🎓<span>Estudo</span></button>
 <button onclick="showPanel('oracoes')">✝️<span>Orações</span></button>
 </div>
+
+<button onclick="showPanel('historico')" style="width:100%;margin-top:8px">🗓️ Histórico diário</button>
 </section>
 <section class="panel" id="areaDetail">
 <div class="section-title">
@@ -738,6 +767,22 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 <div class="muted" id="backupMsg" style="margin-top:10px"></div>
 </div>
 </section>
+
+<section class="panel" id="historico">
+  <div class="section-title">
+    <h2>Histórico diário</h2>
+    <span>Veja o que foi registrado em cada dia</span>
+  </div>
+
+  <div class="history-controls">
+    <button onclick="shiftHistoryDay(-1)">‹</button>
+    <input id="historyDateInput" type="date" onchange="setHistoryDate(this.value)">
+    <button onclick="shiftHistoryDay(1)">›</button>
+  </div>
+
+  <div id="historyContent"></div>
+</section>
+
 <section class="panel" id="conta">
 <div class="section-title"><h2>Conta</h2><span>PWA + nuvem</span></div>
 <div class="card">
@@ -849,6 +894,7 @@ function showPanel(id){
   if(id==="treinos") renderWorkouts();
   if(id==="biblioteca") renderLibrary();
   if(id==="evolucao") renderEvolution();
+  if(id==="historico") renderHistory();
   if(id==="alimentacao") renderFood();
   if(id==="oracoes"){ renderPrayers(); loadDailyGospel(false); }
 }
@@ -1475,6 +1521,133 @@ function syncBookHome(){
 }
 
 
+
+let historyDateKey=null;
+
+function todayKey(){
+  const d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function ensureHistoryDate(){
+  if(!historyDateKey) historyDateKey=todayKey();
+  const input=document.getElementById("historyDateInput");
+  if(input && input.value!==historyDateKey) input.value=historyDateKey;
+}
+function setHistoryDate(value){
+  if(!value) return;
+  historyDateKey=value;
+  renderHistory();
+}
+function shiftHistoryDay(delta){
+  ensureHistoryDate();
+  const d=parseDayKey(historyDateKey);
+  if(!d) return;
+  d.setDate(d.getDate()+delta);
+  historyDateKey=dateKeyFromDate(d);
+  renderHistory();
+}
+function formatHistoryDate(dateKey){
+  const d=parseDayKey(dateKey);
+  if(!d) return dateKey;
+  return d.toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});
+}
+function historyMealTags(m){
+  return [
+    m.protein?"Proteína":null,
+    m.carb?"Carboidrato":null,
+    m.veg?"Vegetais":null,
+    m.fat?"Gordura boa":null
+  ].filter(Boolean);
+}
+async function hydrateHistoryMealPhotos(){
+  const imgs=[...document.querySelectorAll("img[data-history-photo-key]")];
+  for(const img of imgs){
+    try{
+      const blob=await getMealPhoto(img.dataset.historyPhotoKey);
+      if(blob){
+        img.src=URL.createObjectURL(blob);
+      }else{
+        img.style.display="none";
+      }
+    }catch(e){ img.style.display="none"; }
+  }
+}
+function renderHistory(){
+  ensureHistoryDate();
+  const host=document.getElementById("historyContent");
+  if(!host) return;
+  const d=(state.days||{})[historyDateKey];
+
+  const input=document.getElementById("historyDateInput");
+  if(input) input.value=historyDateKey;
+
+  if(!d){
+    host.innerHTML=`
+      <div class="history-card"><h3>${formatHistoryDate(historyDateKey)}</h3></div>
+      <div class="history-empty">Nenhum registro encontrado para este dia.</div>`;
+    return;
+  }
+
+  const meals=Array.isArray(d.mealEntries)?d.mealEntries:[];
+  const prayerDone=[d.prayerMorning,d.prayerAngelus,d.prayerNight].filter(Boolean).length;
+
+  const mealHtml=meals.length ? meals.map(m=>{
+    const tags=historyMealTags(m).map(t=>`<span class="history-tag">${t}</span>`).join("");
+    return `<div class="history-meal">
+      <div class="history-row"><b>${m.type||"Refeição"}</b><span>${m.time||""}</span></div>
+      ${m.description?`<div style="font-size:10px;margin-top:4px">${m.description}</div>`:""}
+      ${m.photoKey?`<img class="history-meal-photo" data-history-photo-key="${m.photoKey}" alt="Foto da refeição">`:""}
+      ${tags?`<div class="history-tags">${tags}</div>`:""}
+      ${m.note?`<div style="font-size:9px;color:var(--muted);margin-top:5px">${m.note}</div>`:""}
+    </div>`;
+  }).join("") : '<div style="font-size:10px;color:var(--muted)">Nenhuma refeição registrada.</div>';
+
+  const workoutLabel = d.workout && d.workout!=="Descanso" ? d.workout : "Sem treino";
+  const studyLabel = d.studyMinutes ? `${d.studyMinutes} min${d.studyTopic?` · ${d.studyTopic}`:""}` : "Sem estudo";
+  const weightLabel = d.weight ? `${Number(d.weight).toFixed(1).replace(".",",")} kg` : "—";
+
+  host.innerHTML=`
+    <div class="history-card">
+      <h3>${formatHistoryDate(historyDateKey)}</h3>
+      <div class="history-grid">
+        <div class="history-mini"><b>${Number(d.water||0).toFixed(1).replace(".",",")} L</b><span>Água</span></div>
+        <div class="history-mini"><b>${meals.length}</b><span>Refeições</span></div>
+        <div class="history-mini"><b>${Number(d.pages||0)}</b><span>Páginas</span></div>
+        <div class="history-mini"><b>${Number(d.studyMinutes||0)} min</b><span>Estudo</span></div>
+      </div>
+    </div>
+
+    <div class="history-card">
+      <h3>Resumo do dia</h3>
+      <div class="history-section">
+        <div class="history-row"><span>Treino</span><b>${workoutLabel}</b></div>
+        <div class="history-row"><span>Leitura</span><b>${Number(d.pages||0)} páginas</b></div>
+        <div class="history-row"><span>Estudo</span><b>${studyLabel}</b></div>
+        <div class="history-row"><span>Peso</span><b>${weightLabel}</b></div>
+      </div>
+    </div>
+
+    <div class="history-card">
+      <h3>Alimentação</h3>
+      ${mealHtml}
+    </div>
+
+    <div class="history-card">
+      <h3>Rotina espiritual</h3>
+      <div class="history-prayer">
+        <span class="${d.prayerMorning?"done":""}">Manhã ${d.prayerMorning?"✓":""}</span>
+        <span class="${d.prayerAngelus?"done":""}">Angelus ${d.prayerAngelus?"✓":""}</span>
+        <span class="${d.prayerNight?"done":""}">Noite ${d.prayerNight?"✓":""}</span>
+        <span class="${d.gospelRead?"done":""}">Evangelho ${d.gospelRead?"✓":""}</span>
+      </div>
+      ${d.prayerIntention?`<div class="history-section"><div style="font-size:9px;color:var(--muted)">Intenção do dia</div><div style="font-size:10px;margin-top:5px">${d.prayerIntention}</div></div>`:""}
+    </div>
+
+    ${d.note?`<div class="history-card"><h3>Observação</h3><div style="font-size:10px">${d.note}</div></div>`:""}
+  `;
+  hydrateHistoryMealPhotos();
+}
+
 let evolutionRange=7;
 
 function parseDayKey(k){
@@ -1541,6 +1714,7 @@ function setEvolutionRange(range){
       : `Período: últimos ${evolutionRange} dias`;
   }
   renderEvolution();
+ renderHistory();
 }
 function renderBars(hostId,items,valueFn,maxVal,className=""){
   const host=document.getElementById(hostId);
@@ -1825,6 +1999,9 @@ Object.assign(window,{
   toggleGospelRead,
   setEvolutionRange,
   renderEvolution,
+  setHistoryDate,
+  shiftHistoryDay,
+  renderHistory,
   openMealForm,
   closeMealForm,
   pickMealPhoto,
