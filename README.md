@@ -155,3 +155,11 @@ Depois:
 - Métricas de alimentação, orações e Evangelho lido.
 - Sequência atual baseada em dias com pelo menos 60% da rotina concluída.
 - Evolução de peso com último registro e variação no período.
+
+
+## V22 — Correção Evolução
+- Corrige os filtros de 30 dias e Geral.
+- Valida as chaves de data antes de montar o histórico.
+- 7 e 30 dias agora incluem corretamente os dias sem registro, evitando inconsistências de período.
+- O histórico Geral usa apenas dias com data válida.
+- Gráficos longos são compactados visualmente para caber melhor no celular, sem alterar os cálculos dos indicadores.

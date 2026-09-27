@@ -333,7 +333,7 @@ input,select,textarea{min-height:44px}
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V21 · Cloud</div>
+<div class="status offline" id="syncStatus">V22 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -1474,17 +1474,38 @@ function syncBookHome(){
 let evolutionRange=7;
 
 function parseDayKey(k){
-  const [y,m,d]=k.split("-").map(Number);
-  return new Date(y,m-1,d);
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(k))) return null;
+  const [y,m,d]=String(k).split("-").map(Number);
+  const dt=new Date(y,m-1,d);
+  if(dt.getFullYear()!==y || dt.getMonth()!==m-1 || dt.getDate()!==d) return null;
+  dt.setHours(0,0,0,0);
+  return dt;
+}
+function dateKeyFromDate(d){
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function recordedEvolutionDays(){
+  return Object.entries(state.days||{})
+    .map(([date,data])=>({date,data:data||{},dateObj:parseDayKey(date)}))
+    .filter(x=>x.dateObj)
+    .sort((a,b)=>a.dateObj-b.dateObj);
 }
 function getEvolutionDays(){
-  const entries=Object.entries(state.days||{}).map(([date,data])=>({date,data,dateObj:parseDayKey(date)}))
-    .sort((a,b)=>a.dateObj-b.dateObj);
-  if(evolutionRange==="all") return entries;
-  const cutoff=new Date();
-  cutoff.setHours(0,0,0,0);
-  cutoff.setDate(cutoff.getDate()-(Number(evolutionRange)-1));
-  return entries.filter(x=>x.dateObj>=cutoff);
+  const recorded=recordedEvolutionDays();
+  if(evolutionRange==="all") return recorded;
+
+  const count=Number(evolutionRange)||7;
+  const map=new Map(recorded.map(x=>[x.date,x.data]));
+  const result=[];
+  const today=new Date(); today.setHours(0,0,0,0);
+
+  for(let i=count-1;i>=0;i--){
+    const d=new Date(today);
+    d.setDate(today.getDate()-i);
+    const key=dateKeyFromDate(d);
+    result.push({date:key,data:map.get(key)||{},dateObj:d});
+  }
+  return result;
 }
 function dayAdherence(d){
   const checks=[
@@ -1504,18 +1525,22 @@ function shortDateLabel(dateStr){
 }
 function setEvolutionRange(range,btn){
   evolutionRange=range;
-  document.querySelectorAll("[data-evo-range]").forEach(x=>x.classList.remove("active"));
-  if(btn) btn.classList.add("active");
+  document.querySelectorAll("[data-evo-range]").forEach(x=>{
+    const raw=x.dataset.evoRange;
+    const selected=(evolutionRange==="all" && raw==="all") || (String(evolutionRange)===raw);
+    x.classList.toggle("active",selected);
+  });
   renderEvolution();
 }
 function renderBars(hostId,items,valueFn,maxVal,className=""){
   const host=document.getElementById(hostId);
+  const displayItems=items.length>14 ? items.filter((_,i)=>i%Math.ceil(items.length/14)===0 || i===items.length-1) : items;
   if(!host) return;
-  if(!items.length){
+  if(!displayItems.length){
     host.innerHTML='<div class="library-empty" style="width:100%">Sem registros no período.</div>';
     return;
   }
-  host.innerHTML=items.map(it=>{
+  host.innerHTML=displayItems.map(it=>{
     const v=Math.max(0,Number(valueFn(it)||0));
     const pct=maxVal?Math.max(2,Math.min(100,v/maxVal*100)):2;
     return `<div class="evo-bar-wrap"><div class="evo-bar ${className}" style="height:${pct}%"></div><span class="evo-label">${shortDateLabel(it.date)}</span></div>`;
@@ -1578,11 +1603,15 @@ function renderEvolution(){
     set("evoWeightChange",`${change>0?"+":""}${change.toFixed(1).replace(".",",")} kg`);
     const min=Math.min(...weights),max=Math.max(...weights),span=Math.max(.1,max-min);
     const host=document.getElementById("evoWeightChart");
-    if(host) host.innerHTML=weightItems.map((it,i)=>{
-      const v=weights[i];
-      const pct=15+((v-min)/span)*85;
-      return `<div class="evo-bar-wrap"><div class="evo-bar orange" style="height:${pct}%"></div><span class="evo-label">${shortDateLabel(it.date)}</span></div>`;
-    }).join("");
+    if(host){
+      const step=Math.max(1,Math.ceil(weightItems.length/14));
+      const visual=weightItems.map((it,i)=>({it,v:weights[i],i}))
+        .filter((x,idx)=>idx%step===0 || idx===weightItems.length-1);
+      host.innerHTML=visual.map(({it,v})=>{
+        const pct=15+((v-min)/span)*85;
+        return `<div class="evo-bar-wrap"><div class="evo-bar orange" style="height:${pct}%"></div><span class="evo-label">${shortDateLabel(it.date)}</span></div>`;
+      }).join("");
+    }
   }else{
     set("evoWeightLatest","—");
     set("evoWeightChange","—");
