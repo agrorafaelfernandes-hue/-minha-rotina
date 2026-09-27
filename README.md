@@ -180,3 +180,10 @@ Depois:
 - Lista das refeições do dia com foto local quando disponível.
 - Exibe oração da manhã, Angelus, oração da noite, Evangelho lido e intenção do dia.
 - Mostra observações registradas no dia.
+
+
+## V25 — Correção de acesso ao Histórico
+- Corrige a abertura do Histórico diário com listeners diretos em JavaScript.
+- Adiciona acesso ao Histórico tanto na Home quanto em Áreas.
+- Controles de data anterior, próxima data e seletor de data também usam listeners diretos.
+- Reforça showPanel para evitar falha silenciosa de navegação.
