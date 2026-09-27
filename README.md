@@ -299,3 +299,27 @@ Depois:
 - Treino realizado passa a ser contado pela sessão finalizada, não apenas por uma ficha preenchida.
 - Histórico de treinos mostra data, ficha, resultado, exercícios concluídos e duração.
 - Mantém acesso às fichas/cargas antigas em um bloco recolhível.
+
+
+## V37 — Vida espiritual 2.0
+- Evangelho do dia passa a exibir o texto completo diretamente na tela.
+- O Evangelho pode ser marcado como lido.
+- Nova Reflexão do dia, com aplicação prática e marcação de conclusão.
+- Meta espiritual diária = Evangelho lido + Reflexão feita (2 itens).
+- Removidas da meta: oração da manhã, Angelus e oração da noite.
+- Novo módulo de Terço como atividade extra, sem impacto na meta diária.
+- Mistérios Gozosos, Luminosos, Dolorosos e Gloriosos disponíveis para consulta.
+- O app destaca automaticamente os mistérios tradicionalmente rezados no dia da semana.
+- Registro do terço com data, hora e tipo de mistério.
+- Histórico diário passa a mostrar Evangelho, Reflexão e Terço.
+- Evolução espiritual passa a considerar somente Evangelho + Reflexão.
+
+
+## V38 — Treino livre
+- “Adicionar treino” agora oferece dois caminhos: ficha guiada A/B/C/D ou treino livre.
+- Treino livre aceita atividade, duração, distância opcional e observação.
+- Exemplo: Esteira · 30 min · 3,2 km.
+- Treino livre finalizado conta normalmente na aderência e na Evolução.
+- O histórico diferencia sessões guiadas de atividades livres.
+- A Home mostra diretamente a atividade livre e a duração.
+- Mantidos todos os recursos da V37 (Vida espiritual 2.0).

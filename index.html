@@ -440,6 +440,43 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 @media(max-width:760px){.workout-plan-grid{grid-template-columns:repeat(4,1fr)}}
 </style>
 
+
+<style id="v37-spiritual">
+.spiritual-goals{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
+.spiritual-goals-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.spiritual-goals-line{height:8px;background:#e9ecef;border-radius:999px;overflow:hidden;margin-top:8px}
+.spiritual-goals-line span{display:block;height:100%;background:var(--accent)}
+.gospel-full{margin-top:10px;padding:12px;border-radius:14px;background:#fbfcfb;border:1px solid var(--line);font-size:11px;line-height:1.65;color:#344139;white-space:pre-line}
+.reflection-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:10px}
+.reflection-card.done{background:#f1f8f3;border-color:#cfe8d5}
+.reflection-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.reflection-text{font-size:11px;line-height:1.58;color:#404956;margin-top:9px}
+.rosary-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:10px}
+.rosary-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.rosary-today{margin-top:8px;padding:9px 10px;background:#f8faf9;border-radius:12px;font-size:10px}
+.mystery-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.mystery-tabs button{padding:8px 4px;border-radius:10px;font-size:9px;font-weight:800}
+.mystery-tabs button.active{background:var(--accent);color:white;border-color:var(--accent)}
+.mystery-list{display:grid;gap:7px;margin-top:9px}
+.mystery-item{padding:9px 10px;background:#f8faf9;border-radius:11px;font-size:10px;line-height:1.4}
+.mystery-item b{display:block;font-size:10px;margin-bottom:2px}
+.rosary-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.rosary-history{display:grid;gap:6px;margin-top:9px}
+.rosary-history-item{display:flex;justify-content:space-between;gap:10px;padding:8px 9px;background:#f8faf9;border-radius:10px;font-size:9px}
+</style>
+
+
+<style id="v38-free-workout">
+.workout-mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
+.workout-mode-tabs button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.free-workout-form{display:grid;gap:8px;margin-top:10px}
+.free-workout-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.free-workout-form textarea{min-height:72px;resize:vertical}
+.free-activity-item{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:9px;background:#f8faf9;border-radius:11px;font-size:10px}
+.free-activity-item strong{display:block;font-size:10px}
+.free-activity-meta{color:var(--muted);font-size:9px;margin-top:2px}
+</style>
+
 </head>
 <body>
 <div class="app" id="authScreen">
@@ -462,7 +499,7 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V36 · Cloud</div>
+<div class="status offline" id="syncStatus">V38 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -504,7 +541,7 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 </div>
 <button class="prayer-card" data-open-panel="oracoes">
 <span class="prayer-icon">✝️</span>
-<span class="prayer-copy"><b>Orações</b><small>Comece seu dia com Deus.</small></span>
+<span class="prayer-copy"><b>Vida espiritual</b><small>Comece seu dia com Deus.</small></span>
 <span class="prayer-status">✓</span>
 </button>
 
@@ -570,7 +607,7 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 <button data-open-area="treino">🏋️<span>Treino</span></button>
 <button data-open-panel="biblioteca">📖<span>Leitura</span></button>
 <button data-open-area="estudo">🎓<span>Estudo</span></button>
-<button data-open-panel="oracoes">✝️<span>Orações</span></button>
+<button data-open-panel="oracoes">✝️<span>Espiritual</span></button>
 <button id="historyOpenBtnHome" type="button">🗓️<span>Histórico</span></button>
 </div>
 </div>
@@ -582,9 +619,17 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
     <span>Sessão guiada A/B/C/D</span>
   </div>
 
-  <div class="workout-launch">
-    <h3 style="margin:0">Adicionar treino</h3>
-    <div class="muted" style="margin-top:4px">Escolha a ficha e acompanhe exercício por exercício.</div>
+  
+<div class="workout-launch">
+  <h3 style="margin:0">Adicionar treino</h3>
+  <div class="muted" style="margin-top:4px">Escolha uma ficha guiada ou registre uma atividade livre.</div>
+
+  <div class="workout-mode-tabs">
+    <button type="button" data-workout-mode="plan" class="active">Ficha A/B/C/D</button>
+    <button type="button" data-workout-mode="free">Treino livre</button>
+  </div>
+
+  <div id="plannedWorkoutForm">
     <div class="workout-plan-grid">
       <button type="button" data-workout-plan="A">A</button>
       <button type="button" data-workout-plan="B">B</button>
@@ -594,7 +639,19 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
     <button class="primary" id="startWorkoutBtn" type="button" style="width:100%;margin-top:9px">Iniciar treino</button>
   </div>
 
-  <div id="workoutSessionHost"></div>
+  <div id="freeWorkoutForm" class="free-workout-form" style="display:none">
+    <input id="freeWorkoutActivity" type="text" placeholder="Atividade — ex.: Esteira, caminhada, bike">
+    <div class="free-workout-row">
+      <input id="freeWorkoutMinutes" type="number" min="1" step="1" inputmode="numeric" placeholder="Duração (min)">
+      <input id="freeWorkoutDistance" type="number" min="0" step="0.1" inputmode="decimal" placeholder="Distância (km) opcional">
+    </div>
+    <textarea id="freeWorkoutNote" placeholder="Observação opcional — ex.: ritmo leve, inclinação 5%, treino regenerativo"></textarea>
+    <button class="primary" id="saveFreeWorkoutBtn" type="button">Registrar treino livre</button>
+  </div>
+</div>
+
+<div id="workoutSessionHost"></div>
+
 
   <div class="card" style="margin-top:10px">
     <h3>Histórico de treinos</h3>
@@ -615,7 +672,7 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 <button data-open-area="treino">🏋️<span>Treino</span></button>
 <button data-open-panel="biblioteca">📖<span>Leitura</span></button>
 <button data-open-area="estudo">🎓<span>Estudo</span></button>
-<button data-open-panel="oracoes">✝️<span>Orações</span></button>
+<button data-open-panel="oracoes">✝️<span>Espiritual</span></button>
 <button id="historyOpenBtnAreas" type="button">🗓️<span>Histórico</span></button>
 </div>
 </section>
@@ -626,23 +683,30 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 </div>
 <div id="areaContent"></div>
 </section>
+
 <section class="panel" id="oracoes">
 <div class="section-title">
-<h2>Orações</h2>
-<span>Rotina espiritual diária</span>
+<h2>Vida espiritual</h2>
+<span>Evangelho, reflexão e terço</span>
 </div>
+
 <div class="prayer-hero">
 <small>Versículo do dia</small>
 <blockquote id="dailyVerseText">“Tudo posso naquele que me fortalece.”</blockquote>
 <cite id="dailyVerseRef">Filipenses 4,13</cite>
 </div>
-<div class="prayer-progress">
-<div style="display:flex;justify-content:space-between;align-items:center">
-<b>Progresso das orações</b>
-<span id="prayerProgressText">0/3</span>
+
+<div class="spiritual-goals">
+<div class="spiritual-goals-head">
+<div>
+<b>Meta espiritual de hoje</b>
+<div class="muted" style="margin-top:3px">Evangelho + reflexão</div>
 </div>
-<div class="prayer-progress-line"><span id="prayerProgressBar" style="width:0%"></span></div>
+<span id="prayerProgressText">0/2</span>
 </div>
+<div class="spiritual-goals-line"><span id="prayerProgressBar" style="width:0%"></span></div>
+</div>
+
 <div class="gospel-card">
 <div class="gospel-head">
 <div>
@@ -652,72 +716,77 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 </div>
 <button data-gospel-action="reload">Atualizar</button>
 </div>
+
 <div class="gospel-status" id="gospelStatus">Conectando à fonte da liturgia...</div>
+
 <div class="gospel-box">
-<b>Resumo curto</b>
+<b>Resumo</b>
 <p id="gospelSummary">Aguardando o Evangelho do dia.</p>
 </div>
-<div class="gospel-box">
-<b>Mensagem central</b>
-<p id="gospelMessage">Aguardando o Evangelho do dia.</p>
-</div>
-<div class="gospel-box">
-<b>Aplicação prática</b>
-<p id="gospelApplication">Aguardando o Evangelho do dia.</p>
-</div>
-<details style="margin-top:10px">
-<summary style="font-size:11px;font-weight:800;cursor:pointer">Ler o texto do Evangelho</summary>
-<div class="gospel-text" id="gospelText">O texto será carregado quando houver conexão.</div>
-</details>
+
+<div class="gospel-full" id="gospelText">O texto completo do Evangelho será carregado quando houver conexão.</div>
+
 <div class="gospel-actions">
-<button class="gospel-read" data-gospel-action="toggle-read" id="gospelReadBtn">Marcar como lido</button>
+<button class="gospel-read" data-gospel-action="toggle-read" id="gospelReadBtn">Marcar Evangelho como lido</button>
 </div>
 <div class="gospel-source" id="gospelSource">Fonte: liturgia diária online.</div>
 </div>
-<div class="prayer-list">
-<div class="prayer-item">
-<div class="prayer-item-head">
-<div class="prayer-item-title">
-<span>🌅</span>
-<div><h3>Oração da manhã</h3><p>Começar o dia com gratidão, proteção e discernimento.</p></div>
+
+<div class="reflection-card" id="dailyReflectionCard">
+<div class="reflection-head">
+<div>
+<span class="gospel-chip">💭 Reflexão do dia</span>
+<h3 style="margin:7px 0 0">Levar a Palavra para a vida</h3>
 </div>
-<button class="prayer-check" data-prayer-toggle="prayerMorning" id="prayerMorningBtn">✓</button>
+<button class="prayer-check" data-reflection-toggle id="reflectionDoneBtn">✓</button>
 </div>
-<div class="prayer-text">
-        Senhor, obrigado pela vida e por este novo dia. Conduza minhas decisões, proteja minha família e meus deslocamentos, dê-me saúde, serenidade, sabedoria para liderar e humildade para ouvir. Que eu possa fazer o bem às pessoas que encontrar hoje. Amém.
-      </div>
+<div class="reflection-text" id="dailyReflectionText">
+A reflexão será apresentada após o carregamento do Evangelho.
 </div>
-<div class="prayer-item">
-<div class="prayer-item-head">
-<div class="prayer-item-title">
-<span>☀️</span>
-<div><h3>Angelus</h3><p>Uma pausa no meio do dia para recordar a presença de Deus.</p></div>
-</div>
-<button class="prayer-check" data-prayer-toggle="prayerAngelus" id="prayerAngelusBtn">✓</button>
-</div>
-<div class="prayer-text">
-        O Anjo do Senhor anunciou a Maria, e ela concebeu do Espírito Santo. Ave Maria... Eis aqui a serva do Senhor; faça-se em mim segundo a vossa palavra. Ave Maria... E o Verbo se fez carne e habitou entre nós. Ave Maria...
-      </div>
-</div>
-<div class="prayer-item">
-<div class="prayer-item-head">
-<div class="prayer-item-title">
-<span>🌙</span>
-<div><h3>Oração da noite</h3><p>Agradecer o dia e entregar a Deus o que ficou pendente.</p></div>
-</div>
-<button class="prayer-check" data-prayer-toggle="prayerNight" id="prayerNightBtn">✓</button>
-</div>
-<div class="prayer-text">
-        Senhor, obrigado por este dia. Perdoa minhas falhas, acolhe minhas preocupações e concede descanso ao meu corpo e à minha mente. Protege minha família durante a noite e prepara meu coração para um novo dia. Amém.
-      </div>
+<div class="gospel-box" style="margin-top:9px">
+<b>Aplicação prática</b>
+<p id="gospelApplication">Aguardando o Evangelho do dia.</p>
 </div>
 </div>
+
+<div class="rosary-card">
+<div class="rosary-head">
+<div>
+<span class="gospel-chip">📿 Terço</span>
+<h3 style="margin:7px 0 0">Mistérios do Rosário</h3>
+<div class="muted">Extra: registrar o terço não altera sua meta diária.</div>
+</div>
+<span class="tag" id="todayRosaryMysteryLabel">Hoje</span>
+</div>
+
+<div class="rosary-today" id="todayRosaryMysteryText"></div>
+
+<div class="mystery-tabs">
+<button type="button" data-mystery-type="gozosos">Gozosos</button>
+<button type="button" data-mystery-type="luminosos">Luminosos</button>
+<button type="button" data-mystery-type="dolorosos">Dolorosos</button>
+<button type="button" data-mystery-type="gloriosos">Gloriosos</button>
+</div>
+
+<div id="mysteryList" class="mystery-list"></div>
+
+<div class="rosary-actions">
+<button class="primary" type="button" data-rosary-action="register">✓ Registrar terço rezado</button>
+</div>
+
+<div style="margin-top:12px">
+<b style="font-size:11px">Últimos registros</b>
+<div id="rosaryHistory" class="rosary-history"></div>
+</div>
+</div>
+
 <div class="prayer-intention">
 <b>Intenção de hoje</b>
 <textarea id="prayerIntentionInput" placeholder="Por quem ou por qual intenção você quer rezar hoje?"></textarea>
 <button class="primary" data-prayer-action="save-intention" style="margin-top:8px;width:100%">Salvar intenção</button>
 </div>
 </section>
+
 <section class="panel" id="alimentacao">
 <div class="section-title">
 <h2>Alimentação</h2>
@@ -871,7 +940,7 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 <div class="evo-card">
 <h3>Rotina espiritual</h3>
 <div class="evo-kpi-row">
-<div class="evo-mini"><b id="evoPrayerAvg">0%</b><span>Orações concluídas</span></div>
+<div class="evo-mini"><b id="evoPrayerAvg">0%</b><span>Meta espiritual</span></div>
 <div class="evo-mini"><b id="evoGospelRead">0%</b><span>Evangelho lido</span></div>
 </div>
 <div class="evo-streak">
@@ -1239,14 +1308,14 @@ function quickLeadership(){ day().leadership=!day().leadership; persist(); }
 
 function renderTodayProgress(){
   const v=day();
-  const prayersDone=[v.prayerMorning,v.prayerAngelus,v.prayerNight].filter(Boolean).length;
+  const spiritualGoal=!!v.gospelRead && !!v.reflectionDone;
   const checks=[
     !!(v.workoutCompleted || v.workoutStatus==="completo" || v.workoutStatus==="parcial"),
     Number(v.water||0)>=3,
     Number(v.mealsCount||0)>=3,
     Number(v.pages||0)>=10,
     Number(v.studyMinutes||0)>=30,
-    prayersDone>=1
+    spiritualGoal
   ];
   const pct=Math.round(checks.filter(Boolean).length/checks.length*100);
   const text=document.getElementById("todayProgressText");
@@ -1381,6 +1450,7 @@ function renderApprovedHome(){
   set("macroFat",`${d.fatCount||0}/3`);
   set("workoutSummaryText",
     d.workoutStatus==="active"?`Treino ${d.workout} em andamento`:
+    d.workoutType==="free"&&d.workoutActivity?`${d.workoutActivity} · ${d.workoutMinutes||0} min`:
     d.workout?`Treino ${d.workout} · ${d.workoutStatus||"registrado"}`:"Selecione o treino");
   set("currentBookTitle",d.bookTitle||"Livro atual");
   set("currentBookAuthor",d.bookAuthor||"Autor");
@@ -1441,17 +1511,21 @@ function shortFaithfulSummary(text){
 }
 function centralMessage(gospel){
   if(gospel.reflection) return gospel.reflection;
-  return "Escutar a Palavra de Jesus com atenção e transformá-la em uma atitude concreta ao longo do dia.";
+  const summary=shortFaithfulSummary(gospel.text);
+  if(summary && !summary.startsWith("O resumo não")) {
+    return `${summary} Hoje, procure acolher essa Palavra sem pressa: observe o que ela pede de você nas relações, nas decisões e na forma de servir.`;
+  }
+  return "Reserve alguns minutos de silêncio para acolher a Palavra e perceber qual atitude concreta ela inspira para o seu dia.";
 }
 function practicalApplication(){
-  return "Escolha uma frase do Evangelho que mais chamou sua atenção e transforme-a em uma ação concreta de caridade, paciência, humildade ou serviço hoje.";
+  return "Escolha uma frase do Evangelho que mais chamou sua atenção e transforme-a em uma ação concreta de caridade, paciência, humildade, perdão ou serviço hoje.";
 }
 function applyGospelToUI(gospel,fromCache=false){
   const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
   set("gospelReference",gospel.reference||"Evangelho do dia");
   set("gospelLiturgicalDay",gospel.liturgicalDay||"Liturgia de hoje");
   set("gospelSummary",shortFaithfulSummary(gospel.text));
-  set("gospelMessage",centralMessage(gospel));
+  set("dailyReflectionText",centralMessage(gospel));
   set("gospelApplication",practicalApplication());
   set("gospelText",gospel.text||"O texto completo do Evangelho não foi disponibilizado pela fonte neste momento.");
   set("gospelStatus",fromCache?"Exibindo a última versão carregada hoje.":"Liturgia atualizada pela internet.");
@@ -1495,7 +1569,7 @@ async function loadDailyGospel(force=false){
       set("gospelReference","Evangelho do dia indisponível");
       set("gospelLiturgicalDay","Não foi possível confirmar a liturgia agora");
       set("gospelSummary","Não vou inventar a leitura. Tente atualizar quando houver conexão.");
-      set("gospelMessage","Assim que a fonte responder, a mensagem central aparecerá aqui.");
+      set("dailyReflectionText","Assim que a fonte responder, a reflexão aparecerá aqui.");
       set("gospelApplication","Enquanto isso, reserve alguns minutos para oração e silêncio.");
       set("gospelText","O texto do Evangelho não pôde ser confirmado com segurança.");
       if(status) status.textContent="Falha ao acessar a fonte da liturgia.";
@@ -1513,6 +1587,131 @@ function renderGospelRead(){
   if(!btn) return;
   btn.classList.toggle("done",!!d.gospelRead);
   btn.textContent=d.gospelRead?"✓ Evangelho lido":"Marcar como lido";
+}
+
+
+function toggleReflectionDone(){
+  const d=day();
+  d.reflectionDone=!d.reflectionDone;
+  persist();
+}
+
+const ROSARY_MYSTERIES={
+  gozosos:{
+    title:"Mistérios Gozosos",
+    days:"Segunda-feira e sábado",
+    items:[
+      "A Anunciação do Anjo a Maria",
+      "A Visitação de Maria a Santa Isabel",
+      "O Nascimento de Jesus em Belém",
+      "A Apresentação do Menino Jesus no Templo",
+      "A perda e o encontro do Menino Jesus no Templo"
+    ]
+  },
+  luminosos:{
+    title:"Mistérios Luminosos",
+    days:"Quinta-feira",
+    items:[
+      "O Batismo de Jesus no Jordão",
+      "A autorrevelação de Jesus nas Bodas de Caná",
+      "O anúncio do Reino de Deus com o convite à conversão",
+      "A Transfiguração de Jesus",
+      "A instituição da Eucaristia"
+    ]
+  },
+  dolorosos:{
+    title:"Mistérios Dolorosos",
+    days:"Terça-feira e sexta-feira",
+    items:[
+      "A agonia de Jesus no Horto das Oliveiras",
+      "A flagelação de Jesus",
+      "A coroação de espinhos",
+      "Jesus carrega a cruz para o Calvário",
+      "A crucifixão e morte de Jesus"
+    ]
+  },
+  gloriosos:{
+    title:"Mistérios Gloriosos",
+    days:"Quarta-feira e domingo",
+    items:[
+      "A Ressurreição de Jesus",
+      "A Ascensão de Jesus ao Céu",
+      "A vinda do Espírito Santo sobre Maria e os Apóstolos",
+      "A Assunção de Maria ao Céu",
+      "A coroação de Maria como Rainha do Céu e da Terra"
+    ]
+  }
+};
+
+let selectedMysteryType="";
+
+function mysteryTypeForToday(){
+  const dayOfWeek=new Date().getDay();
+  if(dayOfWeek===1 || dayOfWeek===6) return "gozosos";
+  if(dayOfWeek===4) return "luminosos";
+  if(dayOfWeek===2 || dayOfWeek===5) return "dolorosos";
+  return "gloriosos";
+}
+
+function selectMysteryType(type){
+  if(!ROSARY_MYSTERIES[type]) return;
+  selectedMysteryType=type;
+  renderRosary();
+}
+
+function ensureRosaryEntries(){
+  if(!Array.isArray(state.rosaryEntries)) state.rosaryEntries=[];
+}
+
+function registerRosary(){
+  ensureRosaryEntries();
+  const type=selectedMysteryType || mysteryTypeForToday();
+  const now=new Date();
+  state.rosaryEntries.unshift({
+    id:"rosary_"+Date.now().toString(36),
+    date:today,
+    time:`${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`,
+    type,
+    title:ROSARY_MYSTERIES[type].title,
+    createdAt:now.toISOString()
+  });
+  const d=day();
+  if(!Array.isArray(d.rosaryEntries)) d.rosaryEntries=[];
+  d.rosaryEntries.unshift({type,time:state.rosaryEntries[0].time});
+  persist();
+}
+
+function renderRosary(){
+  ensureRosaryEntries();
+  const todayType=mysteryTypeForToday();
+  if(!selectedMysteryType) selectedMysteryType=todayType;
+  const selected=ROSARY_MYSTERIES[selectedMysteryType];
+  const todayMystery=ROSARY_MYSTERIES[todayType];
+
+  const todayLabel=document.getElementById("todayRosaryMysteryLabel");
+  const todayText=document.getElementById("todayRosaryMysteryText");
+  if(todayLabel) todayLabel.textContent=todayMystery.title.replace("Mistérios ","");
+  if(todayText) todayText.innerHTML=`<b>Para hoje:</b> ${todayMystery.title} <span class="muted">(${todayMystery.days})</span>`;
+
+  document.querySelectorAll("[data-mystery-type]").forEach(btn=>{
+    btn.classList.toggle("active",btn.dataset.mysteryType===selectedMysteryType);
+  });
+
+  const list=document.getElementById("mysteryList");
+  if(list){
+    list.innerHTML=`
+      <div class="muted" style="font-size:9px">${selected.title} · ${selected.days}</div>
+      ${selected.items.map((m,i)=>`<div class="mystery-item"><b>${i+1}º mistério</b>${m}</div>`).join("")}
+    `;
+  }
+
+  const history=document.getElementById("rosaryHistory");
+  if(history){
+    const items=state.rosaryEntries.slice(0,8);
+    history.innerHTML=items.length
+      ? items.map(x=>`<div class="rosary-history-item"><span>${String(x.date).split("-").reverse().join("/")} · ${x.time||""}</span><b>${ROSARY_MYSTERIES[x.type]?.title?.replace("Mistérios ","")||x.title||"Terço"}</b></div>`).join("")
+      : '<div class="muted">Nenhum terço registrado ainda.</div>';
+  }
 }
 
 const DAILY_VERSES=[
@@ -1553,20 +1752,18 @@ function renderPrayers(){
   set("dailyVerseText",verse.text);
   set("dailyVerseRef",verse.ref);
 
-  const statuses=[
-    ["prayerMorning","prayerMorningBtn"],
-    ["prayerAngelus","prayerAngelusBtn"],
-    ["prayerNight","prayerNightBtn"]
-  ];
-  let done=0;
-  statuses.forEach(([key,id])=>{
-    const el=document.getElementById(id);
-    if(d[key]) done++;
-    if(el) el.classList.toggle("done",!!d[key]);
-  });
-  set("prayerProgressText",`${done}/3`);
+  const goalsDone=[!!d.gospelRead,!!d.reflectionDone].filter(Boolean).length;
+  set("prayerProgressText",`${goalsDone}/2`);
   const bar=document.getElementById("prayerProgressBar");
-  if(bar) bar.style.width=`${Math.round(done/3*100)}%`;
+  if(bar) bar.style.width=`${Math.round(goalsDone/2*100)}%`;
+
+  const reflectionBtn=document.getElementById("reflectionDoneBtn");
+  if(reflectionBtn){
+    reflectionBtn.classList.toggle("done",!!d.reflectionDone);
+    reflectionBtn.textContent=d.reflectionDone?"✓":"✓";
+  }
+  const reflectionCard=document.getElementById("dailyReflectionCard");
+  if(reflectionCard) reflectionCard.classList.toggle("done",!!d.reflectionDone);
 
   const input=document.getElementById("prayerIntentionInput");
   if(input && document.activeElement!==input) input.value=d.prayerIntention||"";
@@ -1577,10 +1774,12 @@ function renderPrayers(){
   if(homeRef) homeRef.textContent=verse.ref;
 
   renderGospelRead();
+  renderRosary();
+
   const prayerStatus=document.querySelector(".prayer-status");
   const prayerCopy=document.querySelector(".prayer-copy small");
-  if(prayerStatus) prayerStatus.textContent=done===3?"✓":`${done}/3`;
-  if(prayerCopy) prayerCopy.textContent=done===3?"Orações concluídas hoje.":"Comece seu dia com Deus.";
+  if(prayerStatus) prayerStatus.textContent=goalsDone===2?"✓":`${goalsDone}/2`;
+  if(prayerCopy) prayerCopy.textContent=goalsDone===2?"Meta espiritual concluída hoje.":"Evangelho + reflexão do dia.";
 }
 
 let pendingMealPhotoBlob=null;
@@ -2234,7 +2433,6 @@ function renderHistory(){
   }
 
   const meals=Array.isArray(d.mealEntries)?d.mealEntries:[];
-  const prayerDone=[d.prayerMorning,d.prayerAngelus,d.prayerNight].filter(Boolean).length;
 
   const mealHtml=meals.length ? meals.map(m=>{
     const tags=historyMealTags(m).map(t=>`<span class="history-tag">${t}</span>`).join("");
@@ -2247,9 +2445,11 @@ function renderHistory(){
     </div>`;
   }).join("") : '<div style="font-size:10px;color:var(--muted)">Nenhuma refeição registrada.</div>';
 
-  const workoutLabel = d.workout
-    ? `Treino ${d.workout}${d.workoutStatus?` · ${d.workoutStatus}`:""}${Number(d.workoutCompletedCount||0)?` · ${d.workoutCompletedCount}/${d.workoutTotalCount||0} exercícios`:""}`
-    : "Sem treino";
+  const workoutLabel = d.workoutType==="free" && d.workoutActivity
+    ? `${d.workoutActivity} · ${d.workoutMinutes||0} min${d.workoutDistance?` · ${String(d.workoutDistance).replace(".",",")} km`:""}`
+    : d.workout
+      ? `Treino ${d.workout}${d.workoutStatus?` · ${d.workoutStatus}`:""}${Number(d.workoutCompletedCount||0)?` · ${d.workoutCompletedCount}/${d.workoutTotalCount||0} exercícios`:""}`
+      : "Sem treino";
   const studyLabel = d.studyMinutes ? `${d.studyMinutes} min${d.studyTopic?` · ${d.studyTopic}`:""}` : "Sem estudo";
   const weightLabel = d.weight ? `${Number(d.weight).toFixed(1).replace(".",",")} kg` : "—";
 
@@ -2284,13 +2484,16 @@ function renderHistory(){
     </div>
 
     <div class="history-card">
-      <h3>Rotina espiritual</h3>
+      <h3>Vida espiritual</h3>
       <div class="history-prayer">
-        <span class="${d.prayerMorning?"done":""}">Manhã ${d.prayerMorning?"✓":""}</span>
-        <span class="${d.prayerAngelus?"done":""}">Angelus ${d.prayerAngelus?"✓":""}</span>
-        <span class="${d.prayerNight?"done":""}">Noite ${d.prayerNight?"✓":""}</span>
         <span class="${d.gospelRead?"done":""}">Evangelho ${d.gospelRead?"✓":""}</span>
+        <span class="${d.reflectionDone?"done":""}">Reflexão ${d.reflectionDone?"✓":""}</span>
+        <span class="${Array.isArray(d.rosaryEntries)&&d.rosaryEntries.length?"done":""}">Terço ${Array.isArray(d.rosaryEntries)&&d.rosaryEntries.length?"✓":""}</span>
       </div>
+      ${Array.isArray(d.rosaryEntries)&&d.rosaryEntries.length?`
+        <div class="history-section">
+          ${d.rosaryEntries.map(x=>`<div class="history-row"><span>${x.time||"—"} · Terço</span><b>${ROSARY_MYSTERIES[x.type]?.title?.replace("Mistérios ","")||x.type||""}</b></div>`).join("")}
+        </div>`:""}
       ${d.prayerIntention?`<div class="history-section"><div style="font-size:9px;color:var(--muted)">Intenção do dia</div><div style="font-size:10px;margin-top:5px">${d.prayerIntention}</div></div>`:""}
     </div>
 
@@ -2342,7 +2545,7 @@ function dayAdherence(d){
     (d.workout&&d.workout!=="Descanso")?1:0,
     Math.min(1,Number(d.pages||0)/10),
     Math.min(1,Number(d.studyMinutes||0)/30),
-    [d.prayerMorning,d.prayerAngelus,d.prayerNight].filter(Boolean).length/3,
+    [d.gospelRead,d.reflectionDone].filter(Boolean).length/2,
     d.gospelRead?1:0
   ];
   return Math.round(checks.reduce((a,b)=>a+b,0)/checks.length*100);
@@ -2425,7 +2628,7 @@ function renderEvolution(){
 
   set("evoMealsGoal",`${Math.round(data.filter(d=>Number(d.mealsCount||0)>=3).length/n*100)}%`);
 
-  const prayerPct=data.map(d=>[d.prayerMorning,d.prayerAngelus,d.prayerNight].filter(Boolean).length/3*100);
+  const prayerPct=data.map(d=>[d.gospelRead,d.reflectionDone].filter(Boolean).length/2*100);
   set("evoPrayerAvg",`${Math.round(avg(prayerPct))}%`);
   set("evoGospelRead",`${Math.round(data.filter(d=>d.gospelRead).length/n*100)}%`);
   set("evoStreak",`${calcStreak(items)} dias`);
@@ -2620,9 +2823,21 @@ document.addEventListener("click",async e=>{
     return;
   }
 
-  const prayerToggle=e.target.closest("[data-prayer-toggle]");
-  if(prayerToggle){
-    togglePrayer(prayerToggle.dataset.prayerToggle);
+  const reflectionToggle=e.target.closest("[data-reflection-toggle]");
+  if(reflectionToggle){
+    toggleReflectionDone();
+    return;
+  }
+
+  const mysteryType=e.target.closest("[data-mystery-type]");
+  if(mysteryType){
+    selectMysteryType(mysteryType.dataset.mysteryType);
+    return;
+  }
+
+  const rosaryAction=e.target.closest("[data-rosary-action]");
+  if(rosaryAction){
+    if(rosaryAction.dataset.rosaryAction==="register") registerRosary();
     return;
   }
 
@@ -2706,10 +2921,96 @@ document.querySelectorAll("[data-workout-plan]").forEach(btn=>{
 const startWorkoutBtn=document.getElementById("startWorkoutBtn");
 if(startWorkoutBtn) startWorkoutBtn.addEventListener("click",()=>startWorkoutSession());
 
+document.querySelectorAll("[data-workout-mode]").forEach(btn=>{
+  btn.addEventListener("click",()=>setWorkoutMode(btn.dataset.workoutMode));
+});
+const saveFreeWorkoutBtn=document.getElementById("saveFreeWorkoutBtn");
+if(saveFreeWorkoutBtn) saveFreeWorkoutBtn.addEventListener("click",()=>saveFreeWorkout());
+setWorkoutMode("plan");
+
 const mealPhotoInput=document.getElementById("mealPhotoInput");
 if(mealPhotoInput) mealPhotoInput.addEventListener("change",e=>handleMealPhotoSelected(e.target.files?.[0]));
 
 
+
+
+let selectedWorkoutMode="plan";
+
+function setWorkoutMode(mode){
+  selectedWorkoutMode=mode==="free"?"free":"plan";
+  document.querySelectorAll("[data-workout-mode]").forEach(btn=>{
+    btn.classList.toggle("active",btn.dataset.workoutMode===selectedWorkoutMode);
+  });
+  const planned=document.getElementById("plannedWorkoutForm");
+  const free=document.getElementById("freeWorkoutForm");
+  if(planned) planned.style.display=selectedWorkoutMode==="plan"?"block":"none";
+  if(free) free.style.display=selectedWorkoutMode==="free"?"grid":"none";
+}
+
+function saveFreeWorkout(){
+  ensureWorkoutSessions();
+  const activity=(document.getElementById("freeWorkoutActivity")?.value||"").trim();
+  const minutes=Number(document.getElementById("freeWorkoutMinutes")?.value||0);
+  const distanceRaw=String(document.getElementById("freeWorkoutDistance")?.value||"").replace(",",".");
+  const distance=distanceRaw?Number(distanceRaw):0;
+  const note=(document.getElementById("freeWorkoutNote")?.value||"").trim();
+
+  if(!activity){
+    alert("Informe a atividade do treino.");
+    return;
+  }
+  if(!minutes || minutes<1){
+    alert("Informe a duração do treino em minutos.");
+    return;
+  }
+
+  const now=new Date();
+  const session={
+    id:"ws_"+Date.now().toString(36),
+    date:today,
+    plan:"Livre",
+    type:"free",
+    activity,
+    minutes:Math.round(minutes),
+    distance:distance>0?Math.round(distance*100)/100:0,
+    note,
+    status:"completed",
+    result:"completo",
+    startedAt:new Date(now.getTime()-minutes*60000).toISOString(),
+    endedAt:now.toISOString(),
+    completedCount:1,
+    totalCount:1,
+    exercises:[{
+      index:0,
+      name:activity,
+      prescription:`${Math.round(minutes)} min`,
+      done:true
+    }]
+  };
+
+  state.workoutSessions.unshift(session);
+
+  const d=day();
+  d.workout="Livre";
+  d.workoutType="free";
+  d.workoutActivity=activity;
+  d.workoutMinutes=Math.round(minutes);
+  d.workoutDistance=session.distance;
+  d.workoutNote=note;
+  d.workoutStatus="completo";
+  d.workoutCompleted=true;
+  d.workoutCompletedCount=1;
+  d.workoutTotalCount=1;
+
+  persist();
+
+  ["freeWorkoutActivity","freeWorkoutMinutes","freeWorkoutDistance","freeWorkoutNote"].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value="";
+  });
+
+  renderWorkoutSession();
+  renderWorkoutHistory();
+}
 
 let selectedWorkoutPlan="";
 
@@ -2724,7 +3025,8 @@ function workoutTitle(plan){
   return plan==="A"?"Peito / tríceps / postura":
          plan==="B"?"Pernas / core":
          plan==="C"?"Costas / postura":
-         plan==="D"?"Ombros / pernas":"";
+         plan==="D"?"Ombros / pernas":
+         plan==="Livre"?"Atividade livre":"";
 }
 function selectWorkoutPlan(plan){
   if(!workouts[plan]) return;
@@ -2838,11 +3140,17 @@ function renderWorkoutSession(){
     if(todayCompleted){
       const total=todayCompleted.totalCount||todayCompleted.exercises?.length||0;
       const done=todayCompleted.completedCount??todayCompleted.exercises?.filter(x=>x.done).length??0;
+      const title=todayCompleted.type==="free"
+        ? (todayCompleted.activity||"Treino livre")
+        : `Treino ${todayCompleted.plan}`;
       host.innerHTML=`<div class="session-banner">
-        <div class="session-head"><div><b>Treino ${todayCompleted.plan} finalizado</b><div class="muted">${workoutTitle(todayCompleted.plan)}</div></div><span class="tag">${todayCompleted.result||"concluído"}</span></div>
+        <div class="session-head"><div><b>${title} finalizado</b><div class="muted">${todayCompleted.type==="free"?"Treino livre":workoutTitle(todayCompleted.plan)}</div></div><span class="tag">${todayCompleted.result||"concluído"}</span></div>
         <div class="session-summary-list">
-          <div class="session-summary-item"><span>Exercícios</span><b>${done}/${total}</b></div>
-          <div class="session-summary-item"><span>Duração</span><b>${workoutElapsedLabel(todayCompleted)}</b></div>
+          ${todayCompleted.type==="free"
+            ? `<div class="session-summary-item"><span>Duração</span><b>${todayCompleted.minutes||0} min</b></div>
+               ${todayCompleted.distance?`<div class="session-summary-item"><span>Distância</span><b>${String(todayCompleted.distance).replace(".",",")} km</b></div>`:""}`
+            : `<div class="session-summary-item"><span>Exercícios</span><b>${done}/${total}</b></div>
+               <div class="session-summary-item"><span>Duração</span><b>${workoutElapsedLabel(todayCompleted)}</b></div>`}
         </div>
       </div>`;
     }else{
@@ -2931,6 +3239,12 @@ function renderWorkoutHistory(){
   host.innerHTML=items.map(s=>{
     const done=s.completedCount??s.exercises?.filter(x=>x.done).length??0;
     const total=s.totalCount||s.exercises?.length||0;
+    if(s.type==="free"){
+      return `<div class="workout-history-item">
+        <div style="display:flex;justify-content:space-between;gap:10px"><b>${s.date.split("-").reverse().join("/")} · ${s.activity||"Treino livre"}</b><span>livre</span></div>
+        <div style="margin-top:5px;font-size:9px">${s.minutes||0} min${s.distance?` · ${String(s.distance).replace(".",",")} km`:""}${s.note?` · ${s.note}`:""}</div>
+      </div>`;
+    }
     return `<div class="workout-history-item">
       <div style="display:flex;justify-content:space-between;gap:10px"><b>${s.date.split("-").reverse().join("/")} · Treino ${s.plan}</b><span>${s.result||""}</span></div>
       <div style="margin-top:5px;font-size:9px">${done}/${total} exercícios · ${workoutElapsedLabel(s)}</div>
