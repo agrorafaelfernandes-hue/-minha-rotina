@@ -204,3 +204,10 @@ Depois:
 - Adiciona listeners diretos via data-open-panel.
 - showPanel agora abre o painel antes de qualquer renderização e isola erros de render para não bloquear a navegação.
 - Mantém todos os recursos da V26.
+
+
+## V28 — Correção do registro de alimentação
+- Remove dependência de onclick inline para abrir, salvar e fechar o formulário de refeição.
+- Usa listener delegado para todos os botões de alimentação, inclusive os renderizados dinamicamente.
+- openMealForm força a exibição do formulário e rola a tela até ele.
+- Mantém fotos, dados e sincronização da versão anterior.
