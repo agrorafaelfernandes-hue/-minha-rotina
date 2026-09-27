@@ -407,6 +407,39 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 }
 </style>
 
+
+<style id="v36-weight-workout">
+.daily-weight-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin:10px 0}
+.daily-weight-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.daily-weight-row input{min-width:0}
+.workout-launch{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:10px}
+.workout-plan-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:9px}
+.workout-plan-grid button{padding:10px 6px;border-radius:12px;font-weight:800}
+.workout-plan-grid button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.session-banner{background:#f8faf9;border:1px solid var(--line);border-radius:16px;padding:11px;margin:10px 0}
+.session-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.session-progress{height:8px;background:#e9ecef;border-radius:999px;overflow:hidden;margin-top:8px}
+.session-progress span{display:block;height:100%;background:var(--accent)}
+.exercise-step{background:#fff;border:1px solid var(--line);border-radius:16px;padding:11px;margin-bottom:9px}
+.exercise-step.done{background:#f1f8f3;border-color:#cfe8d5}
+.exercise-step-head{display:grid;grid-template-columns:34px 1fr auto;gap:9px;align-items:center}
+.exercise-check{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;font-weight:900}
+.exercise-check.done{background:var(--accent);color:#fff;border-color:var(--accent)}
+.exercise-name{font-size:12px;font-weight:800}
+.exercise-prescription{font-size:9px;color:var(--muted);margin-top:2px}
+.exercise-howto{margin-top:9px;padding:9px;background:#f8faf9;border-radius:12px;font-size:10px;line-height:1.45}
+.exercise-howto b{display:block;margin-bottom:4px}
+.exercise-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.session-footer{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:10px}
+.session-summary-list{display:grid;gap:7px;margin-top:8px}
+.session-summary-item{display:flex;justify-content:space-between;gap:10px;padding:8px;background:#f8faf9;border-radius:11px;font-size:10px}
+.workout-history-list{display:grid;gap:8px;margin-top:8px}
+.workout-history-item{background:#f8faf9;border:1px solid var(--line);border-radius:13px;padding:9px}
+.workout-history-item b{font-size:10px}
+.workout-history-item span{font-size:9px;color:var(--muted)}
+@media(max-width:760px){.workout-plan-grid{grid-template-columns:repeat(4,1fr)}}
+</style>
+
 </head>
 <body>
 <div class="app" id="authScreen">
@@ -429,7 +462,7 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V35 · Cloud</div>
+<div class="status offline" id="syncStatus">V36 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -474,6 +507,17 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 <span class="prayer-copy"><b>Orações</b><small>Comece seu dia com Deus.</small></span>
 <span class="prayer-status">✓</span>
 </button>
+
+<div class="daily-weight-card">
+  <div class="section-head">
+    <div><span class="section-icon teal">⚖️</span><b>Peso de hoje</b><small id="dailyWeightLabel">Ainda não registrado</small></div>
+  </div>
+  <div class="daily-weight-row">
+    <input id="dailyWeightInput" type="number" step="0.1" min="0" inputmode="decimal" placeholder="Ex.: 85,7 kg">
+    <button class="primary" id="saveDailyWeightBtn" type="button">Registrar</button>
+  </div>
+</div>
+
 <div class="food-card">
 <div class="section-head">
 <div><span class="section-icon orange">🍴</span><b>Alimentação do dia</b><small id="foodHeadline">0 de 3 refeições registradas</small></div>
@@ -531,7 +575,38 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 </div>
 </div>
 </section>
-<section class="panel" id="treinos"><div class="section-title"><h2>Treinos A/B/C/D</h2><span>Registrar carga e repetições</span></div><div id="workouts"></div></section>
+
+<section class="panel" id="treinos">
+  <div class="section-title">
+    <h2>Treino</h2>
+    <span>Sessão guiada A/B/C/D</span>
+  </div>
+
+  <div class="workout-launch">
+    <h3 style="margin:0">Adicionar treino</h3>
+    <div class="muted" style="margin-top:4px">Escolha a ficha e acompanhe exercício por exercício.</div>
+    <div class="workout-plan-grid">
+      <button type="button" data-workout-plan="A">A</button>
+      <button type="button" data-workout-plan="B">B</button>
+      <button type="button" data-workout-plan="C">C</button>
+      <button type="button" data-workout-plan="D">D</button>
+    </div>
+    <button class="primary" id="startWorkoutBtn" type="button" style="width:100%;margin-top:9px">Iniciar treino</button>
+  </div>
+
+  <div id="workoutSessionHost"></div>
+
+  <div class="card" style="margin-top:10px">
+    <h3>Histórico de treinos</h3>
+    <div id="workoutHistoryList" class="workout-history-list"></div>
+  </div>
+
+  <details style="margin-top:10px">
+    <summary style="font-size:11px;font-weight:800;cursor:pointer">Ver fichas e cargas</summary>
+    <div id="workouts" style="margin-top:10px"></div>
+  </details>
+</section>
+
 <section class="panel" id="areas">
 <div class="section-title"><h2>Áreas da Rotina</h2><span>Detalhes por área</span></div>
 <div class="areas-grid large">
@@ -955,10 +1030,42 @@ let state=JSON.parse(localStorage.getItem("rotinaV3")||'{"days":{},"exerciseLogs
 if(!state.days)state.days={};if(!state.exerciseLogs)state.exerciseLogs={};if(!state.days[today])state.days[today]={};
 
 const workouts={
-A:[["Chest press máquina","3×8–12"],["Peck deck","3×10–12"],["Supino inclinado máquina","3×8–12"],["Tríceps máquina/cabo","3×10–12"],["Tríceps corda","2×12–15"],["Face pull","3×12–15"],["Crucifixo inverso","2×12–15"]],
-B:[["Leg press","4×8–12"],["Extensora","3×10–12"],["Flexora","3×10–12"],["Glúteo máquina","3×10–15"],["Abdutora","3×12–15"],["Panturrilha","3×12–15"],["Abdominal máquina","3×10–15"]],
-C:[["Puxada frontal","3×8–12"],["Remada sentada","3×8–12"],["Remada com apoio de peito","3×10–12"],["Crucifixo inverso","3×12–15"],["Face pull","2×12–15"],["Rosca máquina","3×10–12"],["Rosca no cabo","2×12–15"]],
-D:[["Desenvolvimento máquina","3×8–12"],["Elevação lateral máquina","3×10–15"],["Crucifixo inverso","2×12–15"],["Hack squat/leg press","3×10–12"],["Flexora","3×10–12"],["Extensora","2×12–15"],["Abdominal/prancha","3 séries"]]
+A:[
+["Chest press máquina","3×8–12","Ajuste o banco para as alças ficarem na linha média do peito. Mantenha escápulas apoiadas, empurre sem travar os cotovelos e retorne controlando.","Peito"],
+["Peck deck","3×10–12","Apoie bem as costas. Mantenha cotovelos levemente flexionados e feche os braços sem projetar os ombros à frente.","Peito"],
+["Supino inclinado máquina","3×8–12","Ajuste o banco para trabalhar a parte superior do peito. Pés firmes, escápulas apoiadas e movimento controlado.","Peito"],
+["Tríceps máquina/cabo","3×10–12","Mantenha os cotovelos próximos ao corpo. Estenda os braços sem movimentar os ombros e retorne lentamente.","Tríceps"],
+["Tríceps corda","2×12–15","Cotovelos fixos ao lado do corpo. Estenda e afaste levemente as pontas da corda ao final.","Tríceps"],
+["Face pull","3×12–15","Puxe a corda na direção do rosto, abrindo as mãos. Evite elevar os ombros e mantenha o tronco estável.","Postura"],
+["Crucifixo inverso","2×12–15","Peito apoiado quando possível. Abra os braços levando os cotovelos para trás sem encolher os ombros.","Posterior de ombro"]
+],
+B:[
+["Leg press","4×8–12","Apoie toda a lombar no encosto. Pés firmes, joelhos alinhados com os pés e amplitude confortável sem tirar o quadril do banco.","Pernas"],
+["Extensora","3×10–12","Alinhe o joelho ao eixo da máquina. Estenda controlando a subida e a descida, sem impulsionar o tronco.","Quadríceps"],
+["Flexora","3×10–12","Mantenha quadril e tronco apoiados. Flexione os joelhos sem levantar o quadril e retorne devagar.","Posterior de coxa"],
+["Glúteo máquina","3×10–15","Mantenha abdômen firme e evite girar o quadril. Empurre com o glúteo e retorne de forma controlada.","Glúteos"],
+["Abdutora","3×12–15","Mantenha tronco estável. Abra os joelhos sem embalo e controle o retorno.","Glúteos"],
+["Panturrilha","3×12–15","Use amplitude confortável: desça o calcanhar controlando e suba até contrair bem a panturrilha.","Panturrilha"],
+["Abdominal máquina","3×10–15","Contraia o abdômen aproximando costelas e pelve. Evite puxar apenas com braços ou pescoço.","Core"]
+],
+C:[
+["Puxada frontal","3×8–12","Puxe a barra em direção à parte superior do peito. Mantenha peito aberto e evite inclinar demais o tronco.","Costas"],
+["Remada sentada","3×8–12","Puxe levando cotovelos para trás. Evite arredondar a lombar e não projete os ombros à frente no final.","Costas"],
+["Remada com apoio de peito","3×10–12","Mantenha o peito apoiado e puxe com os cotovelos. Controle a volta sem perder a posição dos ombros.","Costas"],
+["Crucifixo inverso","3×12–15","Abra os braços mantendo os ombros baixos. Priorize controle e postura em vez de carga alta.","Posterior de ombro"],
+["Face pull","2×12–15","Puxe em direção ao rosto com cotovelos altos, mantendo escápulas controladas e sem encolher os ombros.","Postura"],
+["Rosca máquina","3×10–12","Mantenha braços apoiados e ombros estáveis. Flexione os cotovelos sem tirar o braço da posição.","Bíceps"],
+["Rosca no cabo","2×12–15","Cotovelos junto ao corpo. Suba e desça controlando, sem usar balanço do tronco.","Bíceps"]
+],
+D:[
+["Desenvolvimento máquina","3×8–12","Ajuste o banco para as mãos começarem próximas à altura dos ombros. Empurre mantendo tronco apoiado.","Ombros"],
+["Elevação lateral máquina","3×10–15","Eleve os braços até uma amplitude confortável, sem encolher os ombros e sem usar impulso.","Ombros"],
+["Crucifixo inverso","2×12–15","Abra os braços com controle e ombros baixos. Evite compensar com lombar ou pescoço.","Posterior de ombro"],
+["Hack squat/leg press","3×10–12","Pés firmes e joelhos acompanhando a direção dos pés. Desça em amplitude segura mantendo quadril apoiado.","Pernas"],
+["Flexora","3×10–12","Flexione os joelhos com quadril estável e controle a fase de retorno.","Posterior de coxa"],
+["Extensora","2×12–15","Alinhe joelhos ao eixo da máquina, estenda sem impulso e retorne controlando.","Quadríceps"],
+["Abdominal/prancha","3 séries","Mantenha abdômen ativo, coluna neutra e respiração contínua. Interrompa se perder a postura.","Core"]
+]
 };
 
 function day(){return state.days[today]}
@@ -1134,7 +1241,7 @@ function renderTodayProgress(){
   const v=day();
   const prayersDone=[v.prayerMorning,v.prayerAngelus,v.prayerNight].filter(Boolean).length;
   const checks=[
-    !!(v.workout&&v.workout!=="Descanso"),
+    !!(v.workoutCompleted || v.workoutStatus==="completo" || v.workoutStatus==="parcial"),
     Number(v.water||0)>=3,
     Number(v.mealsCount||0)>=3,
     Number(v.pages||0)>=10,
@@ -1230,12 +1337,8 @@ function showArea(area){
         ${waterHistoryHtml()}
       </div>`;
   }else if(area==="treino"){
-    content=`
-      <div class="area-card">
-        <h3>Treino</h3>
-        <p>Selecione o treino do dia e registre cargas e repetições.</p>
-        <button class="primary" data-open-panel="treinos">Abrir ficha de treino</button>
-      </div>`;
+    showPanel("treinos");
+    return;
   }else if(area==="estudo"){
     ensureAreaLogs(d);
     content=`
@@ -1259,7 +1362,7 @@ function renderApprovedHome(){
   const meals=Number(d.mealsCount||0);
   const pages=Number(d.pages||0);
   const study=Number(d.studyMinutes||0);
-  const workoutDone=!!(d.workout&&d.workout!=="Descanso");
+  const workoutDone=!!(d.workoutCompleted || d.workoutStatus==="completo" || d.workoutStatus==="parcial");
   const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val};
   set("homeWater",`${water.toFixed(1).replace(".",",")} / 3,0 L`);
   set("homeWaterPct",`${Math.min(100,Math.round(water/3*100))}%`);
@@ -1276,7 +1379,9 @@ function renderApprovedHome(){
   set("macroCarb",`${d.carbCount||0}/3`);
   set("macroVeg",`${d.vegCount||0}/3`);
   set("macroFat",`${d.fatCount||0}/3`);
-  set("workoutSummaryText",d.workout?`Treino ${d.workout}`:"Selecione o treino");
+  set("workoutSummaryText",
+    d.workoutStatus==="active"?`Treino ${d.workout} em andamento`:
+    d.workout?`Treino ${d.workout} · ${d.workoutStatus||"registrado"}`:"Selecione o treino");
   set("currentBookTitle",d.bookTitle||"Livro atual");
   set("currentBookAuthor",d.bookAuthor||"Autor");
   set("currentBookProgress",`${d.bookCurrentPage||0} de ${d.bookTotalPages||0} páginas`);
@@ -2142,7 +2247,9 @@ function renderHistory(){
     </div>`;
   }).join("") : '<div style="font-size:10px;color:var(--muted)">Nenhuma refeição registrada.</div>';
 
-  const workoutLabel = d.workout && d.workout!=="Descanso" ? d.workout : "Sem treino";
+  const workoutLabel = d.workout
+    ? `Treino ${d.workout}${d.workoutStatus?` · ${d.workoutStatus}`:""}${Number(d.workoutCompletedCount||0)?` · ${d.workoutCompletedCount}/${d.workoutTotalCount||0} exercícios`:""}`
+    : "Sem treino";
   const studyLabel = d.studyMinutes ? `${d.studyMinutes} min${d.studyTopic?` · ${d.studyTopic}`:""}` : "Sem estudo";
   const weightLabel = d.weight ? `${Number(d.weight).toFixed(1).replace(".",",")} kg` : "—";
 
@@ -2296,7 +2403,7 @@ function renderEvolution(){
   const adherenceVals=data.map(dayAdherence);
   set("evoAdherence",`${Math.round(avg(adherenceVals))}%`);
 
-  const workouts=data.filter(d=>d.workout&&d.workout!=="Descanso").length;
+  const workouts=data.filter(d=>d.workoutCompleted || d.workoutStatus==="completo" || d.workoutStatus==="parcial").length;
   set("evoWorkoutCount",String(workouts));
   set("evoWorkoutWeek",String(workouts));
 
@@ -2394,6 +2501,7 @@ function renderFast(){
   // Somente componentes leves e visíveis em várias telas.
   renderTodayProgress();
   renderApprovedHome();
+  renderDailyWeight();
   syncBookHome();
   renderPrayers();
   renderActivePanel();
@@ -2439,6 +2547,24 @@ document.addEventListener("click",async e=>{
   if(mealDelete){
     const id=mealDelete.dataset.mealDelete;
     if(id) await deleteMeal(id);
+    return;
+  }
+
+  const sessionExercise=e.target.closest("[data-session-exercise]");
+  if(sessionExercise){
+    toggleSessionExercise(Number(sessionExercise.dataset.sessionExercise));
+    return;
+  }
+
+  const workoutFinish=e.target.closest("[data-workout-finish]");
+  if(workoutFinish){
+    finishWorkoutSession(workoutFinish.dataset.workoutFinish==="auto"?"":workoutFinish.dataset.workoutFinish);
+    return;
+  }
+
+  const workoutCancel=e.target.closest("[data-workout-cancel]");
+  if(workoutCancel){
+    cancelWorkoutSession();
     return;
   }
 
@@ -2571,23 +2697,298 @@ if(saveProfileBtn) saveProfileBtn.addEventListener("click",()=>saveProfile());
 const saveMeasurementBtn=document.getElementById("saveMeasurementBtn");
 if(saveMeasurementBtn) saveMeasurementBtn.addEventListener("click",()=>saveMeasurement());
 
+const saveDailyWeightBtn=document.getElementById("saveDailyWeightBtn");
+if(saveDailyWeightBtn) saveDailyWeightBtn.addEventListener("click",()=>saveDailyWeight());
+
+document.querySelectorAll("[data-workout-plan]").forEach(btn=>{
+  btn.addEventListener("click",()=>selectWorkoutPlan(btn.dataset.workoutPlan));
+});
+const startWorkoutBtn=document.getElementById("startWorkoutBtn");
+if(startWorkoutBtn) startWorkoutBtn.addEventListener("click",()=>startWorkoutSession());
+
 const mealPhotoInput=document.getElementById("mealPhotoInput");
 if(mealPhotoInput) mealPhotoInput.addEventListener("change",e=>handleMealPhotoSelected(e.target.files?.[0]));
 
 
+
+let selectedWorkoutPlan="";
+
+function ensureWorkoutSessions(){
+  if(!Array.isArray(state.workoutSessions)) state.workoutSessions=[];
+}
+function activeWorkoutSession(){
+  ensureWorkoutSessions();
+  return state.workoutSessions.find(x=>x.date===today && x.status==="active")||null;
+}
+function workoutTitle(plan){
+  return plan==="A"?"Peito / tríceps / postura":
+         plan==="B"?"Pernas / core":
+         plan==="C"?"Costas / postura":
+         plan==="D"?"Ombros / pernas":"";
+}
+function selectWorkoutPlan(plan){
+  if(!workouts[plan]) return;
+  selectedWorkoutPlan=plan;
+  document.querySelectorAll("[data-workout-plan]").forEach(btn=>btn.classList.toggle("active",btn.dataset.workoutPlan===plan));
+}
+function startWorkoutSession(){
+  const plan=selectedWorkoutPlan || day().workout || "A";
+  if(!workouts[plan]) return;
+  ensureWorkoutSessions();
+
+  const existing=activeWorkoutSession();
+  if(existing){
+    selectedWorkoutPlan=existing.plan;
+    renderWorkoutSession();
+    return;
+  }
+
+  const session={
+    id:"ws_"+Date.now().toString(36),
+    date:today,
+    plan,
+    status:"active",
+    startedAt:new Date().toISOString(),
+    endedAt:"",
+    result:"",
+    exercises:workouts[plan].map((it,i)=>({
+      index:i,
+      name:it[0],
+      prescription:it[1],
+      instructions:it[2],
+      group:it[3],
+      done:false
+    }))
+  };
+  state.workoutSessions.unshift(session);
+  const d=day();
+  d.workout=plan;
+  d.workoutStatus="active";
+  persist();
+  selectedWorkoutPlan=plan;
+  renderWorkoutSession();
+  renderWorkoutHistory();
+}
+function toggleSessionExercise(index){
+  const s=activeWorkoutSession();
+  if(!s) return;
+  const ex=s.exercises.find(x=>Number(x.index)===Number(index));
+  if(!ex) return;
+  ex.done=!ex.done;
+  persistQuiet();
+  renderWorkoutSession();
+}
+function exerciseVideoUrl(name){
+  return `https://www.youtube.com/results?search_query=${encodeURIComponent(name+" execução correta musculação")}`;
+}
+function finishWorkoutSession(result){
+  const s=activeWorkoutSession();
+  if(!s) return;
+  const done=s.exercises.filter(x=>x.done).length;
+  const total=s.exercises.length;
+  let finalResult=result;
+  if(!finalResult) finalResult=done===total?"completo":done>0?"parcial":"interrompido";
+
+  s.status="completed";
+  s.result=finalResult;
+  s.endedAt=new Date().toISOString();
+  s.completedCount=done;
+  s.totalCount=total;
+
+  const d=day();
+  d.workout=s.plan;
+  d.workoutStatus=finalResult;
+  d.workoutCompleted=finalResult==="completo";
+  d.workoutCompletedCount=done;
+  d.workoutTotalCount=total;
+
+  persist();
+  renderWorkoutSession();
+  renderWorkoutHistory();
+}
+function cancelWorkoutSession(){
+  const s=activeWorkoutSession();
+  if(!s) return;
+  if(!confirm("Cancelar esta sessão de treino?")) return;
+  s.status="cancelled";
+  s.result="cancelado";
+  s.endedAt=new Date().toISOString();
+  const d=day();
+  d.workoutStatus="cancelado";
+  persist();
+  renderWorkoutSession();
+  renderWorkoutHistory();
+}
+function workoutElapsedLabel(session){
+  if(!session?.startedAt) return "";
+  const start=new Date(session.startedAt);
+  const end=session.endedAt?new Date(session.endedAt):new Date();
+  const min=Math.max(0,Math.round((end-start)/60000));
+  return `${min} min`;
+}
+function renderWorkoutSession(){
+  ensureWorkoutSessions();
+  const host=document.getElementById("workoutSessionHost");
+  if(!host) return;
+
+  const active=activeWorkoutSession();
+  const todayCompleted=state.workoutSessions.find(x=>x.date===today && x.status==="completed");
+
+  if(!active){
+    if(todayCompleted){
+      const total=todayCompleted.totalCount||todayCompleted.exercises?.length||0;
+      const done=todayCompleted.completedCount??todayCompleted.exercises?.filter(x=>x.done).length??0;
+      host.innerHTML=`<div class="session-banner">
+        <div class="session-head"><div><b>Treino ${todayCompleted.plan} finalizado</b><div class="muted">${workoutTitle(todayCompleted.plan)}</div></div><span class="tag">${todayCompleted.result||"concluído"}</span></div>
+        <div class="session-summary-list">
+          <div class="session-summary-item"><span>Exercícios</span><b>${done}/${total}</b></div>
+          <div class="session-summary-item"><span>Duração</span><b>${workoutElapsedLabel(todayCompleted)}</b></div>
+        </div>
+      </div>`;
+    }else{
+      host.innerHTML='<div class="muted" style="padding:8px 2px">Nenhum treino iniciado hoje.</div>';
+    }
+    return;
+  }
+
+  selectedWorkoutPlan=active.plan;
+  document.querySelectorAll("[data-workout-plan]").forEach(btn=>btn.classList.toggle("active",btn.dataset.workoutPlan===active.plan));
+
+  const done=active.exercises.filter(x=>x.done).length;
+  const total=active.exercises.length;
+  const pct=Math.round(done/Math.max(1,total)*100);
+
+  host.innerHTML=`
+    <div class="session-banner">
+      <div class="session-head">
+        <div><b>Treino ${active.plan} em andamento</b><div class="muted">${workoutTitle(active.plan)} · ${workoutElapsedLabel(active)}</div></div>
+        <span class="tag">${done}/${total}</span>
+      </div>
+      <div class="session-progress"><span style="width:${pct}%"></span></div>
+    </div>
+
+    ${active.exercises.map((ex,i)=>{
+      const k=`${today}_${active.plan}_${ex.index}`;
+      const log=state.exerciseLogs[k]||{};
+      let previousLoad="";
+      const prevKeys=Object.keys(state.exerciseLogs).filter(x=>x.endsWith(`_${active.plan}_${ex.index}`)&&x!==k).sort();
+      if(prevKeys.length) previousLoad=state.exerciseLogs[prevKeys[prevKeys.length-1]]?.load||"";
+
+      return `<div class="exercise-step ${ex.done?"done":""}">
+        <div class="exercise-step-head">
+          <button class="exercise-check ${ex.done?"done":""}" data-session-exercise="${ex.index}" type="button">${ex.done?"✓":i+1}</button>
+          <div>
+            <div class="exercise-name">${ex.name}</div>
+            <div class="exercise-prescription">${ex.prescription} · ${ex.group||""}</div>
+          </div>
+          <span class="tag">${ex.done?"Feito":"Pendente"}</span>
+        </div>
+
+        <div class="exercise-howto">
+          <b>Como executar</b>
+          ${ex.instructions}
+        </div>
+
+        <div class="exercise-grid" style="margin-top:8px">
+          <input data-k="${k}" data-f="load" placeholder="${previousLoad?`Carga anterior ${previousLoad}`:"Carga"}" value="${log.load||""}">
+          <input data-k="${k}" data-f="reps" placeholder="Reps realizadas" value="${log.reps||""}">
+          <input data-k="${k}" data-f="note" placeholder="Observação" value="${log.note||""}">
+        </div>
+
+        <div class="exercise-actions">
+          <button data-session-exercise="${ex.index}" type="button">${ex.done?"Desmarcar":"✓ Concluir exercício"}</button>
+          <a class="soft-action" href="${exerciseVideoUrl(ex.name)}" target="_blank" rel="noopener noreferrer">▶ Ver execução</a>
+        </div>
+      </div>`;
+    }).join("")}
+
+    <div class="session-footer">
+      <b>Finalizar treino</b>
+      <div class="muted" style="margin-top:4px">Você pode concluir mesmo se não tiver feito todos os exercícios.</div>
+      <div class="exercise-actions">
+        <button class="primary" data-workout-finish="auto" type="button">Finalizar</button>
+        <button data-workout-finish="parcial" type="button">Marcar parcial</button>
+        <button data-workout-cancel type="button">Cancelar</button>
+      </div>
+    </div>`;
+
+  host.querySelectorAll("input[data-k]").forEach(inp=>inp.addEventListener("input",()=>{
+    const k=inp.dataset.k,f=inp.dataset.f;
+    if(!state.exerciseLogs[k]) state.exerciseLogs[k]={};
+    state.exerciseLogs[k][f]=inp.value;
+    persistQuiet();
+  }));
+}
+function renderWorkoutHistory(){
+  ensureWorkoutSessions();
+  const host=document.getElementById("workoutHistoryList");
+  if(!host) return;
+  const items=state.workoutSessions.filter(x=>x.status==="completed").slice(0,12);
+  if(!items.length){
+    host.innerHTML='<div class="muted">Nenhum treino finalizado ainda.</div>';
+    return;
+  }
+  host.innerHTML=items.map(s=>{
+    const done=s.completedCount??s.exercises?.filter(x=>x.done).length??0;
+    const total=s.totalCount||s.exercises?.length||0;
+    return `<div class="workout-history-item">
+      <div style="display:flex;justify-content:space-between;gap:10px"><b>${s.date.split("-").reverse().join("/")} · Treino ${s.plan}</b><span>${s.result||""}</span></div>
+      <div style="margin-top:5px;font-size:9px">${done}/${total} exercícios · ${workoutElapsedLabel(s)}</div>
+    </div>`;
+  }).join("");
+}
+function saveDailyWeight(){
+  const input=document.getElementById("dailyWeightInput");
+  const value=Number(String(input?.value||"").replace(",","."));
+  if(!value || value<20 || value>400) return;
+
+  const d=day();
+  d.weight=Math.round(value*10)/10;
+
+  if(!state.profile || typeof state.profile!=="object") state.profile={heightCm:"",goalWeight:"",measurements:[]};
+  if(!Array.isArray(state.profile.measurements)) state.profile.measurements=[];
+
+  const existing=state.profile.measurements.find(x=>x.date===today && Number(x.weight||0)>0 && !x.waist && !x.abdomen && !x.chest && !x.arm && !x.thigh && !x.hip);
+  if(existing){
+    existing.weight=d.weight;
+    existing.createdAt=new Date().toISOString();
+  }else{
+    state.profile.measurements.push({
+      id:"measure_"+Date.now().toString(36),
+      date:today,
+      weight:d.weight,
+      waist:0,abdomen:0,chest:0,arm:0,thigh:0,hip:0,
+      createdAt:new Date().toISOString()
+    });
+  }
+  state.profile.measurements.sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  persist();
+  if(input) input.value="";
+}
+function renderDailyWeight(){
+  const d=day();
+  const label=document.getElementById("dailyWeightLabel");
+  if(label) label.textContent=d.weight?`${Number(d.weight).toFixed(1).replace(".",",")} kg registrado hoje`:"Ainda não registrado";
+}
+
 function renderWorkouts(){
- const c=document.getElementById("workouts");c.innerHTML="";
+ const c=document.getElementById("workouts");
+ if(!c) return;
+ c.innerHTML="";
  Object.entries(workouts).forEach(([name,items])=>{
    const wrap=document.createElement("div");wrap.className="card";wrap.style.marginBottom="12px";
-   wrap.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><h3>Treino ${name}</h3><span class="tag">${name==="B"?"Pernas/core":name==="C"?"Costas/postura":name==="D"?"Ombros/pernas":"Peito/tríceps/postura"}</span></div>`;
+   wrap.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><h3>Treino ${name}</h3><span class="tag">${workoutTitle(name)}</span></div>`;
    items.forEach((it,i)=>{
      const k=`${today}_${name}_${i}`,v=state.exerciseLogs[k]||{};
      let previousLoad="";
      const prevKeys=Object.keys(state.exerciseLogs).filter(x=>x.endsWith(`_${name}_${i}`)&&x!==k).sort();
      if(prevKeys.length){ previousLoad=state.exerciseLogs[prevKeys[prevKeys.length-1]]?.load||""; }
-     const row=document.createElement("div");row.className="exercise";row.innerHTML=`<b>${it[0]}</b><div class="exercise-top"><div class="muted">${it[1]}</div><div class="last-load">${previousLoad?`Última carga: ${previousLoad}`:"Sem carga anterior"}</div></div><div class="exercise-grid"><input data-k="${k}" data-f="load" placeholder="Carga atual" value="${v.load||""}"><input data-k="${k}" data-f="reps" placeholder="Reps" value="${v.reps||""}"><input data-k="${k}" data-f="note" placeholder="Observação" value="${v.note||""}"></div>`;
-     wrap.appendChild(row)
-   });c.appendChild(wrap)
+     const row=document.createElement("div");
+     row.className="exercise";
+     row.innerHTML=`<b>${it[0]}</b><div class="exercise-top"><div class="muted">${it[1]} · ${it[3]||""}</div><div class="last-load">${previousLoad?`Última carga: ${previousLoad}`:"Sem carga anterior"}</div></div><div class="exercise-grid"><input data-k="${k}" data-f="load" placeholder="Carga atual" value="${v.load||""}"><input data-k="${k}" data-f="reps" placeholder="Reps" value="${v.reps||""}"><input data-k="${k}" data-f="note" placeholder="Observação" value="${v.note||""}"></div>`;
+     wrap.appendChild(row);
+   });
+   c.appendChild(wrap);
  });
  c.querySelectorAll("input[data-k]").forEach(inp=>inp.addEventListener("input",()=>{
    const k=inp.dataset.k,f=inp.dataset.f;
@@ -2595,6 +2996,8 @@ function renderWorkouts(){
    state.exerciseLogs[k][f]=inp.value;
    persistQuiet();
  }));
+ renderWorkoutSession();
+ renderWorkoutHistory();
 }
 renderWorkouts();
 
@@ -2650,6 +3053,8 @@ async function runDiagnostics(){
   }catch(e){add("Banco local de fotos",false);}
 
   add("Estrutura dos dados",!!state && typeof state==="object" && !!state.days && !!state.exerciseLogs);
+  ensureWorkoutSessions();
+  add("Sessões de treino",Array.isArray(state.workoutSessions));
   add("Supabase configurado",!!(cfg?.supabaseUrl && cfg?.supabaseAnonKey), mode==="cloud"?"modo nuvem":"modo local");
   add("Usuário autenticado",mode!=="cloud" || !!user);
 

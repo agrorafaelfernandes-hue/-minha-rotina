@@ -284,3 +284,18 @@ Depois:
 - Registro por data de peso, cintura, abdômen, peitoral, braço, coxa e quadril.
 - Peso registrado em Perfil também alimenta a evolução diária de peso.
 - Histórico de medidas com exclusão individual.
+
+
+## V36 — Peso diário + Treino 2.0
+- Peso do dia agora pode ser registrado diretamente na Home.
+- O peso diário alimenta automaticamente Perfil & Medidas, Histórico e Evolução.
+- Novo fluxo de treino: escolher ficha A/B/C/D, iniciar sessão, executar exercício por exercício e finalizar.
+- Checklist por exercício com progresso visual da sessão.
+- Cada exercício mostra prescrição, grupo muscular e instruções de execução.
+- Campos de carga, repetições e observação permanecem disponíveis durante a sessão.
+- Mostra carga anterior quando disponível.
+- Botão “Ver execução” abre uma busca de vídeo do exercício no YouTube.
+- Sessão pode ser finalizada como completa ou parcial.
+- Treino realizado passa a ser contado pela sessão finalizada, não apenas por uma ficha preenchida.
+- Histórico de treinos mostra data, ficha, resultado, exercícios concluídos e duração.
+- Mantém acesso às fichas/cargas antigas em um bloco recolhível.
