@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#173f37"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<title>Minha Rotina — V3</title>
+<style>
+:root{
+  --bg:#f4f6f8;--card:#fff;--text:#172033;--muted:#6b7280;--line:#e5e7eb;
+  --accent:#1f6f5f;--accent2:#2b7a68;--soft:#e9f4f0;--shadow:0 10px 35px rgba(15,23,42,.08);--radius:22px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}
+.app{max-width:1080px;margin:0 auto;padding:18px 16px 108px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.brand h1{margin:0;font-size:24px}.brand p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.status{font-size:12px;padding:8px 10px;border-radius:999px;background:#eef1f4;color:#475569;font-weight:700}
+.status.online{background:#e9f4f0;color:#1f6f5f}.status.offline{background:#fff4e5;color:#8a5a00}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:0 2px 12px rgba(15,23,42,.04)}
+.hero{background:linear-gradient(135deg,#173f37,#2b7a68);color:#fff;border-radius:28px;padding:22px;box-shadow:var(--shadow);margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.metric{display:flex;justify-content:space-between;align-items:center;gap:10px}.metric strong{font-size:25px}
+.small{font-size:12px}.muted{color:var(--muted);font-size:12px}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;color:var(--text)}
+button{border:0;border-radius:12px;padding:10px 12px;font-weight:700;cursor:pointer;background:#eef1f4}
+.primary{background:var(--accent)!important;color:#fff!important}.soft{background:var(--soft)!important;color:var(--accent)!important}
+.check-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.check-row:first-of-type{border-top:0}
+.toggle{width:44px;height:24px;background:#d1d5db;border-radius:999px;position:relative;cursor:pointer;flex:0 0 auto}
+.toggle:after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.2s}
+.toggle.on{background:var(--accent)}.toggle.on:after{left:23px}
+.panel{display:none}.panel.active{display:block}
+.bottom-nav{position:fixed;z-index:30;left:50%;bottom:10px;transform:translateX(-50%);width:min(95%,760px);display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:8px;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}
+.nav-btn{background:transparent;color:var(--muted);font-size:12px;padding:10px 6px}.nav-btn.active{background:var(--soft);color:var(--accent)}
+.section-title{display:flex;justify-content:space-between;align-items:flex-end;margin:4px 0 12px}.section-title h2{font-size:20px;margin:0}
+.exercise{padding:12px 0;border-top:1px solid var(--line)}.exercise:first-child{border-top:0}
+.exercise-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
+.tag{font-size:11px;padding:6px 9px;border-radius:999px;background:var(--soft);color:var(--accent);font-weight:700}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:17px;padding:14px}.kpi strong{font-size:22px;display:block}
+.bar{height:7px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin-top:8px}.bar span{display:block;height:100%;background:var(--accent)}
+.auth-wrap{max-width:460px;margin:36px auto}.auth-wrap h2{margin-top:0}
+.notice{padding:12px 14px;border-radius:14px;background:#eef6ff;color:#24547a;font-size:13px}
+.hidden{display:none!important}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}.exercise-grid{grid-template-columns:1fr 1fr}.exercise-grid input:last-child{grid-column:1/-1}}
+</style>
+
+
+
+
+<style id="v10-ui">
+:root{
+  --bg:#f5f7f9;
+  --card:#ffffff;
+  --text:#182234;
+  --muted:#6b7280;
+  --line:#e4e7eb;
+  --accent:#1f6f5f;
+  --accent-dark:#173f37;
+  --accent2:#2b7a68;
+  --soft:#eaf4f0;
+  --soft-blue:#edf5ff;
+  --radius:18px;
+  --shadow:0 5px 18px rgba(15,23,42,.055);
+}
+body{background:var(--bg)}
+.app{max-width:980px}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(245,247,249,.94);backdrop-filter:blur(12px);padding-top:max(8px,env(safe-area-inset-top))}
+.hero{
+  padding:14px 16px;
+  border-radius:20px;
+  margin-bottom:10px;
+  background:linear-gradient(135deg,var(--accent-dark),var(--accent2));
+}
+.hero h2{font-size:21px;margin-bottom:3px}
+.hero p{font-size:12px;line-height:1.35}
+.grid{gap:10px}
+.card{padding:13px;border-radius:18px;box-shadow:var(--shadow)}
+.card h3{font-size:14px;margin-bottom:8px}
+.metric strong{font-size:22px}
+input,select,textarea{min-height:44px}
+.check-row{padding:8px 0}
+.toggle{transform:scale(.95);transform-origin:right center}
+.quick-row{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:7px;
+  margin:0 0 10px;
+}
+.quick-btn{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:62px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:7px 4px;
+  font-size:10px;
+  font-weight:800;
+  color:var(--text);
+}
+.quick-btn span{font-size:18px;line-height:1;margin-bottom:5px}
+.week-summary{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:6px;
+  margin-bottom:10px;
+}
+.week-stat{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:7px 6px;
+  text-align:center;
+}
+.week-stat b{display:block;font-size:13px}
+.week-stat small{display:block;color:var(--muted);font-size:9px;margin-top:2px}
+.mini-track{height:4px;background:#e8ebef;border-radius:999px;overflow:hidden;margin-top:5px}
+.mini-track span{display:block;height:100%;background:var(--accent)}
+.today-progress-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px 12px;
+  margin-bottom:10px;
+}
+.today-progress-row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.today-progress-row b{font-size:13px}
+.today-progress-row span{font-size:12px;color:var(--muted)}
+.today-progress-bar{height:7px;background:#e8ebef;border-radius:999px;overflow:hidden;margin-top:7px}
+.today-progress-bar span{display:block;height:100%;background:var(--accent)}
+.exercise-log-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:5px}
+.last-load{font-size:10px;color:var(--muted);white-space:nowrap}
+.history-list{display:grid;gap:8px}
+.history-item{padding:11px 12px;border-radius:14px}
+.chart-wrap{height:190px}
+.bottom-nav{
+  width:min(96%,720px);
+  bottom:max(8px,env(safe-area-inset-bottom));
+  padding:6px;
+  border-radius:16px;
+}
+.nav-btn{padding:8px 4px;font-size:11px}
+.nav-btn.active{font-weight:800}
+.sync-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#2f855a;margin-right:5px}
+.section-title{margin-bottom:9px}
+.section-title h2{font-size:18px}
+.section-title span{font-size:10px}
+.compact-two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.streak-card{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+  background:var(--soft);
+  border:1px solid #d9ebe4;
+  padding:10px 12px;
+  border-radius:14px;
+  margin-bottom:10px;
+}
+.streak-card b{font-size:13px}
+.streak-card span{font-size:12px;color:var(--accent-dark)}
+@media(max-width:760px){
+  .app{padding:10px 10px 92px}
+  .brand h1{font-size:20px}
+  .brand p{font-size:11px}
+  .status{font-size:11px;padding:7px 9px}
+  .week-summary{grid-template-columns:repeat(5,1fr)}
+  .week-stat{padding:6px 3px}
+  .week-stat b{font-size:12px}
+  .week-stat small{font-size:8px}
+  .grid{grid-template-columns:1fr}
+  .card{padding:12px}
+}
+</style>
+
+</head>
+<body>
+<div id="authScreen" class="app">
+  <div class="auth-wrap card">
+    <h2>Minha Rotina</h2>
+    <p class="muted">Entre para sincronizar seus registros entre dispositivos. Sem configuração de nuvem, o app continua funcionando localmente.</p>
+    <div id="cloudNotice" class="notice" style="margin-bottom:12px">
+      Supabase conectado. Entre ou crie sua conta para sincronizar os registros entre dispositivos.
+    </div>
+    <input id="email" type="email" placeholder="E-mail" style="margin-bottom:8px"/>
+    <input id="password" type="password" placeholder="Senha" style="margin-bottom:8px"/>
+    <div style="display:flex;gap:8px">
+      <button class="primary" id="loginBtn">Entrar</button>
+      <button id="signupBtn">Criar conta</button>
+    </div>
+    <button id="localBtn" class="soft" style="margin-top:10px;width:100%">Continuar em modo local</button>
+    <div id="authMsg" class="muted" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<div id="mainApp" class="app hidden">
+  <div class="topbar">
+    <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
+    <div id="syncStatus" class="status offline">V7 · Cloud</div>
+  </div>
+
+  <section id="hoje" class="panel active">
+    <div class="hero">
+      <h2 style="margin:0 0 6px">Hoje</h2>
+      <p style="margin:0;color:rgba(255,255,255,.8)">Consistência primeiro. Perfeição depois.</p>
+    </div>
+    
+<div class="quick-row">
+  <button class="quick-btn" onclick="quickWater()"><span>💧</span>+0,5 L</button>
+  <button class="quick-btn" onclick="quickRead()"><span>📖</span>+10 pág.</button>
+  <button class="quick-btn" onclick="quickEnglish()"><span>🇬🇧</span>Inglês</button>
+  <button class="quick-btn" onclick="quickLeadership()"><span>🧠</span>PNL</button>
+</div>
+<div class="week-score" id="weekScore"></div>
+
+
+</div>
+
+<div class="today-progress-card">
+  <div class="today-progress-row">
+    <b>Progresso do dia</b>
+    <span id="todayProgressText">0%</span>
+  </div>
+  <div class="today-progress-bar"><span id="todayProgressBar" style="width:0%"></span></div>
+</div>
+
+
+  <button class="quick-btn" onclick="quickWater()"><span>💧</span>+0,5 L</button>
+  <button class="quick-btn" onclick="quickRead()"><span>📖</span>+10 pág.</button>
+  <button class="quick-btn" onclick="quickEnglish()"><span>🇬🇧</span>Inglês</button>
+  <button class="quick-btn" onclick="quickLeadership()"><span>🧠</span>PNL</button>
+</div>
+
+<div class="week-summary" id="weekSummary"></div>
+<div class="streak-card">
+  <b>Sequência atual</b>
+  <span id="streakText">0 dias consistentes</span>
+<div class="grid">
+      <div class="card">
+        <h3>Treino</h3>
+        <select id="workout"><option value="">Selecionar</option><option>A</option><option>B</option><option>C</option><option>D</option><option>Descanso</option></select>
+        <input id="cardio" type="number" min="0" placeholder="Esteira (min)" style="margin-top:8px"/>
+      </div>
+      <div class="card">
+        <h3>Água</h3>
+        <div class="metric"><strong><span id="waterText">0.0</span> L</strong><div><button id="minusWater">−0,5</button><button class="primary" id="plusWater">+0,5</button></div></div>
+      </div>
+      <div class="card">
+        <h3>Alimentação</h3>
+        <div class="check-row"><span>3 refeições</span><div class="toggle" data-key="meals"></div></div>
+        <div class="check-row"><span>Proteína nas 3</span><div class="toggle" data-key="protein"></div></div>
+        <div class="check-row"><span>Vegetais em 2</span><div class="toggle" data-key="veg"></div></div>
+      </div>
+      <div class="card">
+        <h3>Leitura</h3>
+        <input id="pages" type="number" min="0" placeholder="Páginas lidas"/>
+      </div>
+      <div class="card">
+        <h3>Estudos</h3>
+        <div class="check-row"><span>Inglês 30 min</span><div class="toggle" data-key="english"></div></div>
+        <div class="check-row"><span>Liderança/PNL 30 min</span><div class="toggle" data-key="leadership"></div></div>
+        <input id="studyTopic" placeholder="Tema / observação" style="margin-top:8px"/>
+      </div>
+      <div class="card">
+        <h3>Peso e celular</h3>
+        <input id="weight" type="number" step="0.1" placeholder="Peso (kg)"/>
+        <div class="exercise-grid" style="grid-template-columns:1fr 1fr;margin-top:8px">
+          <input id="screenTime" placeholder="Tela total"/>
+          <input id="instagramTime" placeholder="Instagram"/>
+        </div>
+      </div>
+      <div class="card">
+        <h3>LinkedIn</h3>
+        <div class="check-row"><span>Bloco semanal</span><div class="toggle" data-key="linkedin"></div></div>
+      </div>
+      <div class="card">
+        <h3>Observação</h3>
+        <textarea id="note" rows="4"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <section id="treinos" class="panel"><div class="section-title"><h2>Treinos A/B/C/D</h2><span>Registrar carga e repetições</span></div><div id="workouts"></div></section>
+  <section id="evolucao" class="panel"><div class="section-title"><h2>Evolução</h2><span>Semana atual</span></div><div class="kpis" id="kpis"></div></section>
+  <section id="backup" class="panel">
+    <div class="section-title"><h2>Dados & Backup</h2><span>Segurança dos registros</span></div>
+    <div class="card">
+      <p class="muted">Você pode exportar e importar seus dados locais. Quando o Supabase estiver configurado, a sincronização em nuvem será automática.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="primary" id="exportBtn">Exportar JSON</button>
+        <label class="soft" style="display:inline-block;padding:10px 12px;border-radius:12px;font-weight:700;cursor:pointer">Importar JSON<input id="importFile" type="file" accept=".json" style="display:none"/></label>
+        <button id="syncBtn">Sincronizar agora</button>
+      </div>
+      <div id="backupMsg" class="muted" style="margin-top:10px"></div>
+    </div>
+  </section>
+  <section id="conta" class="panel">
+    <div class="section-title"><h2>Conta</h2><span>PWA + nuvem</span></div>
+    <div class="card">
+      <div id="accountInfo" class="muted">Modo local.</div>
+      <button id="installBtn" class="primary hidden" style="margin-top:12px">Instalar app</button>
+      <button id="logoutBtn" style="margin-top:12px">Sair</button>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h3>Configurar sincronização em nuvem</h3>
+      <p class="muted">Cole abaixo a URL do projeto e a chave <b>anon public</b> do Supabase. Esses dados ficam salvos apenas neste navegador.</p>
+      <input id="cloudUrl" placeholder="https://SEU-PROJETO.supabase.co" style="margin-bottom:8px"/>
+      <input id="cloudAnonKey" placeholder="Supabase anon public key" style="margin-bottom:8px"/>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="primary" id="saveCloudBtn">Salvar configuração</button>
+        <button id="clearCloudBtn">Remover configuração</button>
+      </div>
+      <div id="cloudConfigMsg" class="muted" style="margin-top:10px"></div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h3>Instalar no iPhone</h3>
+      <p class="muted">Depois de publicar em HTTPS, abra o site no Safari, toque em Compartilhar e escolha <b>Adicionar à Tela de Início</b>.</p>
+    </div>
+  </section>
+</div>
+
+<nav id="nav" class="bottom-nav hidden">
+  <button class="nav-btn active" data-target="hoje">Hoje</button>
+  <button class="nav-btn" data-target="treinos">Treinos</button>
+  <button class="nav-btn" data-target="evolucao">Evolução</button>
+  <button class="nav-btn" data-target="backup">Backup</button>
+  <button class="nav-btn" data-target="conta">Conta</button>
+</nav>
+
+<script type="module">
+const savedCfg=JSON.parse(localStorage.getItem("rotinaCloudConfig")||"{}");
+const cfg={
+  supabaseUrl:savedCfg.supabaseUrl||"https://kmpaxqejfbebzdhqsodr.supabase.co",
+  supabaseAnonKey:savedCfg.supabaseAnonKey||"sb_publishable_pJuvalmN_N6khDTppj7RPQ_DGUeSLi7"
+};
+let supabase=null, user=null, mode="local";
+async function initSupabase(){
+  if(cfg.supabaseUrl&&cfg.supabaseAnonKey){
+    const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");
+    supabase=createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
+  }
+}
+await initSupabase();
+
+const today=new Date().toISOString().slice(0,10);
+document.getElementById("dateLabel").textContent=new Intl.DateTimeFormat("pt-BR",{weekday:"long",day:"2-digit",month:"long"}).format(new Date());
+let state=JSON.parse(localStorage.getItem("rotinaV3")||'{"days":{},"exerciseLogs":{}}');
+if(!state.days)state.days={};if(!state.exerciseLogs)state.exerciseLogs={};if(!state.days[today])state.days[today]={};
+
+const workouts={
+A:[["Chest press máquina","3×8–12"],["Peck deck","3×10–12"],["Supino inclinado máquina","3×8–12"],["Tríceps máquina/cabo","3×10–12"],["Tríceps corda","2×12–15"],["Face pull","3×12–15"],["Crucifixo inverso","2×12–15"]],
+B:[["Leg press","4×8–12"],["Extensora","3×10–12"],["Flexora","3×10–12"],["Glúteo máquina","3×10–15"],["Abdutora","3×12–15"],["Panturrilha","3×12–15"],["Abdominal máquina","3×10–15"]],
+C:[["Puxada frontal","3×8–12"],["Remada sentada","3×8–12"],["Remada com apoio de peito","3×10–12"],["Crucifixo inverso","3×12–15"],["Face pull","2×12–15"],["Rosca máquina","3×10–12"],["Rosca no cabo","2×12–15"]],
+D:[["Desenvolvimento máquina","3×8–12"],["Elevação lateral máquina","3×10–15"],["Crucifixo inverso","2×12–15"],["Hack squat/leg press","3×10–12"],["Flexora","3×10–12"],["Extensora","2×12–15"],["Abdominal/prancha","3 séries"]]
+};
+
+function day(){return state.days[today]}
+function persist(){localStorage.setItem("rotinaV3",JSON.stringify(state));render(); if(mode==="cloud") queueCloudSave();}
+let saveTimer;
+function queueCloudSave(){clearTimeout(saveTimer);saveTimer=setTimeout(syncCloud,700)}
+
+
+function quickWater(){day().water=Math.min(6,(day().water||0)+0.5);persist()}
+function quickRead(){day().pages=Number(day().pages||0)+10;persist()}
+function quickEnglish(){day().english=!day().english;persist()}
+function quickLeadership(){day().leadership=!day().leadership;persist()}
+
+
+
+
+function quickWater(){day().water=Math.min(6,(day().water||0)+0.5);persist()}
+function quickRead(){day().pages=Number(day().pages||0)+10;persist()}
+function quickEnglish(){day().english=!day().english;persist()}
+function quickLeadership(){day().leadership=!day().leadership;persist()}
+
+function currentWeekStats(){
+  const dates=weekDates();
+  let tr=0,en=0,ld=0,pg=0,wa=0,meals=0;
+  dates.forEach(k=>{
+    const v=state.days[k]||{};
+    if(v.workout&&v.workout!=="Descanso")tr++;
+    if(v.english)en++;
+    if(v.leadership)ld++;
+    pg+=Number(v.pages||0);
+    if(Number(v.water||0)>=3)wa++;
+    if(v.meals&&v.protein&&v.veg)meals++;
+  });
+  return {tr,en,ld,pg,wa,meals};
+}
+function renderWeekSummary(){
+  const s=currentWeekStats();
+  const items=[
+    ["Treino",s.tr,4],
+    ["Inglês",s.en,3],
+    ["PNL",s.ld,2],
+    ["Leitura",s.pg,70],
+    ["Água",s.wa,7]
+  ];
+  const el=document.getElementById("weekSummary");
+  if(!el) return;
+  el.innerHTML=items.map(([label,v,t])=>{
+    const pct=Math.min(100,Math.round((v/t)*100));
+    return `<div class="week-stat"><b>${v}/${t}</b><small>${label}</small><div class="mini-track"><span style="width:${pct}%"></span></div></div>`;
+  }).join("");
+}
+function renderTodayProgress(){
+  const v=day();
+  const checks=[
+    !!v.workout,
+    Number(v.water||0)>=3,
+    !!(v.meals&&v.protein&&v.veg),
+    Number(v.pages||0)>=10,
+    !!(v.english||v.leadership)
+  ];
+  const done=checks.filter(Boolean).length;
+  const pct=Math.round(done/checks.length*100);
+  const txt=document.getElementById("todayProgressText");
+  const bar=document.getElementById("todayProgressBar");
+  if(txt) txt.textContent=pct+"%";
+  if(bar) bar.style.width=pct+"%";
+}
+function renderStreak(){
+  const keys=Object.keys(state.days).sort().reverse();
+  let streak=0;
+  const todayKey=new Date().toISOString().slice(0,10);
+  const d=new Date(todayKey+"T12:00:00");
+  for(let i=0;i<30;i++){
+    const k=d.toISOString().slice(0,10);
+    const v=state.days[k]||{};
+    const score=[
+      !!v.workout,
+      Number(v.water||0)>=3,
+      Number(v.pages||0)>=10,
+      !!(v.meals&&v.protein&&v.veg),
+      !!(v.english||v.leadership)
+    ].filter(Boolean).length;
+    if(score>=3) streak++;
+    else if(i===0){ /* hoje ainda pode estar em andamento */ }
+    else break;
+    d.setDate(d.getDate()-1);
+  }
+  const el=document.getElementById("streakText");
+  if(el) el.textContent=`${streak} ${streak===1?"dia consistente":"dias consistentes"}`;
+}
+
+function render(){
+ const d=day();
+ document.getElementById("workout").value=d.workout||"";
+ document.getElementById("cardio").value=d.cardio||"";
+ document.getElementById("waterText").textContent=(d.water||0).toFixed(1);
+ document.getElementById("pages").value=d.pages||"";
+ document.getElementById("studyTopic").value=d.studyTopic||"";
+ document.getElementById("weight").value=d.weight||"";
+ document.getElementById("screenTime").value=d.screenTime||"";
+ document.getElementById("instagramTime").value=d.instagramTime||"";
+ document.getElementById("note").value=d.note||"";
+ document.querySelectorAll(".toggle").forEach(t=>t.classList.toggle("on",!!d[t.dataset.key]));
+ renderKpis(); renderWeekSummary(); renderTodayProgress(); renderStreak(); renderWeekSummary(); renderTodayProgress(); renderStreak();
+}
+["workout","cardio","pages","studyTopic","weight","screenTime","instagramTime","note"].forEach(id=>{
+ document.getElementById(id).addEventListener("input",e=>{day()[id]=e.target.value;persist()});
+});
+document.querySelectorAll(".toggle").forEach(t=>t.addEventListener("click",()=>{day()[t.dataset.key]=!day()[t.dataset.key];persist()}));
+document.getElementById("plusWater").onclick=()=>{day().water=Math.min(6,(day().water||0)+.5);persist()};
+document.getElementById("minusWater").onclick=()=>{day().water=Math.max(0,(day().water||0)-.5);persist()};
+
+function renderWorkouts(){
+ const c=document.getElementById("workouts");c.innerHTML="";
+ Object.entries(workouts).forEach(([name,items])=>{
+   const wrap=document.createElement("div");wrap.className="card";wrap.style.marginBottom="12px";
+   wrap.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><h3>Treino ${name}</h3><span class="tag">${name==="B"?"Pernas/core":name==="C"?"Costas/postura":name==="D"?"Ombros/pernas":"Peito/tríceps/postura"}</span></div>`;
+   items.forEach((it,i)=>{
+     const k=`${today}_${name}_${i}`,v=state.exerciseLogs[k]||{};
+     let previousLoad="";
+     const prevKeys=Object.keys(state.exerciseLogs).filter(x=>x.endsWith(`_${name}_${i}`)&&x!==k).sort();
+     if(prevKeys.length){
+       const prev=state.exerciseLogs[prevKeys[prevKeys.length-1]];
+       previousLoad=prev?.load||"";
+     }
+     const row=document.createElement("div");row.className="exercise";row.innerHTML=`<b>${it[0]}</b><div class="exercise-log-head"><div class="muted">${it[1]}</div><div class="last-load">${previousLoad?`Última carga: ${previousLoad}`:"Sem carga anterior"}</div></div><div class="exercise-grid"><input data-k="${k}" data-f="load" placeholder="Carga" value="${v.load||""}"><input data-k="${k}" data-f="reps" placeholder="Reps" value="${v.reps||""}"><input data-k="${k}" data-f="note" placeholder="Observação" value="${v.note||""}"></div>`;
+     wrap.appendChild(row)
+   });c.appendChild(wrap)
+ });
+ c.querySelectorAll("input[data-k]").forEach(inp=>inp.oninput=()=>{const k=inp.dataset.k,f=inp.dataset.f;if(!state.exerciseLogs[k])state.exerciseLogs[k]={};state.exerciseLogs[k][f]=inp.value;persist()});
+}
+renderWorkouts();
+
+function weekDates(){const d=new Date();const n=(d.getDay()+6)%7;const m=new Date(d);m.setDate(d.getDate()-n);return Array.from({length:7},(_,i)=>{const x=new Date(m);x.setDate(m.getDate()+i);return x.toISOString().slice(0,10)})}
+function renderKpis(){
+ let tr=0,en=0,ld=0,pg=0,wa=0,wt=0,li=0,weights=[];
+ weekDates().forEach(k=>{const v=state.days[k]||{};if(v.workout&&v.workout!=="Descanso")tr++;if(v.english)en++;if(v.leadership)ld++;pg+=Number(v.pages||0);if(Number(v.water||0)>=3)wa++;if(v.weight){wt++;weights.push(Number(v.weight))}if(v.linkedin)li=1});
+ const avg=weights.length?(weights.reduce((a,b)=>a+b,0)/weights.length).toFixed(1):"—";
+ const arr=[["Treinos",`${tr}/4`,tr/4],["Inglês",`${en}/3`,en/3],["PNL",`${ld}/2`,ld/2],["Leitura",`${pg}/70`,pg/70],["Água",`${wa}/7`,wa/7],["Pesagens",`${wt}/2`,wt/2],["LinkedIn",`${li}/1`,li],["Peso médio",avg==="—"?"—":avg+" kg",0]];
+ document.getElementById("kpis").innerHTML=arr.map(x=>`<div class="kpi"><span class="muted">${x[0]}</span><strong>${x[1]}</strong>${x[0]!=="Peso médio"?`<div class="bar"><span style="width:${Math.min(100,x[2]*100)}%"></span></div>`:""}</div>`).join("");
+}
+
+async function syncCloud(){
+ if(!supabase||!user)return;
+ const payload={user_id:user.id,data:state,updated_at:new Date().toISOString()};
+ const {error}=await supabase.from("user_state").upsert(payload,{onConflict:"user_id"});
+ const status=document.getElementById("syncStatus");
+ if(error){status.textContent="Erro de sync";status.className="status offline"} else {status.textContent="Sincronizado";status.className="status online"}
+}
+async function loadCloud(){
+ if(!supabase||!user)return;
+ const {data,error}=await supabase.from("user_state").select("data").eq("user_id",user.id).maybeSingle();
+ if(data?.data){state=data.data;if(!state.days)state.days={};if(!state.exerciseLogs)state.exerciseLogs={};if(!state.days[today])state.days[today]={};persist()}
+}
+function enterApp(local=false){
+ document.getElementById("authScreen").classList.add("hidden");
+ document.getElementById("mainApp").classList.remove("hidden");
+ document.getElementById("nav").classList.remove("hidden");
+ mode=local?"local":"cloud";
+ document.getElementById("syncStatus").textContent=local?"Local":"Sincronizando…";
+ document.getElementById("syncStatus").className="status "+(local?"offline":"online");
+ document.getElementById("accountInfo").textContent=local?"Modo local — sem conta conectada.":`Conectado como ${user?.email||""}`;
+ render();
+}
+document.getElementById("localBtn").onclick=()=>enterApp(true);
+
+document.getElementById("loginBtn").onclick=async()=>{
+ if(!supabase){document.getElementById("authMsg").textContent="Supabase ainda não configurado.";return}
+ const email=document.getElementById("email").value,password=document.getElementById("password").value;
+ const {data,error}=await supabase.auth.signInWithPassword({email,password});
+ if(error){document.getElementById("authMsg").textContent=error.message;return}
+ user=data.user;enterApp(false);await loadCloud();
+};
+document.getElementById("signupBtn").onclick=async()=>{
+ if(!supabase){document.getElementById("authMsg").textContent="Supabase ainda não configurado.";return}
+ const email=document.getElementById("email").value,password=document.getElementById("password").value;
+ const {data,error}=await supabase.auth.signUp({email,password});
+ document.getElementById("authMsg").textContent=error?error.message:"Conta criada. Verifique seu e-mail se a confirmação estiver habilitada.";
+};
+document.getElementById("logoutBtn").onclick=async()=>{if(supabase&&user)await supabase.auth.signOut();location.reload()};
+document.getElementById("cloudUrl").value=cfg.supabaseUrl||"";
+document.getElementById("cloudAnonKey").value=cfg.supabaseAnonKey||"";
+
+document.getElementById("saveCloudBtn").onclick=()=>{
+  const supabaseUrl=document.getElementById("cloudUrl").value.trim();
+  const supabaseAnonKey=document.getElementById("cloudAnonKey").value.trim();
+  if(!supabaseUrl||!supabaseAnonKey){
+    document.getElementById("cloudConfigMsg").textContent="Preencha os dois campos.";
+    return;
+  }
+  localStorage.setItem("rotinaCloudConfig",JSON.stringify({supabaseUrl,supabaseAnonKey}));
+  document.getElementById("cloudConfigMsg").textContent="Configuração salva. O app será recarregado.";
+  setTimeout(()=>location.reload(),700);
+};
+document.getElementById("clearCloudBtn").onclick=()=>{
+  localStorage.removeItem("rotinaCloudConfig");
+  document.getElementById("cloudConfigMsg").textContent="Configuração removida. O app será recarregado.";
+  setTimeout(()=>location.reload(),500);
+};
+
+document.getElementById("exportBtn").onclick=()=>{
+ const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="minha_rotina_backup.json";a.click();URL.revokeObjectURL(url)
+};
+document.getElementById("importFile").onchange=async e=>{
+ const f=e.target.files[0];if(!f)return;
+ try{const txt=await f.text();const obj=JSON.parse(txt);state=obj;persist();document.getElementById("backupMsg").textContent="Backup importado com sucesso."}catch{document.getElementById("backupMsg").textContent="Arquivo inválido."}
+};
+document.getElementById("syncBtn").onclick=()=>syncCloud();
+
+document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll(".nav-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+ document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));document.getElementById(b.dataset.target).classList.add("active");
+ if(b.dataset.target==="treinos")renderWorkouts();
+});
+
+let deferredPrompt;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;document.getElementById("installBtn").classList.remove("hidden")});
+document.getElementById("installBtn").onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;document.getElementById("installBtn").classList.add("hidden")}};
+
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");
+
+if(supabase){
+ const {data}=await supabase.auth.getSession();
+ if(data.session){user=data.session.user;enterApp(false);await loadCloud()}
+}
+render();
+</script>
+</body>
+</html>
