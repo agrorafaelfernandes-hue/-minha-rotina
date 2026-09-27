@@ -203,7 +203,7 @@ input,select,textarea{min-height:44px}
 <div id="mainApp" class="app hidden">
   <div class="topbar">
     <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-    <div id="syncStatus" class="status offline">V7 · Cloud</div>
+    <div id="syncStatus" class="status offline">V11 · Cloud</div>
   </div>
 
   <section id="hoje" class="panel active">
@@ -369,10 +369,6 @@ let saveTimer;
 function queueCloudSave(){clearTimeout(saveTimer);saveTimer=setTimeout(syncCloud,700)}
 
 
-function quickWater(){day().water=Math.min(6,(day().water||0)+0.5);persist()}
-function quickRead(){day().pages=Number(day().pages||0)+10;persist()}
-function quickEnglish(){day().english=!day().english;persist()}
-function quickLeadership(){day().leadership=!day().leadership;persist()}
 
 
 
@@ -464,7 +460,7 @@ function render(){
  document.getElementById("instagramTime").value=d.instagramTime||"";
  document.getElementById("note").value=d.note||"";
  document.querySelectorAll(".toggle").forEach(t=>t.classList.toggle("on",!!d[t.dataset.key]));
- renderKpis(); renderWeekSummary(); renderTodayProgress(); renderStreak(); renderWeekSummary(); renderTodayProgress(); renderStreak();
+ renderKpis(); renderWeekSummary(); renderTodayProgress(); renderStreak();
 }
 ["workout","cardio","pages","studyTopic","weight","screenTime","instagramTime","note"].forEach(id=>{
  document.getElementById(id).addEventListener("input",e=>{day()[id]=e.target.value;persist()});
@@ -528,11 +524,27 @@ function enterApp(local=false){
 document.getElementById("localBtn").onclick=()=>enterApp(true);
 
 document.getElementById("loginBtn").onclick=async()=>{
- if(!supabase){document.getElementById("authMsg").textContent="Supabase ainda não configurado.";return}
- const email=document.getElementById("email").value,password=document.getElementById("password").value;
- const {data,error}=await supabase.auth.signInWithPassword({email,password});
- if(error){document.getElementById("authMsg").textContent=error.message;return}
- user=data.user;enterApp(false);await loadCloud();
+ const btn=document.getElementById("loginBtn");
+ const msg=document.getElementById("authMsg");
+ if(!supabase){msg.textContent="Supabase ainda não configurado.";return}
+ const email=document.getElementById("email").value.trim();
+ const password=document.getElementById("password").value;
+ if(!email||!password){msg.textContent="Preencha e-mail e senha.";return}
+ btn.disabled=true;
+ btn.textContent="Entrando...";
+ msg.textContent="";
+ try{
+   const {data,error}=await supabase.auth.signInWithPassword({email,password});
+   if(error) throw error;
+   user=data.user;
+   enterApp(false);
+   await loadCloud();
+ }catch(err){
+   msg.textContent=err?.message||"Não foi possível entrar.";
+ }finally{
+   btn.disabled=false;
+   btn.textContent="Entrar";
+ }
 };
 document.getElementById("signupBtn").onclick=async()=>{
  if(!supabase){document.getElementById("authMsg").textContent="Supabase ainda não configurado.";return}

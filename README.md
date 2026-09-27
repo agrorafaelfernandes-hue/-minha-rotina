@@ -93,3 +93,10 @@ Depois:
 - Navegação inferior mais compacta
 - Cache atualizado para V10
 - Mantém login e sincronização via Supabase
+
+
+## V11 — correção do login
+- Corrigida duplicação de funções JavaScript que impedia o módulo inteiro de executar.
+- Botão Entrar agora mostra “Entrando...” durante a autenticação.
+- Erros do Supabase aparecem claramente abaixo do formulário.
+- Cache atualizado para V11.
