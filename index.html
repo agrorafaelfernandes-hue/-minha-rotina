@@ -112,6 +112,48 @@ input,select,textarea{min-height:44px}
 }
 </style>
 
+
+<style id="v13-approved-layout">
+.hero-photo{
+  background:
+    linear-gradient(90deg,rgba(12,44,35,.88),rgba(21,70,57,.32)),
+    url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80") center/cover;
+  min-height:128px;display:flex;align-items:flex-end;
+}
+.hero-overlay h2{font-size:30px;margin:0 0 3px}
+.hero-overlay p{font-size:15px;margin:0;line-height:1.25}
+.verse-card{display:flex;justify-content:space-between;align-items:center;background:#fff8ef;border:1px solid #f2e7d8;border-radius:16px;padding:12px 14px;margin-bottom:10px}
+.verse-card strong{display:block;font-size:13px}.verse-card span{font-size:11px;color:#7a8190}.verse-icon{font-size:22px}
+.metric-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:10px}
+.metric-box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px 4px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.metric-emoji{font-size:20px}.metric-box b{font-size:10px}.metric-box small{font-size:10px}.metric-box em{font-size:9px;color:var(--muted);font-style:normal}
+.prayer-card{width:100%;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:11px 12px;margin-bottom:10px}
+.prayer-icon{width:38px;height:38px;border-radius:12px;background:#fff0de;display:grid;place-items:center;font-size:20px}
+.prayer-copy{display:flex;flex-direction:column;align-items:flex-start;flex:1}.prayer-copy b{font-size:14px}.prayer-copy small{font-size:11px;color:var(--muted)}
+.prayer-status{width:28px;height:28px;border-radius:50%;background:#4aa67a;color:#fff;display:grid;place-items:center}
+.food-card,.compact-card,.study-card,.areas-drawer{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:10px}
+.section-head{display:flex;justify-content:space-between;align-items:center}.section-head>div{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.section-head b{font-size:14px}.section-head small{font-size:11px;color:var(--muted);flex-basis:100%;padding-left:42px}
+.section-icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:18px}.orange{background:#fff0df}.blue{background:#e7efff}.teal{background:#e4f4ef}.purple{background:#efe9ff}
+.macro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0}.macro-grid>div{background:#f8f9fb;border-radius:10px;padding:7px}.macro-grid span{display:block;font-size:9px}.macro-grid b{font-size:11px}
+.wide-action{width:100%;background:var(--accent);color:#fff;border-radius:11px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.compact-list{display:grid;gap:4px;margin:8px 0}.compact-list span{font-size:10px;color:#57606e}
+.soft-action{width:100%;background:var(--soft);color:var(--accent);border-radius:10px}
+.book-mini{display:grid;grid-template-columns:56px 1fr;gap:8px;align-items:center;margin:8px 0}.book-cover{height:78px;background:#17324a;color:#fff;border-radius:6px;display:grid;place-items:center;font-size:9px}.book-mini b{display:block;font-size:11px}.book-mini small,.book-mini span{display:block;font-size:9px;color:var(--muted)}
+.study-card{display:grid;grid-template-columns:38px 1fr auto;gap:8px;align-items:center}.study-main b{display:block}.study-main span,.study-main small{display:block;font-size:10px;color:var(--muted)}
+.areas-title b,.areas-title small{display:block}.areas-title small{font-size:10px;color:var(--muted)}
+.areas-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:9px}.areas-grid button{background:#f8fafb;border:1px solid var(--line);border-radius:10px;padding:7px 3px;font-size:17px}.areas-grid button span{display:block;font-size:8px;margin-top:3px}
+.areas-grid.large{grid-template-columns:repeat(2,1fr)}.areas-grid.large button{min-height:90px;font-size:26px}.areas-grid.large button span{font-size:12px}
+.area-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:10px}
+.area-card h3{margin-top:0}
+.area-card .row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+@media(max-width:760px){
+  .metric-strip{grid-template-columns:repeat(5,1fr)}
+  .two-col{grid-template-columns:1fr 1fr}
+  .areas-grid{grid-template-columns:repeat(6,1fr)}
+}
+</style>
+
 </head>
 <body>
 <div id="authScreen" class="app">
@@ -135,79 +177,142 @@ input,select,textarea{min-height:44px}
 <div id="mainApp" class="app hidden">
   <div class="topbar">
     <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-    <div id="syncStatus" class="status offline">V12 · Cloud</div>
+    <div id="syncStatus" class="status offline">V13 · Cloud</div>
   </div>
 
-  <section id="hoje" class="panel active">
-    <div class="hero">
-      <h2 style="margin:0 0 6px">Hoje</h2>
-      <p style="margin:0;color:rgba(255,255,255,.8)">Consistência primeiro. Perfeição depois.</p>
+  
+<section id="hoje" class="panel active">
+  <div class="hero hero-photo">
+    <div class="hero-overlay">
+      <h2>Hoje</h2>
+      <p>Consistência primeiro.<br>Perfeição depois.</p>
+    </div>
+  </div>
+
+  <div class="verse-card">
+    <div>
+      <strong>“Tudo posso naquele que me fortalece.”</strong>
+      <span>Filipenses 4,13</span>
+    </div>
+    <div class="verse-icon">☀️</div>
+  </div>
+
+  <div class="today-progress">
+    <div class="today-progress-head">
+      <b>Progresso do dia</b>
+      <span id="todayProgressText">0%</span>
+    </div>
+    <div class="today-progress-track"><span id="todayProgressBar" style="width:0%"></span></div>
+  </div>
+
+  <div class="metric-strip">
+    <button class="metric-box" onclick="showArea('agua')">
+      <span class="metric-emoji">💧</span><b>Água</b><small id="homeWater">0,0 / 3,0 L</small><em id="homeWaterPct">0%</em>
+    </button>
+    <button class="metric-box" onclick="showArea('alimentacao')">
+      <span class="metric-emoji">🍴</span><b>Alimentação</b><small id="homeMeals">0 / 3</small><em id="homeMealsPct">0%</em>
+    </button>
+    <button class="metric-box" onclick="showArea('treino')">
+      <span class="metric-emoji">🏋️</span><b>Treino</b><small id="homeWorkout">0 / 1</small><em id="homeWorkoutPct">0%</em>
+    </button>
+    <button class="metric-box" onclick="showArea('leitura')">
+      <span class="metric-emoji">📖</span><b>Leitura</b><small id="homeReading">0 / 70</small><em id="homeReadingPct">0%</em>
+    </button>
+    <button class="metric-box" onclick="showArea('estudo')">
+      <span class="metric-emoji">🎓</span><b>Estudo</b><small id="homeStudy">0 / 30 min</small><em id="homeStudyPct">0%</em>
+    </button>
+  </div>
+
+  <button class="prayer-card" onclick="showArea('oracoes')">
+    <span class="prayer-icon">✝️</span>
+    <span class="prayer-copy"><b>Orações</b><small>Comece seu dia com Deus.</small></span>
+    <span class="prayer-status">✓</span>
+  </button>
+
+  <div class="food-card">
+    <div class="section-head">
+      <div><span class="section-icon orange">🍴</span><b>Alimentação do dia</b><small id="foodHeadline">0 de 3 refeições registradas</small></div>
+      <button onclick="showArea('alimentacao')">›</button>
+    </div>
+    <div class="macro-grid">
+      <div><span>Proteína</span><b id="macroProtein">0/3</b></div>
+      <div><span>Carboidrato</span><b id="macroCarb">0/3</b></div>
+      <div><span>Vegetais</span><b id="macroVeg">0/3</b></div>
+      <div><span>Gorduras</span><b id="macroFat">0/3</b></div>
+    </div>
+    <button class="wide-action" onclick="registerMeal()">＋ Registrar refeição</button>
+  </div>
+
+  <div class="two-col">
+    <div class="compact-card workout-summary">
+      <div class="section-head">
+        <div><span class="section-icon blue">🏋️</span><b>Treino de hoje</b><small id="workoutSummaryText">Selecione o treino</small></div>
+      </div>
+      <div class="compact-list" id="workoutPreview">
+        <span>Agachamento</span><span>Leg Press</span><span>Cadeira Extensora</span><span>+ mais 3 exercícios</span>
+      </div>
+      <button class="soft-action" onclick="showArea('treino')">Iniciar treino</button>
     </div>
 
-    <div class="today-progress">
-      <div class="today-progress-head">
-        <b>Progresso do dia</b>
-        <span id="todayProgressText">0%</span>
+    <div class="compact-card reading-summary">
+      <div class="section-head">
+        <div><span class="section-icon teal">📖</span><b>Leitura atual</b></div>
+        <button onclick="showArea('leitura')">›</button>
       </div>
-      <div class="today-progress-track"><span id="todayProgressBar" style="width:0%"></span></div>
+      <div class="book-mini">
+        <div class="book-cover">LIVRO</div>
+        <div><b id="currentBookTitle">Livro atual</b><small id="currentBookAuthor">Autor</small><span id="currentBookProgress">0 de 0 páginas</span></div>
+      </div>
+      <button class="soft-action" onclick="quickRead()">+10 páginas</button>
     </div>
+  </div>
 
-    <div class="quick-row">
-      <button class="quick-btn" onclick="quickWater()"><span>💧</span>+0,5 L</button>
-      <button class="quick-btn" onclick="quickRead()"><span>📖</span>+10 pág.</button>
-      <button class="quick-btn" onclick="quickEnglish()"><span>🇬🇧</span>Inglês</button>
-      <button class="quick-btn" onclick="quickLeadership()"><span>🧠</span>PNL</button>
+  <div class="study-card">
+    <div><span class="section-icon purple">🎓</span></div>
+    <div class="study-main">
+      <b>Estudo</b>
+      <span id="studyHomeProgress">0 / 30 minutos</span>
+      <small id="studyHomeTopic">Tema de hoje: —</small>
     </div>
+    <button class="soft-action" onclick="showArea('estudo')">Iniciar estudo</button>
+  </div>
 
-    <div class="week-row" id="weekSummary"></div>
-
-    <div class="grid">
-      <div class="card">
-        <h3>Treino</h3>
-        <select id="workout"><option value="">Selecionar</option><option>A</option><option>B</option><option>C</option><option>D</option><option>Descanso</option></select>
-        <input id="cardio" type="number" min="0" placeholder="Esteira (min)" style="margin-top:8px"/>
-      </div>
-      <div class="card">
-        <h3>Água</h3>
-        <div class="metric"><strong><span id="waterText">0.0</span> L</strong><div><button id="minusWater">−0,5</button><button class="primary" id="plusWater">+0,5</button></div></div>
-      </div>
-      <div class="card">
-        <h3>Alimentação</h3>
-        <div class="check-row"><span>3 refeições</span><div class="toggle" data-key="meals"></div></div>
-        <div class="check-row"><span>Proteína nas 3</span><div class="toggle" data-key="protein"></div></div>
-        <div class="check-row"><span>Vegetais em 2</span><div class="toggle" data-key="veg"></div></div>
-      </div>
-      <div class="card">
-        <h3>Leitura</h3>
-        <input id="pages" type="number" min="0" placeholder="Páginas lidas"/>
-      </div>
-      <div class="card">
-        <h3>Estudos</h3>
-        <div class="check-row"><span>Inglês 30 min</span><div class="toggle" data-key="english"></div></div>
-        <div class="check-row"><span>Liderança/PNL 30 min</span><div class="toggle" data-key="leadership"></div></div>
-        <input id="studyTopic" placeholder="Tema / observação" style="margin-top:8px"/>
-      </div>
-      <div class="card">
-        <h3>Peso e celular</h3>
-        <input id="weight" type="number" step="0.1" placeholder="Peso (kg)"/>
-        <div class="exercise-grid" style="grid-template-columns:1fr 1fr;margin-top:8px">
-          <input id="screenTime" placeholder="Tela total"/>
-          <input id="instagramTime" placeholder="Instagram"/>
-        </div>
-      </div>
-      <div class="card">
-        <h3>LinkedIn</h3>
-        <div class="check-row"><span>Bloco semanal</span><div class="toggle" data-key="linkedin"></div></div>
-      </div>
-      <div class="card">
-        <h3>Observação</h3>
-        <textarea id="note" rows="4"></textarea>
-      </div>
+  <div class="areas-drawer">
+    <div class="areas-title"><b>Áreas da Rotina</b><small>Acesse os detalhes de cada área</small></div>
+    <div class="areas-grid">
+      <button onclick="showArea('agua')">💧<span>Água</span></button>
+      <button onclick="showArea('alimentacao')">🍴<span>Alimentação</span></button>
+      <button onclick="showArea('treino')">🏋️<span>Treino</span></button>
+      <button onclick="showArea('leitura')">📖<span>Leitura</span></button>
+      <button onclick="showArea('estudo')">🎓<span>Estudo</span></button>
+      <button onclick="showArea('oracoes')">✝️<span>Orações</span></button>
     </div>
-  </section>
+  </div>
+</section>
+
 
   <section id="treinos" class="panel"><div class="section-title"><h2>Treinos A/B/C/D</h2><span>Registrar carga e repetições</span></div><div id="workouts"></div></section>
-  <section id="evolucao" class="panel"><div class="section-title"><h2>Evolução</h2><span>Semana atual</span></div><div class="kpis" id="kpis"></div></section>
+  
+<section id="areas" class="panel">
+  <div class="section-title"><h2>Áreas da Rotina</h2><span>Detalhes por área</span></div>
+  <div class="areas-grid large">
+    <button onclick="showArea('agua')">💧<span>Água</span></button>
+    <button onclick="showArea('alimentacao')">🍴<span>Alimentação</span></button>
+    <button onclick="showArea('treino')">🏋️<span>Treino</span></button>
+    <button onclick="showArea('leitura')">📖<span>Leitura</span></button>
+    <button onclick="showArea('estudo')">🎓<span>Estudo</span></button>
+    <button onclick="showArea('oracoes')">✝️<span>Orações</span></button>
+  </div>
+</section>
+
+<section id="areaDetail" class="panel">
+  <div class="section-title">
+    <h2 id="areaTitle">Área</h2>
+    <button onclick="showPanel('areas')">Voltar</button>
+  </div>
+  <div id="areaContent"></div>
+</section>
+<section id="evolucao" class="panel"><div class="section-title"><h2>Evolução</h2><span>Semana atual</span></div><div class="kpis" id="kpis"></div></section>
   <section id="backup" class="panel">
     <div class="section-title"><h2>Dados & Backup</h2><span>Segurança dos registros</span></div>
     <div class="card">
@@ -247,13 +352,14 @@ input,select,textarea{min-height:44px}
   </section>
 </div>
 
+
 <nav id="nav" class="bottom-nav hidden">
   <button class="nav-btn active" data-target="hoje">Hoje</button>
-  <button class="nav-btn" data-target="treinos">Treinos</button>
+  <button class="nav-btn" data-target="areas">Áreas</button>
   <button class="nav-btn" data-target="evolucao">Evolução</button>
-  <button class="nav-btn" data-target="backup">Backup</button>
   <button class="nav-btn" data-target="conta">Conta</button>
 </nav>
+
 
 <script type="module">
 const savedCfg=JSON.parse(localStorage.getItem("rotinaCloudConfig")||"{}");
@@ -328,6 +434,75 @@ function renderWeekSummary(){
   }).join("");
 }
 
+
+function showPanel(id){
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  const el=document.getElementById(id); if(el) el.classList.add("active");
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.target===id));
+  if(id==="treinos") renderWorkouts();
+}
+function registerMeal(){
+  const d=day();
+  d.mealsCount=Math.min(3,Number(d.mealsCount||0)+1);
+  d.meals=d.mealsCount>=3;
+  d.proteinCount=Math.min(3,Number(d.proteinCount||0)+1);
+  d.carbCount=Math.min(3,Number(d.carbCount||0)+1);
+  d.vegCount=Math.min(3,Number(d.vegCount||0)+1);
+  d.fatCount=Math.min(3,Number(d.fatCount||0)+1);
+  persist();
+}
+function showArea(area){
+  const titleMap={agua:"Água",alimentacao:"Alimentação",treino:"Treino",leitura:"Leitura",estudo:"Estudo",oracoes:"Orações"};
+  document.getElementById("areaTitle").textContent=titleMap[area]||"Área";
+  const d=day();
+  let html="";
+  if(area==="agua"){
+    html=`<div class="area-card"><h3>Água</h3><p><b>${(d.water||0).toFixed(1)} L</b> de 3,0 L</p><div class="row"><button onclick="day().water=Math.max(0,(day().water||0)-0.5);persist()">−0,5 L</button><button class="primary" onclick="quickWater()">+0,5 L</button></div></div>`;
+  }else if(area==="alimentacao"){
+    html=`<div class="area-card"><h3>Alimentação</h3><p>${d.mealsCount||0} de 3 refeições registradas</p><div class="row"><span>Proteína</span><b>${d.proteinCount||0}/3</b></div><div class="row"><span>Carboidrato</span><b>${d.carbCount||0}/3</b></div><div class="row"><span>Vegetais</span><b>${d.vegCount||0}/3</b></div><div class="row"><span>Gorduras</span><b>${d.fatCount||0}/3</b></div><button class="primary" style="width:100%;margin-top:10px" onclick="registerMeal()">Registrar refeição</button></div>`;
+  }else if(area==="treino"){
+    html=`<div class="area-card"><h3>Treino</h3><p>Selecione o treino do dia e registre cargas e repetições.</p><button class="primary" onclick="showPanel('treinos')">Abrir ficha de treino</button></div>`;
+  }else if(area==="leitura"){
+    html=`<div class="area-card"><h3>Leitura</h3><p><b>${d.bookTitle||"Livro atual"}</b></p><p>${d.pages||0} páginas registradas hoje.</p><button class="primary" onclick="quickRead()">+10 páginas</button><div class="row"><span>Biblioteca</span><button onclick="alert('Biblioteca será a próxima etapa desta versão.')">Abrir</button></div></div>`;
+  }else if(area==="estudo"){
+    html=`<div class="area-card"><h3>Estudo</h3><p>${d.studyMinutes||0} / 30 min</p><input id="studyMinutesArea" type="number" min="0" placeholder="Minutos estudados" value="${d.studyMinutes||""}"><input id="studyTopicArea" placeholder="Tema de hoje" value="${d.studyTopic||""}" style="margin-top:8px"><button class="primary" style="margin-top:8px;width:100%" onclick="day().studyMinutes=document.getElementById('studyMinutesArea').value;day().studyTopic=document.getElementById('studyTopicArea').value;persist();showArea('estudo')">Salvar estudo</button></div>`;
+  }else if(area==="oracoes"){
+    html=`<div class="area-card"><h3>Orações</h3><div class="row"><span>Oração da manhã</span><div class="toggle ${d.prayerMorning?'on':''}" onclick="day().prayerMorning=!day().prayerMorning;persist();showArea('oracoes')"></div></div><div class="row"><span>Angelus</span><div class="toggle ${d.prayerAngelus?'on':''}" onclick="day().prayerAngelus=!day().prayerAngelus;persist();showArea('oracoes')"></div></div><div class="row"><span>Oração da noite</span><div class="toggle ${d.prayerNight?'on':''}" onclick="day().prayerNight=!day().prayerNight;persist();showArea('oracoes')"></div></div><div class="verse-card" style="margin-top:10px"><div><strong>“O Senhor é o meu pastor, nada me faltará.”</strong><span>Salmo 23,1</span></div><div class="verse-icon">☀️</div></div></div>`;
+  }
+  document.getElementById("areaContent").innerHTML=html;
+  showPanel("areaDetail");
+}
+function renderApprovedHome(){
+  const d=day();
+  const water=Number(d.water||0);
+  const meals=Number(d.mealsCount||0);
+  const pages=Number(d.pages||0);
+  const study=Number(d.studyMinutes||0);
+  const workoutDone=!!(d.workout&&d.workout!=="Descanso");
+  const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val};
+  set("homeWater",`${water.toFixed(1).replace(".",",")} / 3,0 L`);
+  set("homeWaterPct",`${Math.min(100,Math.round(water/3*100))}%`);
+  set("homeMeals",`${meals} / 3`);
+  set("homeMealsPct",`${Math.min(100,Math.round(meals/3*100))}%`);
+  set("homeWorkout",`${workoutDone?1:0} / 1`);
+  set("homeWorkoutPct",workoutDone?"100%":"0%");
+  set("homeReading",`${pages} / 70`);
+  set("homeReadingPct",`${Math.min(100,Math.round(pages/70*100))}%`);
+  set("homeStudy",`${study} / 30 min`);
+  set("homeStudyPct",`${Math.min(100,Math.round(study/30*100))}%`);
+  set("foodHeadline",`${meals} de 3 refeições registradas`);
+  set("macroProtein",`${d.proteinCount||0}/3`);
+  set("macroCarb",`${d.carbCount||0}/3`);
+  set("macroVeg",`${d.vegCount||0}/3`);
+  set("macroFat",`${d.fatCount||0}/3`);
+  set("workoutSummaryText",d.workout?`Treino ${d.workout}`:"Selecione o treino");
+  set("currentBookTitle",d.bookTitle||"Livro atual");
+  set("currentBookAuthor",d.bookAuthor||"Autor");
+  set("currentBookProgress",`${d.bookCurrentPage||0} de ${d.bookTotalPages||0} páginas`);
+  set("studyHomeProgress",`${study} / 30 minutos`);
+  set("studyHomeTopic",`Tema de hoje: ${d.studyTopic||"—"}`);
+}
+
 function render(){
  const d=day();
  document.getElementById("workout").value=d.workout||"";
@@ -340,7 +515,7 @@ function render(){
  document.getElementById("instagramTime").value=d.instagramTime||"";
  document.getElementById("note").value=d.note||"";
  document.querySelectorAll(".toggle").forEach(t=>t.classList.toggle("on",!!d[t.dataset.key]));
- renderKpis(); renderTodayProgress(); renderWeekSummary();
+ renderKpis(); renderTodayProgress(); renderWeekSummary(); renderApprovedHome();
 }
 ["workout","cardio","pages","studyTopic","weight","screenTime","instagramTime","note"].forEach(id=>{
  document.getElementById(id).addEventListener("input",e=>{day()[id]=e.target.value;persist()});
@@ -460,11 +635,7 @@ document.getElementById("importFile").onchange=async e=>{
 };
 document.getElementById("syncBtn").onclick=()=>syncCloud();
 
-document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>{
- document.querySelectorAll(".nav-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");
- document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));document.getElementById(b.dataset.target).classList.add("active");
- if(b.dataset.target==="treinos")renderWorkouts();
-});
+document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showPanel(b.dataset.target));
 
 let deferredPrompt;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;document.getElementById("installBtn").classList.remove("hidden")});

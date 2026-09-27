@@ -82,3 +82,13 @@ Depois:
 - Resumo semanal.
 - Última carga do exercício.
 - Layout mobile limpo.
+
+
+## V13 — layout aprovado
+- Home reconstruída conforme o layout aprovado.
+- Destaques: versículo do dia, progresso, água, alimentação, treino, leitura, estudo e orações.
+- Nova aba Áreas da Rotina com detalhes por categoria.
+- Alimentação com registro de refeições e composição.
+- Leitura preparada para evoluir para biblioteca.
+- Estudo unificado.
+- Orações com checklist diário.
