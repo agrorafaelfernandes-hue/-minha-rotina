@@ -74,29 +74,11 @@ Depois:
 - Adicionado tratamento de erro para leitura e gravação no Supabase.
 
 
-## V9 — experiência mobile
-- Cards mais compactos no iPhone
-- Atalhos rápidos para água, leitura, inglês e PNL
-- Resumo semanal visível logo no topo
-- Última carga exibida nos exercícios para facilitar progressão
-- Interface mais rápida para uso diário
-
-
-## V10 — versão mobile completa
-- Layout mais compacto para iPhone
-- Progresso diário visual
-- Atalhos rápidos para água, leitura, inglês e PNL
-- Resumo semanal no topo
-- Indicador de sequência de dias consistentes
-- Histórico com filtro por data
-- Última carga visível em cada exercício para facilitar progressão
-- Navegação inferior mais compacta
-- Cache atualizado para V10
-- Mantém login e sincronização via Supabase
-
-
-## V11 — correção do login
-- Corrigida duplicação de funções JavaScript que impedia o módulo inteiro de executar.
-- Botão Entrar agora mostra “Entrando...” durante a autenticação.
-- Erros do Supabase aparecem claramente abaixo do formulário.
-- Cache atualizado para V11.
+## V12 — versão estável
+- Reconstruída sobre a V8 estável para eliminar duplicações e HTML quebrado.
+- Login corrigido e validado.
+- Atalhos rápidos sem duplicação.
+- Progresso diário.
+- Resumo semanal.
+- Última carga do exercício.
+- Layout mobile limpo.

@@ -49,134 +49,66 @@ button{border:0;border-radius:12px;padding:10px 12px;font-weight:700;cursor:poin
 @media(max-width:760px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}.exercise-grid{grid-template-columns:1fr 1fr}.exercise-grid input:last-child{grid-column:1/-1}}
 </style>
 
-
-
-
-<style id="v10-ui">
+<style id="v12-ui">
 :root{
-  --bg:#f5f7f9;
-  --card:#ffffff;
-  --text:#182234;
-  --muted:#6b7280;
-  --line:#e4e7eb;
-  --accent:#1f6f5f;
-  --accent-dark:#173f37;
-  --accent2:#2b7a68;
-  --soft:#eaf4f0;
-  --soft-blue:#edf5ff;
-  --radius:18px;
-  --shadow:0 5px 18px rgba(15,23,42,.055);
+  --bg:#f5f7f9; --card:#fff; --text:#172033; --muted:#6b7280;
+  --line:#e4e7eb; --accent:#1f6f5f; --accent2:#2b7a68; --soft:#eaf4f0;
 }
 body{background:var(--bg)}
-.app{max-width:980px}
-.topbar{position:sticky;top:0;z-index:20;background:rgba(245,247,249,.94);backdrop-filter:blur(12px);padding-top:max(8px,env(safe-area-inset-top))}
-.hero{
-  padding:14px 16px;
-  border-radius:20px;
-  margin-bottom:10px;
-  background:linear-gradient(135deg,var(--accent-dark),var(--accent2));
+.app{max-width:980px;padding:12px 12px 96px}
+.topbar{
+  position:sticky; top:0; z-index:15;
+  background:rgba(245,247,249,.95); backdrop-filter:blur(12px);
+  padding-top:max(8px,env(safe-area-inset-top)); margin-bottom:10px
 }
-.hero h2{font-size:21px;margin-bottom:3px}
-.hero p{font-size:12px;line-height:1.35}
+.brand h1{font-size:22px}.brand p{font-size:12px}
+.hero{padding:16px 18px;border-radius:22px;margin-bottom:10px}
+.hero h2{font-size:22px}.hero p{font-size:13px}
+.card{padding:13px;border-radius:18px}
 .grid{gap:10px}
-.card{padding:13px;border-radius:18px;box-shadow:var(--shadow)}
-.card h3{font-size:14px;margin-bottom:8px}
-.metric strong{font-size:22px}
 input,select,textarea{min-height:44px}
 .check-row{padding:8px 0}
-.toggle{transform:scale(.95);transform-origin:right center}
+.bottom-nav{bottom:max(8px,env(safe-area-inset-bottom));border-radius:16px;padding:6px}
+.nav-btn{padding:8px 4px;font-size:11px}
+.status{font-size:11px;padding:7px 9px}
+
 .quick-row{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:7px;
-  margin:0 0 10px;
+  display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:10px;
 }
 .quick-btn{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  min-height:62px;
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:7px 4px;
-  font-size:10px;
-  font-weight:800;
-  color:var(--text);
+  min-height:70px; border:1px solid var(--line); background:#fff; border-radius:16px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-size:11px; font-weight:800; color:var(--text); padding:8px 4px;
 }
-.quick-btn span{font-size:18px;line-height:1;margin-bottom:5px}
-.week-summary{
-  display:grid;
-  grid-template-columns:repeat(5,minmax(0,1fr));
-  gap:6px;
-  margin-bottom:10px;
+.quick-btn span{font-size:21px;line-height:1;margin-bottom:6px}
+
+.today-progress{
+  background:#fff;border:1px solid var(--line);border-radius:16px;
+  padding:11px 12px;margin-bottom:10px;
+}
+.today-progress-head{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.today-progress-head b{font-size:13px}.today-progress-head span{font-size:12px;color:var(--muted)}
+.today-progress-track{height:7px;background:#e8ebef;border-radius:999px;overflow:hidden;margin-top:7px}
+.today-progress-track span{display:block;height:100%;background:var(--accent)}
+
+.week-row{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px;
 }
 .week-stat{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:13px;
-  padding:7px 6px;
-  text-align:center;
+  background:#fff;border:1px solid var(--line);border-radius:14px;padding:7px 4px;text-align:center;
 }
 .week-stat b{display:block;font-size:13px}
-.week-stat small{display:block;color:var(--muted);font-size:9px;margin-top:2px}
+.week-stat small{display:block;font-size:9px;color:var(--muted);margin-top:2px}
 .mini-track{height:4px;background:#e8ebef;border-radius:999px;overflow:hidden;margin-top:5px}
 .mini-track span{display:block;height:100%;background:var(--accent)}
-.today-progress-card{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:10px 12px;
-  margin-bottom:10px;
-}
-.today-progress-row{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.today-progress-row b{font-size:13px}
-.today-progress-row span{font-size:12px;color:var(--muted)}
-.today-progress-bar{height:7px;background:#e8ebef;border-radius:999px;overflow:hidden;margin-top:7px}
-.today-progress-bar span{display:block;height:100%;background:var(--accent)}
-.exercise-log-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:5px}
+
+.exercise-top{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:5px}
 .last-load{font-size:10px;color:var(--muted);white-space:nowrap}
-.history-list{display:grid;gap:8px}
-.history-item{padding:11px 12px;border-radius:14px}
-.chart-wrap{height:190px}
-.bottom-nav{
-  width:min(96%,720px);
-  bottom:max(8px,env(safe-area-inset-bottom));
-  padding:6px;
-  border-radius:16px;
-}
-.nav-btn{padding:8px 4px;font-size:11px}
-.nav-btn.active{font-weight:800}
-.sync-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#2f855a;margin-right:5px}
-.section-title{margin-bottom:9px}
-.section-title h2{font-size:18px}
-.section-title span{font-size:10px}
-.compact-two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.streak-card{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  align-items:center;
-  background:var(--soft);
-  border:1px solid #d9ebe4;
-  padding:10px 12px;
-  border-radius:14px;
-  margin-bottom:10px;
-}
-.streak-card b{font-size:13px}
-.streak-card span{font-size:12px;color:var(--accent-dark)}
+
 @media(max-width:760px){
-  .app{padding:10px 10px 92px}
-  .brand h1{font-size:20px}
-  .brand p{font-size:11px}
-  .status{font-size:11px;padding:7px 9px}
-  .week-summary{grid-template-columns:repeat(5,1fr)}
-  .week-stat{padding:6px 3px}
-  .week-stat b{font-size:12px}
-  .week-stat small{font-size:8px}
   .grid{grid-template-columns:1fr}
-  .card{padding:12px}
+  .exercise-grid{grid-template-columns:1fr 1fr}
+  .exercise-grid input:last-child{grid-column:1/-1}
 }
 </style>
 
@@ -203,7 +135,7 @@ input,select,textarea{min-height:44px}
 <div id="mainApp" class="app hidden">
   <div class="topbar">
     <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-    <div id="syncStatus" class="status offline">V11 · Cloud</div>
+    <div id="syncStatus" class="status offline">V12 · Cloud</div>
   </div>
 
   <section id="hoje" class="panel active">
@@ -211,38 +143,25 @@ input,select,textarea{min-height:44px}
       <h2 style="margin:0 0 6px">Hoje</h2>
       <p style="margin:0;color:rgba(255,255,255,.8)">Consistência primeiro. Perfeição depois.</p>
     </div>
-    
-<div class="quick-row">
-  <button class="quick-btn" onclick="quickWater()"><span>💧</span>+0,5 L</button>
-  <button class="quick-btn" onclick="quickRead()"><span>📖</span>+10 pág.</button>
-  <button class="quick-btn" onclick="quickEnglish()"><span>🇬🇧</span>Inglês</button>
-  <button class="quick-btn" onclick="quickLeadership()"><span>🧠</span>PNL</button>
-</div>
-<div class="week-score" id="weekScore"></div>
 
+    <div class="today-progress">
+      <div class="today-progress-head">
+        <b>Progresso do dia</b>
+        <span id="todayProgressText">0%</span>
+      </div>
+      <div class="today-progress-track"><span id="todayProgressBar" style="width:0%"></span></div>
+    </div>
 
-</div>
+    <div class="quick-row">
+      <button class="quick-btn" onclick="quickWater()"><span>💧</span>+0,5 L</button>
+      <button class="quick-btn" onclick="quickRead()"><span>📖</span>+10 pág.</button>
+      <button class="quick-btn" onclick="quickEnglish()"><span>🇬🇧</span>Inglês</button>
+      <button class="quick-btn" onclick="quickLeadership()"><span>🧠</span>PNL</button>
+    </div>
 
-<div class="today-progress-card">
-  <div class="today-progress-row">
-    <b>Progresso do dia</b>
-    <span id="todayProgressText">0%</span>
-  </div>
-  <div class="today-progress-bar"><span id="todayProgressBar" style="width:0%"></span></div>
-</div>
+    <div class="week-row" id="weekSummary"></div>
 
-
-  <button class="quick-btn" onclick="quickWater()"><span>💧</span>+0,5 L</button>
-  <button class="quick-btn" onclick="quickRead()"><span>📖</span>+10 pág.</button>
-  <button class="quick-btn" onclick="quickEnglish()"><span>🇬🇧</span>Inglês</button>
-  <button class="quick-btn" onclick="quickLeadership()"><span>🧠</span>PNL</button>
-</div>
-
-<div class="week-summary" id="weekSummary"></div>
-<div class="streak-card">
-  <b>Sequência atual</b>
-  <span id="streakText">0 dias consistentes</span>
-<div class="grid">
+    <div class="grid">
       <div class="card">
         <h3>Treino</h3>
         <select id="workout"><option value="">Selecionar</option><option>A</option><option>B</option><option>C</option><option>D</option><option>Descanso</option></select>
@@ -369,45 +288,11 @@ let saveTimer;
 function queueCloudSave(){clearTimeout(saveTimer);saveTimer=setTimeout(syncCloud,700)}
 
 
+function quickWater(){ day().water=Math.min(6,(day().water||0)+0.5); persist(); }
+function quickRead(){ day().pages=Number(day().pages||0)+10; persist(); }
+function quickEnglish(){ day().english=!day().english; persist(); }
+function quickLeadership(){ day().leadership=!day().leadership; persist(); }
 
-
-
-
-function quickWater(){day().water=Math.min(6,(day().water||0)+0.5);persist()}
-function quickRead(){day().pages=Number(day().pages||0)+10;persist()}
-function quickEnglish(){day().english=!day().english;persist()}
-function quickLeadership(){day().leadership=!day().leadership;persist()}
-
-function currentWeekStats(){
-  const dates=weekDates();
-  let tr=0,en=0,ld=0,pg=0,wa=0,meals=0;
-  dates.forEach(k=>{
-    const v=state.days[k]||{};
-    if(v.workout&&v.workout!=="Descanso")tr++;
-    if(v.english)en++;
-    if(v.leadership)ld++;
-    pg+=Number(v.pages||0);
-    if(Number(v.water||0)>=3)wa++;
-    if(v.meals&&v.protein&&v.veg)meals++;
-  });
-  return {tr,en,ld,pg,wa,meals};
-}
-function renderWeekSummary(){
-  const s=currentWeekStats();
-  const items=[
-    ["Treino",s.tr,4],
-    ["Inglês",s.en,3],
-    ["PNL",s.ld,2],
-    ["Leitura",s.pg,70],
-    ["Água",s.wa,7]
-  ];
-  const el=document.getElementById("weekSummary");
-  if(!el) return;
-  el.innerHTML=items.map(([label,v,t])=>{
-    const pct=Math.min(100,Math.round((v/t)*100));
-    return `<div class="week-stat"><b>${v}/${t}</b><small>${label}</small><div class="mini-track"><span style="width:${pct}%"></span></div></div>`;
-  }).join("");
-}
 function renderTodayProgress(){
   const v=day();
   const checks=[
@@ -417,35 +302,30 @@ function renderTodayProgress(){
     Number(v.pages||0)>=10,
     !!(v.english||v.leadership)
   ];
-  const done=checks.filter(Boolean).length;
-  const pct=Math.round(done/checks.length*100);
+  const pct=Math.round(checks.filter(Boolean).length/checks.length*100);
   const txt=document.getElementById("todayProgressText");
   const bar=document.getElementById("todayProgressBar");
   if(txt) txt.textContent=pct+"%";
   if(bar) bar.style.width=pct+"%";
 }
-function renderStreak(){
-  const keys=Object.keys(state.days).sort().reverse();
-  let streak=0;
-  const todayKey=new Date().toISOString().slice(0,10);
-  const d=new Date(todayKey+"T12:00:00");
-  for(let i=0;i<30;i++){
-    const k=d.toISOString().slice(0,10);
+
+function renderWeekSummary(){
+  let tr=0,en=0,ld=0,pg=0,wa=0;
+  weekDates().forEach(k=>{
     const v=state.days[k]||{};
-    const score=[
-      !!v.workout,
-      Number(v.water||0)>=3,
-      Number(v.pages||0)>=10,
-      !!(v.meals&&v.protein&&v.veg),
-      !!(v.english||v.leadership)
-    ].filter(Boolean).length;
-    if(score>=3) streak++;
-    else if(i===0){ /* hoje ainda pode estar em andamento */ }
-    else break;
-    d.setDate(d.getDate()-1);
-  }
-  const el=document.getElementById("streakText");
-  if(el) el.textContent=`${streak} ${streak===1?"dia consistente":"dias consistentes"}`;
+    if(v.workout&&v.workout!=="Descanso") tr++;
+    if(v.english) en++;
+    if(v.leadership) ld++;
+    pg+=Number(v.pages||0);
+    if(Number(v.water||0)>=3) wa++;
+  });
+  const items=[["Treino",tr,4],["Inglês",en,3],["PNL",ld,2],["Leitura",pg,70],["Água",wa,7]];
+  const el=document.getElementById("weekSummary");
+  if(!el) return;
+  el.innerHTML=items.map(([label,v,t])=>{
+    const pct=Math.min(100,Math.round(v/t*100));
+    return `<div class="week-stat"><b>${v}/${t}</b><small>${label}</small><div class="mini-track"><span style="width:${pct}%"></span></div></div>`;
+  }).join("");
 }
 
 function render(){
@@ -460,7 +340,7 @@ function render(){
  document.getElementById("instagramTime").value=d.instagramTime||"";
  document.getElementById("note").value=d.note||"";
  document.querySelectorAll(".toggle").forEach(t=>t.classList.toggle("on",!!d[t.dataset.key]));
- renderKpis(); renderWeekSummary(); renderTodayProgress(); renderStreak();
+ renderKpis(); renderTodayProgress(); renderWeekSummary();
 }
 ["workout","cardio","pages","studyTopic","weight","screenTime","instagramTime","note"].forEach(id=>{
  document.getElementById(id).addEventListener("input",e=>{day()[id]=e.target.value;persist()});
@@ -478,11 +358,8 @@ function renderWorkouts(){
      const k=`${today}_${name}_${i}`,v=state.exerciseLogs[k]||{};
      let previousLoad="";
      const prevKeys=Object.keys(state.exerciseLogs).filter(x=>x.endsWith(`_${name}_${i}`)&&x!==k).sort();
-     if(prevKeys.length){
-       const prev=state.exerciseLogs[prevKeys[prevKeys.length-1]];
-       previousLoad=prev?.load||"";
-     }
-     const row=document.createElement("div");row.className="exercise";row.innerHTML=`<b>${it[0]}</b><div class="exercise-log-head"><div class="muted">${it[1]}</div><div class="last-load">${previousLoad?`Última carga: ${previousLoad}`:"Sem carga anterior"}</div></div><div class="exercise-grid"><input data-k="${k}" data-f="load" placeholder="Carga" value="${v.load||""}"><input data-k="${k}" data-f="reps" placeholder="Reps" value="${v.reps||""}"><input data-k="${k}" data-f="note" placeholder="Observação" value="${v.note||""}"></div>`;
+     if(prevKeys.length){ previousLoad=state.exerciseLogs[prevKeys[prevKeys.length-1]]?.load||""; }
+     const row=document.createElement("div");row.className="exercise";row.innerHTML=`<b>${it[0]}</b><div class="exercise-top"><div class="muted">${it[1]}</div><div class="last-load">${previousLoad?`Última carga: ${previousLoad}`:"Sem carga anterior"}</div></div><div class="exercise-grid"><input data-k="${k}" data-f="load" placeholder="Carga atual" value="${v.load||""}"><input data-k="${k}" data-f="reps" placeholder="Reps" value="${v.reps||""}"><input data-k="${k}" data-f="note" placeholder="Observação" value="${v.note||""}"></div>`;
      wrap.appendChild(row)
    });c.appendChild(wrap)
  });
