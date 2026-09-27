@@ -187,3 +187,13 @@ Depois:
 - Adiciona acesso ao Histórico tanto na Home quanto em Áreas.
 - Controles de data anterior, próxima data e seletor de data também usam listeners diretos.
 - Reforça showPanel para evitar falha silenciosa de navegação.
+
+
+## V26 — Conta, Backup e revisão de estabilidade
+- Acesso direto a Dados & Backup pela aba Conta.
+- Mostra quantidade de dias registrados, livros, último salvamento local e última sincronização na nuvem.
+- Exportação gera arquivo JSON datado com metadados da versão.
+- Importação valida a estrutura do arquivo antes de substituir dados.
+- Antes de importar, preserva automaticamente uma cópia local do estado anterior.
+- Sincronização manual informa sucesso ou erro com mais clareza.
+- Fotos das refeições continuam locais e não entram no backup JSON nesta versão.

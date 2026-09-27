@@ -338,6 +338,19 @@ input,select,textarea{min-height:44px}
 @media(max-width:760px){.history-grid{grid-template-columns:1fr 1fr}}
 </style>
 
+
+<style id="v26-account-backup">
+.account-status-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.account-mini{background:#f8faf9;border:1px solid var(--line);border-radius:14px;padding:10px}
+.account-mini b{display:block;font-size:12px}
+.account-mini span{font-size:9px;color:var(--muted)}
+.backup-warning{background:#fff8ee;border:1px solid #eadcc8;border-radius:14px;padding:10px;font-size:10px;color:#6b5b43;margin-top:10px}
+.backup-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.backup-meta{display:grid;gap:7px;margin-top:10px}
+.backup-meta-row{display:flex;justify-content:space-between;gap:10px;font-size:10px}
+.backup-meta-row span{color:var(--muted)}
+</style>
+
 </head>
 <body>
 <div class="app" id="authScreen">
@@ -360,7 +373,7 @@ input,select,textarea{min-height:44px}
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V25 · Cloud</div>
+<div class="status offline" id="syncStatus">V26 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -755,18 +768,35 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
   </div>
 </section>
 
+
 <section class="panel" id="backup">
-<div class="section-title"><h2>Dados &amp; Backup</h2><span>Segurança dos registros</span></div>
-<div class="card">
-<p class="muted">Você pode exportar e importar seus dados locais. Quando o Supabase estiver configurado, a sincronização em nuvem será automática.</p>
-<div style="display:flex;gap:8px;flex-wrap:wrap">
-<button class="primary" id="exportBtn">Exportar JSON</button>
-<label class="soft" style="display:inline-block;padding:10px 12px;border-radius:12px;font-weight:700;cursor:pointer">Importar JSON<input accept=".json" id="importFile" style="display:none" type="file"/></label>
-<button id="syncBtn">Sincronizar agora</button>
-</div>
-<div class="muted" id="backupMsg" style="margin-top:10px"></div>
-</div>
+  <div class="section-title"><h2>Dados &amp; Backup</h2><span>Segurança dos registros</span></div>
+
+  <div class="card">
+    <h3>Estado dos dados</h3>
+    <div class="backup-meta">
+      <div class="backup-meta-row"><span>Registros diários</span><b id="backupDaysCount">0</b></div>
+      <div class="backup-meta-row"><span>Livros cadastrados</span><b id="backupBooksCount">0</b></div>
+      <div class="backup-meta-row"><span>Último salvamento local</span><b id="backupLocalTime">—</b></div>
+      <div class="backup-meta-row"><span>Última sincronização na nuvem</span><b id="backupCloudTime">—</b></div>
+    </div>
+
+    <div class="backup-actions">
+      <button class="primary" id="exportBtn">Exportar backup JSON</button>
+      <label class="soft" style="display:inline-block;padding:10px 12px;border-radius:12px;font-weight:700;cursor:pointer">
+        Importar backup
+        <input accept=".json,application/json" id="importFile" style="display:none" type="file"/>
+      </label>
+      <button id="syncBtn">Sincronizar agora</button>
+    </div>
+
+    <div class="backup-warning">
+      O backup JSON inclui os dados da rotina, biblioteca e histórico. As fotos das refeições continuam armazenadas somente neste aparelho nesta versão.
+    </div>
+    <div class="muted" id="backupMsg" style="margin-top:10px"></div>
+  </div>
 </section>
+
 
 <section class="panel" id="historico">
   <div class="section-title">
@@ -787,6 +817,10 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 <div class="section-title"><h2>Conta</h2><span>PWA + nuvem</span></div>
 <div class="card">
 <div class="muted" id="accountInfo">Modo local.</div>
+<div class="account-status-grid">
+  <div class="account-mini"><b id="accountModeLabel">Local</b><span>Modo atual</span></div>
+  <div class="account-mini"><b id="accountSyncLabel">—</b><span>Último sync</span></div>
+</div>
 <button class="primary hidden" id="installBtn" style="margin-top:12px">Instalar app</button>
 <button id="logoutBtn" style="margin-top:12px">Sair</button>
 </div>
@@ -801,6 +835,11 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 </div>
 <div class="muted" id="cloudConfigMsg" style="margin-top:10px"></div>
 </input></input></div>
+<div class="card" style="margin-top:14px">
+<h3>Dados &amp; Backup</h3>
+<p class="muted">Exporte seus registros, importe um backup ou force uma sincronização com a nuvem.</p>
+<button class="primary" id="openBackupBtn" type="button">Abrir Dados &amp; Backup</button>
+</div>
 <div class="card" style="margin-top:14px">
 <h3>Instalar no iPhone</h3>
 <p class="muted">Depois de publicar em HTTPS, abra o site no Safari, toque em Compartilhar e escolha <b>Adicionar à Tela de Início</b>.</p>
@@ -841,7 +880,7 @@ D:[["Desenvolvimento máquina","3×8–12"],["Elevação lateral máquina","3×1
 };
 
 function day(){return state.days[today]}
-function persist(){localStorage.setItem("rotinaV3",JSON.stringify(state));render(); if(mode==="cloud") queueCloudSave();}
+function persist(){localStorage.setItem("rotinaV3",JSON.stringify(state));markLocalSaved();render(); if(mode==="cloud") queueCloudSave();}
 let saveTimer;
 function queueCloudSave(){clearTimeout(saveTimer);saveTimer=setTimeout(syncCloud,700)}
 
@@ -898,6 +937,8 @@ function showPanel(id){
   if(id==="biblioteca") renderLibrary();
   if(id==="evolucao") renderEvolution();
   if(id==="historico") renderHistory();
+  if(id==="backup") renderBackupStatus();
+  if(id==="conta") renderBackupStatus();
   if(id==="alimentacao") renderFood();
   if(id==="oracoes"){ renderPrayers(); loadDailyGospel(false); }
 }
@@ -1893,12 +1934,50 @@ function renderKpis(){
  document.getElementById("kpis").innerHTML=arr.map(x=>`<div class="kpi"><span class="muted">${x[0]}</span><strong>${x[1]}</strong>${x[0]!=="Peso médio"?`<div class="bar"><span style="width:${Math.min(100,x[2]*100)}%"></span></div>`:""}</div>`).join("");
 }
 
+
+function isValidBackupState(obj){
+  return !!obj && typeof obj==="object" &&
+    !!obj.days && typeof obj.days==="object" && !Array.isArray(obj.days);
+}
+function formatDateTime(value){
+  if(!value) return "—";
+  const d=new Date(value);
+  if(Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
+}
+function markLocalSaved(){
+  localStorage.setItem("rotinaLastLocalSave",new Date().toISOString());
+}
+function renderBackupStatus(){
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  set("backupDaysCount",String(Object.keys(state.days||{}).filter(k=>/^\d{4}-\d{2}-\d{2}$/.test(k)).length));
+  set("backupBooksCount",String(Array.isArray(state.library)?state.library.length:0));
+  set("backupLocalTime",formatDateTime(localStorage.getItem("rotinaLastLocalSave")));
+  set("backupCloudTime",formatDateTime(localStorage.getItem("rotinaLastCloudSync")));
+  set("accountModeLabel",mode==="cloud"?"Nuvem":"Local");
+  set("accountSyncLabel",formatDateTime(localStorage.getItem("rotinaLastCloudSync")));
+}
+
 async function syncCloud(){
- if(!supabase||!user)return;
+ const backupMsg=document.getElementById("backupMsg");
+ if(!supabase||!user){
+   if(backupMsg) backupMsg.textContent="Entre na conta para sincronizar com a nuvem.";
+   return;
+ }
+ const status=document.getElementById("syncStatus");
+ if(status){status.textContent="Sincronizando…";status.className="status online";}
  const payload={user_id:user.id,data:state,updated_at:new Date().toISOString()};
  const {error}=await supabase.from("user_state").upsert(payload,{onConflict:"user_id"});
- const status=document.getElementById("syncStatus");
- if(error){status.textContent="Erro de sync";status.className="status offline"} else {status.textContent="Sincronizado";status.className="status online"}
+ if(error){
+   if(status){status.textContent="Erro de sync";status.className="status offline";}
+   if(backupMsg) backupMsg.textContent="Não foi possível sincronizar agora.";
+ }else{
+   const now=new Date().toISOString();
+   localStorage.setItem("rotinaLastCloudSync",now);
+   if(status){status.textContent="Sincronizado";status.className="status online";}
+   if(backupMsg) backupMsg.textContent="Sincronização concluída.";
+ }
+ renderBackupStatus();
 }
 async function loadCloud(){
  if(!supabase||!user)return;
@@ -1968,14 +2047,46 @@ document.getElementById("clearCloudBtn").onclick=()=>{
 };
 
 document.getElementById("exportBtn").onclick=()=>{
- const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
- a.href=url;a.download="minha_rotina_backup.json";a.click();URL.revokeObjectURL(url)
+ const stamp=today.replaceAll("-","");
+ const payload={
+   app:"Minha Rotina",
+   version:"V26",
+   exportedAt:new Date().toISOString(),
+   state
+ };
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download=`minha_rotina_backup_${stamp}.json`;a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+ const msg=document.getElementById("backupMsg");
+ if(msg) msg.textContent="Backup exportado. Guarde o arquivo em um local seguro.";
 };
 document.getElementById("importFile").onchange=async e=>{
  const f=e.target.files[0];if(!f)return;
- try{const txt=await f.text();const obj=JSON.parse(txt);state=obj;persist();document.getElementById("backupMsg").textContent="Backup importado com sucesso."}catch{document.getElementById("backupMsg").textContent="Arquivo inválido."}
+ const msg=document.getElementById("backupMsg");
+ try{
+   const txt=await f.text();
+   const parsed=JSON.parse(txt);
+   const imported=parsed?.state||parsed;
+   if(!isValidBackupState(imported)) throw new Error("estrutura inválida");
+
+   // snapshot local automático antes da substituição
+   localStorage.setItem("rotinaPreImportBackup",JSON.stringify(state));
+   state=imported;
+   if(!state.days) state.days={};
+   if(!state.exerciseLogs) state.exerciseLogs={};
+   if(!state.days[today]) state.days[today]={};
+   persist();
+   if(msg) msg.textContent="Backup importado com sucesso. Uma cópia do estado anterior foi preservada neste aparelho.";
+ }catch(err){
+   if(msg) msg.textContent="Arquivo de backup inválido ou incompatível.";
+ }finally{
+   e.target.value="";
+   renderBackupStatus();
+ }
 };
 document.getElementById("syncBtn").onclick=()=>syncCloud();
+document.getElementById("openBackupBtn").onclick=()=>showPanel("backup");
 
 document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showPanel(b.dataset.target));
 
@@ -1990,6 +2101,7 @@ if(supabase){
  if(data.session){user=data.session.user;enterApp(false);await loadCloud()}
 }
 render();
+renderBackupStatus();
 
 
 // V16: bridge entre o módulo JavaScript e os botões inline da interface.
