@@ -163,3 +163,6 @@ Depois:
 - 7 e 30 dias agora incluem corretamente os dias sem registro, evitando inconsistências de período.
 - O histórico Geral usa apenas dias com data válida.
 - Gráficos longos são compactados visualmente para caber melhor no celular, sem alterar os cálculos dos indicadores.
+-    Disparo de deploy Teste-22
+-    
+- 
