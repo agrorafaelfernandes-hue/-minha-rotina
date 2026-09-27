@@ -323,3 +323,8 @@ Depois:
 - O histórico diferencia sessões guiadas de atividades livres.
 - A Home mostra diretamente a atividade livre e a duração.
 - Mantidos todos os recursos da V37 (Vida espiritual 2.0).
+
+## V38.1 — correção de inicialização
+- Corrige erro da V38 que impedia o app de abrir.
+- A função do modo de treino estava sendo executada antes da variável de controle ser inicializada.
+- Mantém Treino Livre, Treino guiado e Vida Espiritual 2.0.

@@ -499,7 +499,7 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V38 · Cloud</div>
+<div class="status offline" id="syncStatus">V38.1 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -2926,7 +2926,7 @@ document.querySelectorAll("[data-workout-mode]").forEach(btn=>{
 });
 const saveFreeWorkoutBtn=document.getElementById("saveFreeWorkoutBtn");
 if(saveFreeWorkoutBtn) saveFreeWorkoutBtn.addEventListener("click",()=>saveFreeWorkout());
-setWorkoutMode("plan");
+
 
 const mealPhotoInput=document.getElementById("mealPhotoInput");
 if(mealPhotoInput) mealPhotoInput.addEventListener("change",e=>handleMealPhotoSelected(e.target.files?.[0]));
