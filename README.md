@@ -248,3 +248,39 @@ Depois:
 - Evangelho deixa de fazer tentativa de rede a cada alteração de água, leitura, estudo etc.; carrega apenas ao abrir Orações.
 - Corrige também o botão Editar livro, que ainda era gerado com onclick inline.
 - Adiciona content-visibility aos painéis inativos para reduzir trabalho de layout no iPhone.
+
+
+## V33 — Histórico dentro das áreas
+- Água agora registra cada ajuste com horário.
+- Área Água mostra registros de hoje e totais dos últimos 7 dias.
+- Estudos agora são registrados por sessão, com horário, minutos e tema.
+- Área Estudos mostra sessões do dia e resumo dos últimos 7 dias.
+- Sessões de estudo podem ser excluídas individualmente.
+- Histórico diário também exibe as sessões de estudo com horário e tema.
+- Evolução passa a considerar a soma das sessões quando elas existirem.
+- Mantém compatibilidade com registros antigos que só tinham total diário.
+
+
+## V34 — Auditoria consolidada
+- Consolida as melhorias da V33 sem exigir upload intermediário.
+- Corrige meta diária de leitura da Home para 10 páginas (70 permanece referência semanal).
+- Treinos deixam de reconstruir toda a ficha a cada tecla; cargas, reps e observações são salvas silenciosamente.
+- Remove renderizações duplicadas após salvar refeição/livro/páginas.
+- Corrige estado visual dos filtros da Biblioteca.
+- Mantém históricos próprios de Água e Estudos.
+- Adiciona Diagnóstico rápido na Conta para verificar telas, armazenamento local, banco de fotos, estrutura de dados e nuvem.
+- Auditoria estática: JavaScript válido, sem IDs duplicados e sem atributos onclick/onchange/oninput inline.
+
+
+## V35 — Biblioteca online + Perfil & Medidas
+- Biblioteca integrada à Open Library para pesquisa de livros por título.
+- Busca automática após digitação com debounce para reduzir chamadas.
+- Preenche título, autor, capa, páginas, editora, ano, ISBN e descrição quando disponíveis.
+- Guarda assuntos/temas do livro para apoiar recomendações.
+- Sugestões personalizadas com base em temas, autores, status de leitura e avaliações.
+- Sugestões podem ser adicionadas diretamente em “Quero ler”.
+- Nova área Perfil & Medidas dentro de Conta.
+- Altura e meta de peso opcionais.
+- Registro por data de peso, cintura, abdômen, peitoral, braço, coxa e quadril.
+- Peso registrado em Perfil também alimenta a evolução diária de peso.
+- Histórico de medidas com exclusão individual.

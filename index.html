@@ -353,6 +353,60 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 .panel.active{content-visibility:visible}
 </style>
 
+
+<style id="v33-area-history">
+.area-history{margin-top:12px}
+.area-history h4{margin:0 0 8px;font-size:12px}
+.area-history-list{display:grid;gap:7px}
+.area-history-item{background:#f8faf9;border:1px solid var(--line);border-radius:12px;padding:9px}
+.area-history-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.area-history-top b{font-size:10px}
+.area-history-top span{font-size:9px;color:var(--muted)}
+.area-history-item p{margin:5px 0 0;font-size:10px;color:#4b554e}
+.area-history-days{display:grid;gap:6px;margin-top:8px}
+.area-history-day{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:11px;padding:8px 9px}
+.area-history-day span{font-size:9px;color:var(--muted)}
+.area-history-day b{font-size:10px}
+</style>
+
+
+<style id="v34-diagnostics">
+.diag-list{display:grid;gap:7px;margin-top:10px}
+.diag-item{display:flex;justify-content:space-between;gap:10px;padding:8px 9px;border-radius:11px;background:#f8faf9;font-size:10px}
+.diag-ok{color:#26703e;font-weight:800}.diag-warn{color:#9a6729;font-weight:800}
+</style>
+
+
+<style id="v35-library-profile">
+.book-search-box{background:#f8faf9;border:1px solid var(--line);border-radius:14px;padding:10px;margin-bottom:10px}
+.book-search-results{display:grid;gap:7px;margin-top:8px}
+.book-search-result{display:grid;grid-template-columns:48px 1fr;gap:9px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;cursor:pointer}
+.book-search-result img{width:48px;height:68px;object-fit:cover;border-radius:7px;background:#eef1ef}
+.book-search-result b{font-size:10px;display:block}
+.book-search-result span{font-size:9px;color:var(--muted)}
+.book-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.book-meta-grid .full{grid-column:1/-1}
+.recommend-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin:10px 0}
+.recommend-list{display:grid;gap:8px;margin-top:8px}
+.recommend-item{display:grid;grid-template-columns:54px 1fr;gap:9px;background:#f8faf9;border-radius:13px;padding:8px}
+.recommend-item img{width:54px;height:76px;object-fit:cover;border-radius:8px;background:#eef1ef}
+.recommend-item h4{margin:0;font-size:11px}
+.recommend-item p{margin:4px 0;font-size:9px;color:var(--muted)}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.profile-grid .full{grid-column:1/-1}
+.measure-list{display:grid;gap:7px;margin-top:10px}
+.measure-item{background:#f8faf9;border:1px solid var(--line);border-radius:13px;padding:9px}
+.measure-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.measure-head b{font-size:10px}
+.measure-head span{font-size:9px;color:var(--muted)}
+.measure-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.measure-tag{font-size:8px;padding:4px 6px;border-radius:999px;background:#fff;border:1px solid var(--line)}
+@media(max-width:760px){
+  .book-meta-grid,.profile-grid{grid-template-columns:1fr}
+  .book-meta-grid .full,.profile-grid .full{grid-column:auto}
+}
+</style>
+
 </head>
 <body>
 <div class="app" id="authScreen">
@@ -375,7 +429,7 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V32 · Cloud</div>
+<div class="status offline" id="syncStatus">V35 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -645,6 +699,25 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 <h2>Biblioteca</h2>
 <button class="primary" data-book-action="open">+ Livro</button>
 </div>
+<div class="book-search-box">
+  <b>Pesquisar livro na internet</b>
+  <div class="muted" style="margin-top:3px">Digite o título. O app busca dados, capa e edição automaticamente.</div>
+  <input id="bookGlobalSearchInput" placeholder="Ex.: A Regra 10X" style="margin-top:8px"/>
+  <div id="bookGlobalSearchStatus" class="muted" style="margin-top:6px"></div>
+  <div id="bookGlobalSearchResults" class="book-search-results"></div>
+</div>
+
+<div class="recommend-card">
+  <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+    <div>
+      <h3 style="margin:0">Sugestões para você</h3>
+      <div class="muted">Baseadas nos livros, autores, temas e avaliações da sua biblioteca.</div>
+    </div>
+    <button id="refreshRecommendationsBtn" type="button">Atualizar</button>
+  </div>
+  <div id="recommendationsList" class="recommend-list"></div>
+</div>
+
 <div id="currentReadingHero"></div>
 <div class="hidden" id="bookFormWrap">
 <div class="book-form">
@@ -652,6 +725,9 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 <div class="book-form-grid">
 <input id="bookTitleInput" placeholder="Título do livro">
 <input id="bookAuthorInput" placeholder="Autor">
+<input id="bookPublisherInput" placeholder="Editora">
+<input id="bookYearInput" placeholder="Ano" type="number" min="0">
+<input id="bookIsbnInput" placeholder="ISBN">
 <input id="bookPagesInput" min="1" placeholder="Total de páginas" type="number">
 <input id="bookCurrentInput" min="0" placeholder="Página atual" type="number">
 <select id="bookStatusInput">
@@ -664,6 +740,7 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 <input id="bookStartDateInput" placeholder="Data de início" type="date">
 <input id="bookEndDateInput" placeholder="Data de conclusão" type="date"/>
 <input class="full" id="bookCoverInput" placeholder="URL da capa (opcional)"/>
+<textarea class="full" id="bookDescriptionInput" placeholder="Descrição do livro"></textarea>
 <textarea class="full" id="bookNotesInput" placeholder="Observações, aprendizados, frases..."></textarea>
 </input></input></input></input></input></input></div>
 <div style="display:flex;gap:8px;margin-top:10px">
@@ -773,6 +850,40 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 </div>
 <div id="historyContent"></div>
 </section>
+
+<section class="panel" id="perfil">
+  <div class="section-title"><h2>Perfil &amp; Medidas</h2><span>Dados pessoais de acompanhamento</span></div>
+
+  <div class="card">
+    <h3>Informações gerais</h3>
+    <div class="profile-grid">
+      <input id="profileHeightInput" type="number" step="0.1" min="0" placeholder="Altura (cm)">
+      <input id="profileGoalWeightInput" type="number" step="0.1" min="0" placeholder="Meta de peso (kg)">
+    </div>
+    <button class="primary" id="saveProfileBtn" type="button" style="margin-top:8px">Salvar informações</button>
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <h3>Nova medição</h3>
+    <div class="profile-grid">
+      <input id="measureDateInput" type="date">
+      <input id="measureWeightInput" type="number" step="0.1" min="0" placeholder="Peso (kg)">
+      <input id="measureWaistInput" type="number" step="0.1" min="0" placeholder="Cintura (cm)">
+      <input id="measureAbdomenInput" type="number" step="0.1" min="0" placeholder="Abdômen (cm)">
+      <input id="measureChestInput" type="number" step="0.1" min="0" placeholder="Peitoral (cm)">
+      <input id="measureArmInput" type="number" step="0.1" min="0" placeholder="Braço (cm)">
+      <input id="measureThighInput" type="number" step="0.1" min="0" placeholder="Coxa (cm)">
+      <input id="measureHipInput" type="number" step="0.1" min="0" placeholder="Quadril (cm)">
+    </div>
+    <button class="primary" id="saveMeasurementBtn" type="button" style="margin-top:8px">Salvar medição</button>
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <h3>Histórico de medidas</h3>
+    <div id="measurementList" class="measure-list"></div>
+  </div>
+</section>
+
 <section class="panel" id="conta">
 <div class="section-title"><h2>Conta</h2><span>PWA + nuvem</span></div>
 <div class="card">
@@ -794,6 +905,17 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 <button id="clearCloudBtn">Remover configuração</button>
 </div>
 <div class="muted" id="cloudConfigMsg" style="margin-top:10px"></div>
+</div>
+<div class="card" style="margin-top:14px">
+<h3>Diagnóstico rápido</h3>
+<p class="muted">Verifica estrutura do app, armazenamento local, fotos e configuração da nuvem.</p>
+<button class="primary" id="runDiagnosticsBtn" type="button">Executar diagnóstico</button>
+<div id="diagnosticsResult" class="diag-list"></div>
+</div>
+<div class="card" style="margin-top:14px">
+<h3>Perfil &amp; Medidas</h3>
+<p class="muted">Registre peso e medidas corporais e acompanhe sua evolução ao longo do tempo.</p>
+<button class="primary" data-open-panel="perfil" type="button">Abrir Perfil &amp; Medidas</button>
 </div>
 <div class="card" style="margin-top:14px">
 <h3>Dados &amp; Backup</h3>
@@ -840,29 +962,165 @@ D:[["Desenvolvimento máquina","3×8–12"],["Elevação lateral máquina","3×1
 };
 
 function day(){return state.days[today]}
-function persist(){
+function persistQuiet(){
   localStorage.setItem("rotinaV3",JSON.stringify(state));
   markLocalSaved();
-  renderFast();
   if(mode==="cloud") queueCloudSave();
+}
+function persist(){
+  persistQuiet();
+  renderFast();
 }
 let saveTimer;
 function queueCloudSave(){clearTimeout(saveTimer);saveTimer=setTimeout(syncCloud,700)}
 
 
 
+
+function nowTimeLabel(){
+  const d=new Date();
+  return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+}
+function ensureAreaLogs(d=day()){
+  if(!Array.isArray(d.waterEntries)) d.waterEntries=[];
+  if(!Array.isArray(d.studyEntries)) d.studyEntries=[];
+}
+function formatShortDay(key){
+  const dt=parseDayKey(key);
+  if(!dt) return key;
+  return dt.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+}
+function recentDayKeys(limit=7){
+  const out=[];
+  const base=new Date();
+  base.setHours(0,0,0,0);
+  for(let i=0;i<limit;i++){
+    const d=new Date(base);
+    d.setDate(base.getDate()-i);
+    out.push(dateKeyFromDate(d));
+  }
+  return out;
+}
+function waterHistoryHtml(){
+  const d=day();
+  ensureAreaLogs(d);
+  const todayItems=d.waterEntries.length
+    ? d.waterEntries.slice().reverse().map(x=>`
+      <div class="area-history-item">
+        <div class="area-history-top">
+          <b>${x.amount>0?"+":""}${Number(x.amount||0).toFixed(1).replace(".",",")} L</b>
+          <span>${x.time||"—"}</span>
+        </div>
+      </div>`).join("")
+    : `<div class="muted">Nenhum registro individual de água hoje.</div>`;
+
+  const days=recentDayKeys(7).map(key=>{
+    const x=(state.days||{})[key]||{};
+    return `<div class="area-history-day">
+      <span>${formatShortDay(key)}</span>
+      <b>${Number(x.water||0).toFixed(1).replace(".",",")} L</b>
+    </div>`;
+  }).join("");
+
+  return `
+    <div class="area-history">
+      <h4>Registros de hoje</h4>
+      <div class="area-history-list">${todayItems}</div>
+      <h4 style="margin-top:12px">Últimos 7 dias</h4>
+      <div class="area-history-days">${days}</div>
+    </div>`;
+}
+function studyHistoryHtml(){
+  const d=day();
+  ensureAreaLogs(d);
+
+  let todayItems="";
+  if(d.studyEntries.length){
+    todayItems=d.studyEntries.slice().reverse().map(x=>`
+      <div class="area-history-item">
+        <div class="area-history-top">
+          <b>${Number(x.minutes||0)} min</b>
+          <span>${x.time||"—"}</span>
+        </div>
+        <p>${x.topic||"Sem tema informado"}</p>
+        <button style="margin-top:6px" data-study-delete="${x.id}">Excluir</button>
+      </div>`).join("");
+  }else if(Number(d.studyMinutes||0)>0){
+    todayItems=`<div class="area-history-item">
+      <div class="area-history-top"><b>${Number(d.studyMinutes||0)} min</b><span>registro anterior</span></div>
+      <p>${d.studyTopic||"Sem tema informado"}</p>
+    </div>`;
+  }else{
+    todayItems=`<div class="muted">Nenhuma sessão de estudo registrada hoje.</div>`;
+  }
+
+  const days=recentDayKeys(7).map(key=>{
+    const x=(state.days||{})[key]||{};
+    const entries=Array.isArray(x.studyEntries)?x.studyEntries:[];
+    const minutes=entries.length
+      ? entries.reduce((s,e)=>s+Number(e.minutes||0),0)
+      : Number(x.studyMinutes||0);
+    const topics=entries.length
+      ? [...new Set(entries.map(e=>e.topic).filter(Boolean))].slice(0,2).join(" · ")
+      : (x.studyTopic||"");
+    return `<div class="area-history-day">
+      <span>${formatShortDay(key)}${topics?` · ${topics}`:""}</span>
+      <b>${minutes} min</b>
+    </div>`;
+  }).join("");
+
+  return `
+    <div class="area-history">
+      <h4>Sessões de hoje</h4>
+      <div class="area-history-list">${todayItems}</div>
+      <h4 style="margin-top:12px">Últimos 7 dias</h4>
+      <div class="area-history-days">${days}</div>
+    </div>`;
+}
+
 function changeWater(delta){
   const d=day();
+  ensureAreaLogs(d);
+  const amount=Number(delta||0);
   const current=Number(d.water||0);
-  d.water=Math.max(0,Math.min(6,Math.round((current+Number(delta||0))*10)/10));
+  const next=Math.max(0,Math.min(6,Math.round((current+amount)*10)/10));
+  const applied=Math.round((next-current)*10)/10;
+  d.water=next;
+  if(applied!==0){
+    d.waterEntries.push({
+      id:"water_"+Date.now().toString(36),
+      time:nowTimeLabel(),
+      amount:applied
+    });
+  }
   persist();
 }
 function saveStudyArea(){
   const minutesEl=document.getElementById("studyMinutesArea");
   const topicEl=document.getElementById("studyTopicArea");
+  const minutes=Math.max(0,Number(minutesEl?.value||0));
+  const topic=(topicEl?.value||"").trim();
+  if(!minutes) return;
+
   const d=day();
-  d.studyMinutes=Math.max(0,Number(minutesEl?.value||0));
-  d.studyTopic=(topicEl?.value||"").trim();
+  ensureAreaLogs(d);
+  d.studyEntries.push({
+    id:"study_"+Date.now().toString(36),
+    time:nowTimeLabel(),
+    minutes,
+    topic
+  });
+  d.studyMinutes=d.studyEntries.reduce((s,e)=>s+Number(e.minutes||0),0);
+  d.studyTopic=topic || d.studyTopic || "";
+  persist();
+  showArea("estudo");
+}
+function deleteStudyEntry(id){
+  const d=day();
+  ensureAreaLogs(d);
+  d.studyEntries=d.studyEntries.filter(x=>x.id!==id);
+  d.studyMinutes=d.studyEntries.reduce((s,e)=>s+Number(e.minutes||0),0);
+  d.studyTopic=d.studyEntries.length ? (d.studyEntries[d.studyEntries.length-1].topic||"") : "";
   persist();
   showArea("estudo");
 }
@@ -926,6 +1184,8 @@ function showPanel(id){
     else if(id==="evolucao") renderEvolution();
     else if(id==="historico") renderHistory();
     else if(id==="backup" || id==="conta") renderBackupStatus();
+    else if(id==="perfil") renderProfile();
+    else if(id==="perfil") renderProfile();
     else if(id==="alimentacao") renderFood();
     else if(id==="oracoes"){
       renderPrayers();
@@ -967,6 +1227,7 @@ function showArea(area){
           <button data-area-action="water-minus">−0,5 L</button>
           <button class="primary" data-area-action="water-plus">+0,5 L</button>
         </div>
+        ${waterHistoryHtml()}
       </div>`;
   }else if(area==="treino"){
     content=`
@@ -976,13 +1237,15 @@ function showArea(area){
         <button class="primary" data-open-panel="treinos">Abrir ficha de treino</button>
       </div>`;
   }else if(area==="estudo"){
+    ensureAreaLogs(d);
     content=`
       <div class="area-card">
         <h3>Estudo</h3>
-        <p>${Number(d.studyMinutes||0)} / 30 min</p>
-        <input id="studyMinutesArea" type="number" min="0" inputmode="numeric" placeholder="Minutos estudados" value="${d.studyMinutes||""}">
-        <input id="studyTopicArea" placeholder="Tema de hoje" value="${d.studyTopic||""}" style="margin-top:8px">
-        <button class="primary" style="margin-top:8px;width:100%" data-area-action="study-save">Salvar estudo</button>
+        <p><b>${Number(d.studyMinutes||0)} min</b> acumulados hoje · meta 30 min</p>
+        <input id="studyMinutesArea" type="number" min="1" inputmode="numeric" placeholder="Minutos desta sessão">
+        <input id="studyTopicArea" placeholder="Tema estudado" style="margin-top:8px">
+        <button class="primary" style="margin-top:8px;width:100%" data-area-action="study-save">Salvar sessão</button>
+        ${studyHistoryHtml()}
       </div>`;
   }
 
@@ -1004,8 +1267,8 @@ function renderApprovedHome(){
   set("homeMealsPct",`${Math.min(100,Math.round(meals/3*100))}%`);
   set("homeWorkout",`${workoutDone?1:0} / 1`);
   set("homeWorkoutPct",workoutDone?"100%":"0%");
-  set("homeReading",`${pages} / 70`);
-  set("homeReadingPct",`${Math.min(100,Math.round(pages/70*100))}%`);
+  set("homeReading",`${pages} / 10`);
+  set("homeReadingPct",`${Math.min(100,Math.round(pages/10*100))}%`);
   set("homeStudy",`${study} / 30 min`);
   set("homeStudyPct",`${Math.min(100,Math.round(study/30*100))}%`);
   set("foodHeadline",`${meals} de 3 refeições registradas`);
@@ -1393,7 +1656,6 @@ async function deleteMeal(id){
   d.mealEntries=d.mealEntries.filter(x=>x.id!==id);
   recalcMeals(d);
   persist();
-  renderFood();
 }
 async function hydrateMealPhotos(){
   const imgs=[...document.querySelectorAll("img[data-meal-photo-key]")];
@@ -1440,6 +1702,183 @@ function renderFood(){
   hydrateMealPhotos();
 }
 
+
+let bookSearchTimer=null;
+let bookSearchAbort=null;
+let bookSearchResults=[];
+const OPEN_LIBRARY_SEARCH="https://openlibrary.org/search.json";
+
+function coverUrlFromDoc(doc,size="M"){
+  if(doc?.cover_i) return `https://covers.openlibrary.org/b/id/${doc.cover_i}-${size}.jpg`;
+  const isbn=Array.isArray(doc?.isbn)?doc.isbn[0]:null;
+  return isbn?`https://covers.openlibrary.org/b/isbn/${isbn}-${size}.jpg`:"";
+}
+function normalizeOlDoc(doc){
+  return {
+    openLibraryKey:doc?.key||"",
+    title:doc?.title||"",
+    author:Array.isArray(doc?.author_name)?doc.author_name.join(", "):"",
+    publisher:Array.isArray(doc?.publisher)?doc.publisher[0]||"":(doc?.publisher||""),
+    year:doc?.first_publish_year||"",
+    isbn:Array.isArray(doc?.isbn)?doc.isbn[0]||"":(doc?.isbn||""),
+    totalPages:Number(doc?.number_of_pages_median||0),
+    coverUrl:coverUrlFromDoc(doc,"M"),
+    subjects:Array.isArray(doc?.subject)?doc.subject.slice(0,12):[]
+  };
+}
+async function searchBooksOnline(query){
+  const q=(query||"").trim();
+  const status=document.getElementById("bookGlobalSearchStatus");
+  const host=document.getElementById("bookGlobalSearchResults");
+  if(q.length<3){
+    if(host) host.innerHTML="";
+    if(status) status.textContent="";
+    return;
+  }
+  if(bookSearchAbort) bookSearchAbort.abort();
+  bookSearchAbort=new AbortController();
+  if(status) status.textContent="Buscando livros...";
+  try{
+    const fields="key,title,author_name,cover_i,first_publish_year,isbn,publisher,number_of_pages_median,subject";
+    const url=`${OPEN_LIBRARY_SEARCH}?title=${encodeURIComponent(q)}&limit=6&lang=pt&fields=${encodeURIComponent(fields)}`;
+    const res=await fetch(url,{signal:bookSearchAbort.signal});
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data=await res.json();
+    bookSearchResults=(data?.docs||[]).map(normalizeOlDoc);
+    renderBookSearchResults();
+    if(status) status.textContent=bookSearchResults.length?`${bookSearchResults.length} resultado(s)`:"Nenhum resultado encontrado.";
+  }catch(err){
+    if(err?.name==="AbortError") return;
+    if(status) status.textContent="Não foi possível pesquisar agora.";
+  }
+}
+function renderBookSearchResults(){
+  const host=document.getElementById("bookGlobalSearchResults");
+  if(!host) return;
+  host.innerHTML=bookSearchResults.map((b,i)=>`
+    <div class="book-search-result" data-book-search-index="${i}">
+      ${b.coverUrl?`<img src="${b.coverUrl}" alt="">`:`<div style="width:48px;height:68px;background:#eef1ef;border-radius:7px"></div>`}
+      <div>
+        <b>${b.title||"Sem título"}</b>
+        <span>${b.author||"Autor não informado"}${b.year?` · ${b.year}`:""}</span>
+        <span style="display:block">${b.publisher||""}</span>
+      </div>
+    </div>`).join("");
+}
+async function selectOnlineBook(index){
+  const b=bookSearchResults[Number(index)];
+  if(!b) return;
+  openBookForm();
+  const setVal=(id,val)=>{const el=document.getElementById(id); if(el) el.value=val??"";};
+  setVal("bookTitleInput",b.title);
+  setVal("bookAuthorInput",b.author);
+  setVal("bookPublisherInput",b.publisher);
+  setVal("bookYearInput",b.year);
+  setVal("bookIsbnInput",b.isbn);
+  setVal("bookPagesInput",b.totalPages||"");
+  setVal("bookCoverInput",b.coverUrl);
+  const wrap=document.getElementById("bookFormWrap");
+  if(wrap) wrap.dataset.openLibraryKey=b.openLibraryKey||"";
+  if(wrap) wrap.dataset.subjects=JSON.stringify(b.subjects||[]);
+
+  if(b.openLibraryKey){
+    try{
+      const res=await fetch(`https://openlibrary.org${b.openLibraryKey}.json`);
+      if(res.ok){
+        const data=await res.json();
+        let desc=data?.description||"";
+        if(desc && typeof desc==="object") desc=desc.value||"";
+        if(desc) setVal("bookDescriptionInput",desc);
+        const subjects=Array.isArray(data?.subjects)?data.subjects.slice(0,12):(b.subjects||[]);
+        if(wrap) wrap.dataset.subjects=JSON.stringify(subjects);
+      }
+    }catch(e){}
+  }
+  const host=document.getElementById("bookGlobalSearchResults");
+  if(host) host.innerHTML="";
+}
+function recommendationSeeds(){
+  ensureLibrary();
+  const books=state.library.slice().sort((a,b)=>(Number(b.rating||0)-Number(a.rating||0)));
+  const subjectScore=new Map(), authorScore=new Map();
+  books.forEach(b=>{
+    const w=Math.max(1,Number(b.rating||0)) + (b.status==="concluido"?2:0) + (b.status==="lendo"?1:0);
+    (Array.isArray(b.subjects)?b.subjects:[]).slice(0,5).forEach(s=>subjectScore.set(s,(subjectScore.get(s)||0)+w));
+    if(b.author) authorScore.set(b.author,(authorScore.get(b.author)||0)+w);
+  });
+  const subjects=[...subjectScore.entries()].sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>x[0]);
+  const authors=[...authorScore.entries()].sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>x[0]);
+  return {subjects,authors};
+}
+async function refreshRecommendations(){
+  ensureLibrary();
+  const host=document.getElementById("recommendationsList");
+  if(host) host.innerHTML='<div class="muted">Buscando sugestões...</div>';
+  const existing=new Set(state.library.map(b=>(b.title||"").trim().toLowerCase()));
+  const {subjects,authors}=recommendationSeeds();
+  const queries=[];
+  subjects.forEach(s=>queries.push({q:`subject:"${s}"`,reason:`Tema: ${s}`}));
+  if(!queries.length) authors.forEach(a=>queries.push({q:`author:"${a}"`,reason:`Autor relacionado: ${a}`}));
+  if(!queries.length && state.library[0]?.title) queries.push({q:state.library[0].title,reason:"Baseado na sua biblioteca"});
+  if(!queries.length){
+    if(host) host.innerHTML='<div class="muted">Adicione e avalie alguns livros para gerar sugestões personalizadas.</div>';
+    return;
+  }
+  const picks=[];
+  for(const seed of queries.slice(0,2)){
+    try{
+      const fields="key,title,author_name,cover_i,first_publish_year,isbn,publisher,number_of_pages_median,subject";
+      const res=await fetch(`${OPEN_LIBRARY_SEARCH}?q=${encodeURIComponent(seed.q)}&limit=8&lang=pt&fields=${encodeURIComponent(fields)}`);
+      if(!res.ok) continue;
+      const data=await res.json();
+      for(const doc of (data?.docs||[])){
+        const b=normalizeOlDoc(doc);
+        if(!b.title || existing.has(b.title.trim().toLowerCase())) continue;
+        if(picks.some(x=>x.title.trim().toLowerCase()===b.title.trim().toLowerCase())) continue;
+        picks.push({...b,reason:seed.reason});
+        if(picks.length>=6) break;
+      }
+    }catch(e){}
+    if(picks.length>=6) break;
+  }
+  state.bookRecommendations=picks.slice(0,6);
+  persistQuiet();
+  renderRecommendations();
+}
+function renderRecommendations(){
+  const host=document.getElementById("recommendationsList");
+  if(!host) return;
+  const items=Array.isArray(state.bookRecommendations)?state.bookRecommendations:[];
+  if(!items.length){
+    host.innerHTML='<div class="muted">Toque em “Atualizar” para gerar sugestões.</div>';
+    return;
+  }
+  host.innerHTML=items.map((b,i)=>`
+    <div class="recommend-item">
+      ${b.coverUrl?`<img src="${b.coverUrl}" alt="">`:`<div style="width:54px;height:76px;background:#eef1ef;border-radius:8px"></div>`}
+      <div>
+        <h4>${b.title}</h4>
+        <p>${b.author||"Autor não informado"}</p>
+        <p>${b.reason||"Sugestão personalizada"}</p>
+        <button data-recommend-add="${i}">Adicionar a Quero ler</button>
+      </div>
+    </div>`).join("");
+}
+function addRecommendationToLibrary(index){
+  const b=(state.bookRecommendations||[])[Number(index)];
+  if(!b) return;
+  ensureLibrary();
+  if(state.library.some(x=>(x.title||"").trim().toLowerCase()===b.title.trim().toLowerCase())) return;
+  state.library.unshift({
+    id:makeId(),title:b.title,author:b.author,totalPages:b.totalPages||0,currentPage:0,
+    status:"quero_ler",rating:0,startDate:"",endDate:"",coverUrl:b.coverUrl||"",
+    notes:"",publisher:b.publisher||"",year:b.year||"",isbn:b.isbn||"",
+    description:"",openLibraryKey:b.openLibraryKey||"",subjects:b.subjects||[],
+    updatedAt:new Date().toISOString()
+  });
+  persist();
+}
+
 let bookFilter="lendo";
 let editingBookId=null;
 
@@ -1470,6 +1909,9 @@ function openBookForm(bookId=null){
   document.getElementById("bookFormTitle").textContent=book?"Editar livro":"Adicionar livro";
   document.getElementById("bookTitleInput").value=book?.title||"";
   document.getElementById("bookAuthorInput").value=book?.author||"";
+  document.getElementById("bookPublisherInput").value=book?.publisher||"";
+  document.getElementById("bookYearInput").value=book?.year||"";
+  document.getElementById("bookIsbnInput").value=book?.isbn||"";
   document.getElementById("bookPagesInput").value=book?.totalPages||"";
   document.getElementById("bookCurrentInput").value=book?.currentPage||"";
   document.getElementById("bookStatusInput").value=book?.status||"lendo";
@@ -1477,7 +1919,13 @@ function openBookForm(bookId=null){
   document.getElementById("bookStartDateInput").value=book?.startDate||"";
   document.getElementById("bookEndDateInput").value=book?.endDate||"";
   document.getElementById("bookCoverInput").value=book?.coverUrl||"";
+  document.getElementById("bookDescriptionInput").value=book?.description||"";
   document.getElementById("bookNotesInput").value=book?.notes||"";
+  const wrap=document.getElementById("bookFormWrap");
+  if(wrap){
+    wrap.dataset.openLibraryKey=book?.openLibraryKey||"";
+    wrap.dataset.subjects=JSON.stringify(book?.subjects||[]);
+  }
 }
 function closeBookForm(){
   document.getElementById("bookFormWrap").classList.add("hidden");
@@ -1491,6 +1939,9 @@ function saveBook(){
     id:editingBookId||makeId(),
     title,
     author:document.getElementById("bookAuthorInput").value.trim(),
+    publisher:document.getElementById("bookPublisherInput").value.trim(),
+    year:Number(document.getElementById("bookYearInput").value||0),
+    isbn:document.getElementById("bookIsbnInput").value.trim(),
     totalPages:Number(document.getElementById("bookPagesInput").value||0),
     currentPage:Number(document.getElementById("bookCurrentInput").value||0),
     status:document.getElementById("bookStatusInput").value,
@@ -1498,6 +1949,9 @@ function saveBook(){
     startDate:document.getElementById("bookStartDateInput").value,
     endDate:document.getElementById("bookEndDateInput").value,
     coverUrl:document.getElementById("bookCoverInput").value.trim(),
+    description:document.getElementById("bookDescriptionInput").value.trim(),
+    openLibraryKey:document.getElementById("bookFormWrap")?.dataset.openLibraryKey||"",
+    subjects:(()=>{try{return JSON.parse(document.getElementById("bookFormWrap")?.dataset.subjects||"[]")}catch(e){return []}})(),
     notes:document.getElementById("bookNotesInput").value.trim(),
     updatedAt:new Date().toISOString()
   };
@@ -1511,12 +1965,13 @@ function saveBook(){
 function deleteBook(id){
   if(!confirm("Excluir este livro da biblioteca?")) return;
   state.library=(state.library||[]).filter(b=>b.id!==id);
-  persist();renderLibrary();
+  persist();
 }
-function setBookFilter(filter,btn){
+function setBookFilter(filter){
   bookFilter=filter;
-  document.querySelectorAll(".library-tab").forEach(x=>x.classList.remove("active"));
-  if(btn) btn.classList.add("active");
+  document.querySelectorAll(".library-tab").forEach(x=>{
+    x.classList.toggle("active",x.dataset.bookFilter===filter);
+  });
   renderLibrary();
 }
 function addPagesToBook(id,qty){
@@ -1530,7 +1985,7 @@ function addPagesToBook(id,qty){
   }
   b.updatedAt=new Date().toISOString();
   day().pages=Number(day().pages||0)+Math.max(0,qty);
-  persist();renderLibrary();
+  persist();
 }
 function quickReadCurrentBook(){
   const b=currentBook();
@@ -1562,6 +2017,7 @@ function renderCurrentReadingHero(){
 }
 function renderLibrary(){
   ensureLibrary();
+  renderRecommendations();
   renderCurrentReadingHero();
   const grid=document.getElementById("libraryGrid");
   if(!grid) return;
@@ -1707,6 +2163,10 @@ function renderHistory(){
         <div class="history-row"><span>Treino</span><b>${workoutLabel}</b></div>
         <div class="history-row"><span>Leitura</span><b>${Number(d.pages||0)} páginas</b></div>
         <div class="history-row"><span>Estudo</span><b>${studyLabel}</b></div>
+        ${Array.isArray(d.studyEntries)&&d.studyEntries.length?`
+          <div class="history-section">
+            ${d.studyEntries.map(x=>`<div class="history-row"><span>${x.time||"—"} · ${x.topic||"Sem tema"}</span><b>${Number(x.minutes||0)} min</b></div>`).join("")}
+          </div>`:""}
         <div class="history-row"><span>Peso</span><b>${weightLabel}</b></div>
       </div>
     </div>
@@ -1840,7 +2300,11 @@ function renderEvolution(){
   set("evoWorkoutCount",String(workouts));
   set("evoWorkoutWeek",String(workouts));
 
-  const studyTotal=data.reduce((s,d)=>s+Number(d.studyMinutes||0),0);
+  const studyTotal=data.reduce((s,d)=>{
+    const entries=Array.isArray(d.studyEntries)?d.studyEntries:[];
+    const value=entries.length?entries.reduce((x,e)=>x+Number(e.minutes||0),0):Number(d.studyMinutes||0);
+    return s+value;
+  },0);
   set("evoStudyMinutes",`${Math.round(studyTotal)} min`);
   set("evoStudyAvg",`${Math.round(studyTotal/n)} min`);
 
@@ -1978,6 +2442,24 @@ document.addEventListener("click",async e=>{
     return;
   }
 
+  const searchResult=e.target.closest("[data-book-search-index]");
+  if(searchResult){
+    await selectOnlineBook(Number(searchResult.dataset.bookSearchIndex));
+    return;
+  }
+
+  const recommendAdd=e.target.closest("[data-recommend-add]");
+  if(recommendAdd){
+    addRecommendationToLibrary(Number(recommendAdd.dataset.recommendAdd));
+    return;
+  }
+
+  const measureDelete=e.target.closest("[data-measure-delete]");
+  if(measureDelete){
+    deleteMeasurement(measureDelete.dataset.measureDelete);
+    return;
+  }
+
   const bookAction=e.target.closest("[data-book-action]");
   if(bookAction){
     const action=bookAction.dataset.bookAction;
@@ -2031,6 +2513,12 @@ document.addEventListener("click",async e=>{
     return;
   }
 
+  const studyDelete=e.target.closest("[data-study-delete]");
+  if(studyDelete){
+    if(confirm("Excluir esta sessão de estudo?")) deleteStudyEntry(studyDelete.dataset.studyDelete);
+    return;
+  }
+
   const areaAction=e.target.closest("[data-area-action]");
   if(areaAction){
     const action=areaAction.dataset.areaAction;
@@ -2064,18 +2552,28 @@ if(historyNextBtn) historyNextBtn.addEventListener("click",()=>shiftHistoryDay(1
 const historyDateInput=document.getElementById("historyDateInput");
 if(historyDateInput) historyDateInput.addEventListener("change",e=>setHistoryDate(e.target.value));
 
+const runDiagnosticsBtn=document.getElementById("runDiagnosticsBtn");
+if(runDiagnosticsBtn) runDiagnosticsBtn.addEventListener("click",()=>runDiagnostics());
+
+const bookGlobalSearchInput=document.getElementById("bookGlobalSearchInput");
+if(bookGlobalSearchInput){
+  bookGlobalSearchInput.addEventListener("input",e=>{
+    clearTimeout(bookSearchTimer);
+    const q=e.target.value;
+    bookSearchTimer=setTimeout(()=>searchBooksOnline(q),750);
+  });
+}
+const refreshRecommendationsBtn=document.getElementById("refreshRecommendationsBtn");
+if(refreshRecommendationsBtn) refreshRecommendationsBtn.addEventListener("click",()=>refreshRecommendations());
+
+const saveProfileBtn=document.getElementById("saveProfileBtn");
+if(saveProfileBtn) saveProfileBtn.addEventListener("click",()=>saveProfile());
+const saveMeasurementBtn=document.getElementById("saveMeasurementBtn");
+if(saveMeasurementBtn) saveMeasurementBtn.addEventListener("click",()=>saveMeasurement());
+
 const mealPhotoInput=document.getElementById("mealPhotoInput");
 if(mealPhotoInput) mealPhotoInput.addEventListener("change",e=>handleMealPhotoSelected(e.target.files?.[0]));
 
-["workout","cardio","pages","studyTopic","weight","screenTime","instagramTime","note"].forEach(id=>{
- const el=document.getElementById(id);
- if(el) el.addEventListener("input",e=>{day()[id]=e.target.value;persist()});
-});
-document.querySelectorAll(".toggle[data-key]").forEach(t=>t.addEventListener("click",()=>{day()[t.dataset.key]=!day()[t.dataset.key];persist()}));
-const plusWaterBtn=document.getElementById("plusWater");
-if(plusWaterBtn) plusWaterBtn.onclick=()=>{day().water=Math.min(6,(day().water||0)+.5);persist()};
-const minusWaterBtn=document.getElementById("minusWater");
-if(minusWaterBtn) minusWaterBtn.onclick=()=>{day().water=Math.max(0,(day().water||0)-.5);persist()};
 
 function renderWorkouts(){
  const c=document.getElementById("workouts");c.innerHTML="";
@@ -2091,7 +2589,12 @@ function renderWorkouts(){
      wrap.appendChild(row)
    });c.appendChild(wrap)
  });
- c.querySelectorAll("input[data-k]").forEach(inp=>inp.oninput=()=>{const k=inp.dataset.k,f=inp.dataset.f;if(!state.exerciseLogs[k])state.exerciseLogs[k]={};state.exerciseLogs[k][f]=inp.value;persist()});
+ c.querySelectorAll("input[data-k]").forEach(inp=>inp.addEventListener("input",()=>{
+   const k=inp.dataset.k,f=inp.dataset.f;
+   if(!state.exerciseLogs[k]) state.exerciseLogs[k]={};
+   state.exerciseLogs[k][f]=inp.value;
+   persistQuiet();
+ }));
 }
 renderWorkouts();
 
@@ -2118,6 +2621,115 @@ function formatDateTime(value){
 function markLocalSaved(){
   localStorage.setItem("rotinaLastLocalSave",new Date().toISOString());
 }
+
+async function runDiagnostics(){
+  const host=document.getElementById("diagnosticsResult");
+  if(!host) return;
+  host.innerHTML='<div class="diag-item"><span>Executando…</span><b>...</b></div>';
+
+  const checks=[];
+  const add=(name,ok,detail="")=>checks.push({name,ok,detail});
+
+  try{
+    const requiredPanels=["hoje","areas","alimentacao","biblioteca","oracoes","evolucao","historico","perfil","conta","backup"];
+    add("Telas principais",requiredPanels.every(id=>!!document.getElementById(id)));
+  }catch(e){add("Telas principais",false);}
+
+  try{
+    const probe="diag_"+Date.now();
+    localStorage.setItem(probe,"ok");
+    const ok=localStorage.getItem(probe)==="ok";
+    localStorage.removeItem(probe);
+    add("Armazenamento local",ok);
+  }catch(e){add("Armazenamento local",false);}
+
+  try{
+    const db=await openPhotoDb();
+    add("Banco local de fotos",!!db);
+    try{db.close();}catch(e){}
+  }catch(e){add("Banco local de fotos",false);}
+
+  add("Estrutura dos dados",!!state && typeof state==="object" && !!state.days && !!state.exerciseLogs);
+  add("Supabase configurado",!!(cfg?.supabaseUrl && cfg?.supabaseAnonKey), mode==="cloud"?"modo nuvem":"modo local");
+  add("Usuário autenticado",mode!=="cloud" || !!user);
+
+  host.innerHTML=checks.map(c=>`
+    <div class="diag-item">
+      <span>${c.name}${c.detail?` · ${c.detail}`:""}</span>
+      <b class="${c.ok?"diag-ok":"diag-warn"}">${c.ok?"OK":"Verificar"}</b>
+    </div>`).join("");
+}
+
+
+function ensureProfile(){
+  if(!state.profile || typeof state.profile!=="object") state.profile={heightCm:"",goalWeight:"",measurements:[]};
+  if(!Array.isArray(state.profile.measurements)) state.profile.measurements=[];
+}
+function saveProfile(){
+  ensureProfile();
+  state.profile.heightCm=Number(document.getElementById("profileHeightInput")?.value||0);
+  state.profile.goalWeight=Number(document.getElementById("profileGoalWeightInput")?.value||0);
+  persist();
+}
+function saveMeasurement(){
+  ensureProfile();
+  const val=id=>Number(document.getElementById(id)?.value||0);
+  const date=document.getElementById("measureDateInput")?.value||todayKey();
+  const entry={
+    id:"measure_"+Date.now().toString(36),
+    date,
+    weight:val("measureWeightInput"),
+    waist:val("measureWaistInput"),
+    abdomen:val("measureAbdomenInput"),
+    chest:val("measureChestInput"),
+    arm:val("measureArmInput"),
+    thigh:val("measureThighInput"),
+    hip:val("measureHipInput"),
+    createdAt:new Date().toISOString()
+  };
+  if(!Object.entries(entry).some(([k,v])=>!["id","date","createdAt"].includes(k) && Number(v)>0)) return;
+  state.profile.measurements.push(entry);
+  state.profile.measurements.sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  if(entry.weight>0){
+    if(!state.days[date]) state.days[date]={};
+    state.days[date].weight=entry.weight;
+  }
+  persist();
+  renderProfile();
+}
+function deleteMeasurement(id){
+  ensureProfile();
+  if(!confirm("Excluir esta medição?")) return;
+  state.profile.measurements=state.profile.measurements.filter(x=>x.id!==id);
+  persist();
+  renderProfile();
+}
+function renderProfile(){
+  ensureProfile();
+  const setVal=(id,val)=>{const el=document.getElementById(id);if(el && document.activeElement!==el)el.value=val??""};
+  setVal("profileHeightInput",state.profile.heightCm||"");
+  setVal("profileGoalWeightInput",state.profile.goalWeight||"");
+  setVal("measureDateInput",document.getElementById("measureDateInput")?.value||todayKey());
+  const host=document.getElementById("measurementList");
+  if(!host) return;
+  const items=state.profile.measurements.slice().reverse().slice(0,30);
+  if(!items.length){
+    host.innerHTML='<div class="muted">Nenhuma medição registrada ainda.</div>';
+    return;
+  }
+  const labels={weight:"Peso",waist:"Cintura",abdomen:"Abdômen",chest:"Peitoral",arm:"Braço",thigh:"Coxa",hip:"Quadril"};
+  host.innerHTML=items.map(x=>{
+    const tags=Object.entries(labels).filter(([k])=>Number(x[k]||0)>0).map(([k,l])=>{
+      const unit=k==="weight"?"kg":"cm";
+      return `<span class="measure-tag">${l}: ${Number(x[k]).toFixed(1).replace(".",",")} ${unit}</span>`;
+    }).join("");
+    return `<div class="measure-item">
+      <div class="measure-head"><b>${x.date.split("-").reverse().join("/")}</b><button data-measure-delete="${x.id}">Excluir</button></div>
+      <div class="measure-tags">${tags}</div>
+    </div>`;
+  }).join("");
+}
+
 function renderBackupStatus(){
   const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
   set("backupDaysCount",String(Object.keys(state.days||{}).filter(k=>/^\d{4}-\d{2}-\d{2}$/.test(k)).length));
