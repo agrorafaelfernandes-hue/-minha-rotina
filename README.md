@@ -127,3 +127,22 @@ Depois:
 - Fotos comprimidas e armazenadas localmente em IndexedDB para não inflar o JSON do Supabase.
 - Dados textuais continuam sincronizados normalmente.
 - Próxima evolução planejada: Supabase Storage para sincronização das fotos entre dispositivos.
+
+
+## V19 — Orações
+- Módulo diário de oração integrado à Home.
+- Oração da manhã, Angelus e oração da noite com checklist.
+- Campo para intenção de oração do dia.
+- Progresso 0/3, 1/3, 2/3 e 3/3.
+- Versículo diário rotativo por data, exibido também na Home.
+- Dados salvos no mesmo estado sincronizado pelo Supabase.
+
+
+## V20 — Evangelho do dia
+- Bloco Evangelho do dia dentro de Orações.
+- Busca online da liturgia por data na API pública liturgia.up.railway.app/v2.
+- Mostra referência, dia litúrgico, texto do Evangelho, resumo curto, mensagem central e aplicação prática.
+- Botão para atualizar a leitura.
+- Botão “Marcar como lido”.
+- Cache local da liturgia do dia para funcionar melhor quando a conexão oscilar.
+- Se a fonte não responder e não houver cache, o app informa claramente que não conseguiu confirmar a leitura em vez de inventar conteúdo.

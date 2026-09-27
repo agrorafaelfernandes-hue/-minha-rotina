@@ -233,6 +233,60 @@ input,select,textarea{min-height:44px}
 }
 </style>
 
+
+<style id="v19-prayers">
+.prayer-hero{
+  background:linear-gradient(135deg,#fff8ee,#f4eadb);
+  border:1px solid #eadcc8;border-radius:18px;padding:14px;margin-bottom:10px
+}
+.prayer-hero small{display:block;color:var(--muted);margin-bottom:5px}
+.prayer-hero blockquote{margin:0;font-size:14px;font-weight:800;line-height:1.45}
+.prayer-hero cite{display:block;margin-top:6px;font-size:10px;color:var(--muted);font-style:normal}
+.prayer-progress{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
+.prayer-progress-line{height:8px;background:#e9ecef;border-radius:999px;overflow:hidden;margin-top:8px}
+.prayer-progress-line span{display:block;height:100%;background:var(--accent)}
+.prayer-list{display:grid;gap:9px}
+.prayer-item{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px}
+.prayer-item-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.prayer-item-title{display:flex;align-items:center;gap:9px}
+.prayer-item-title span:first-child{font-size:20px}
+.prayer-item h3{margin:0;font-size:13px}
+.prayer-item p{margin:5px 0 0;font-size:10px;color:var(--muted)}
+.prayer-check{
+  width:34px;height:34px;border-radius:50%;border:1px solid var(--line);
+  background:#fff;display:grid;place-items:center;font-weight:900
+}
+.prayer-check.done{background:var(--accent);color:#fff;border-color:var(--accent)}
+.prayer-text{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:11px;line-height:1.55;color:#404956}
+.prayer-intention{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:10px}
+.prayer-intention textarea{min-height:80px}
+</style>
+
+
+<style id="v20-gospel">
+.gospel-card{
+  background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px;margin-bottom:10px
+}
+.gospel-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.gospel-head h3{margin:0;font-size:14px}
+.gospel-head small{display:block;color:var(--muted);margin-top:3px}
+.gospel-chip{
+  display:inline-flex;align-items:center;gap:5px;background:#f3f6f4;color:var(--accent);
+  border-radius:999px;padding:5px 8px;font-size:9px;font-weight:800
+}
+.gospel-status{font-size:10px;color:var(--muted);margin-top:7px}
+.gospel-box{margin-top:10px;padding:10px;border-radius:13px;background:#f8faf9}
+.gospel-box b{display:block;font-size:10px;margin-bottom:4px;color:#344139}
+.gospel-box p{margin:0;font-size:11px;line-height:1.5;color:#47514a}
+.gospel-text{
+  margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:13px;
+  max-height:230px;overflow:auto;font-size:11px;line-height:1.55;color:#3f4742;background:#fff
+}
+.gospel-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.gospel-read.done{background:var(--accent);color:#fff}
+.gospel-source{margin-top:8px;font-size:9px;color:var(--muted)}
+</style>
+
 </head>
 <body>
 <div class="app" id="authScreen">
@@ -255,7 +309,7 @@ input,select,textarea{min-height:44px}
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V18 · Cloud</div>
+<div class="status offline" id="syncStatus">V20 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -295,7 +349,7 @@ input,select,textarea{min-height:44px}
 <span class="metric-emoji">🎓</span><b>Estudo</b><small id="homeStudy">0 / 30 min</small><em id="homeStudyPct">0%</em>
 </button>
 </div>
-<button class="prayer-card" onclick="showArea('oracoes')">
+<button class="prayer-card" onclick="showPanel('oracoes')">
 <span class="prayer-icon">✝️</span>
 <span class="prayer-copy"><b>Orações</b><small>Comece seu dia com Deus.</small></span>
 <span class="prayer-status">✓</span>
@@ -352,7 +406,7 @@ input,select,textarea{min-height:44px}
 <button onclick="showArea('treino')">🏋️<span>Treino</span></button>
 <button onclick="showPanel('biblioteca')">📖<span>Leitura</span></button>
 <button onclick="showArea('estudo')">🎓<span>Estudo</span></button>
-<button onclick="showArea('oracoes')">✝️<span>Orações</span></button>
+<button onclick="showPanel('oracoes')">✝️<span>Orações</span></button>
 </div>
 </div>
 </section>
@@ -365,7 +419,7 @@ input,select,textarea{min-height:44px}
 <button onclick="showArea('treino')">🏋️<span>Treino</span></button>
 <button onclick="showPanel('biblioteca')">📖<span>Leitura</span></button>
 <button onclick="showArea('estudo')">🎓<span>Estudo</span></button>
-<button onclick="showArea('oracoes')">✝️<span>Orações</span></button>
+<button onclick="showPanel('oracoes')">✝️<span>Orações</span></button>
 </div>
 </section>
 <section class="panel" id="areaDetail">
@@ -374,6 +428,113 @@ input,select,textarea{min-height:44px}
 <button onclick="showPanel('areas')">Voltar</button>
 </div>
 <div id="areaContent"></div>
+</section>
+
+
+<section class="panel" id="oracoes">
+  <div class="section-title">
+    <h2>Orações</h2>
+    <span>Rotina espiritual diária</span>
+  </div>
+
+  <div class="prayer-hero">
+    <small>Versículo do dia</small>
+    <blockquote id="dailyVerseText">“Tudo posso naquele que me fortalece.”</blockquote>
+    <cite id="dailyVerseRef">Filipenses 4,13</cite>
+  </div>
+
+  <div class="prayer-progress">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <b>Progresso das orações</b>
+      <span id="prayerProgressText">0/3</span>
+    </div>
+    <div class="prayer-progress-line"><span id="prayerProgressBar" style="width:0%"></span></div>
+  </div>
+
+  <div class="gospel-card">
+    <div class="gospel-head">
+      <div>
+        <span class="gospel-chip">📖 Evangelho do dia</span>
+        <h3 id="gospelReference" style="margin-top:7px">Carregando...</h3>
+        <small id="gospelLiturgicalDay">Buscando a liturgia de hoje</small>
+      </div>
+      <button onclick="loadDailyGospel(true)">Atualizar</button>
+    </div>
+
+    <div id="gospelStatus" class="gospel-status">Conectando à fonte da liturgia...</div>
+
+    <div class="gospel-box">
+      <b>Resumo curto</b>
+      <p id="gospelSummary">Aguardando o Evangelho do dia.</p>
+    </div>
+
+    <div class="gospel-box">
+      <b>Mensagem central</b>
+      <p id="gospelMessage">Aguardando o Evangelho do dia.</p>
+    </div>
+
+    <div class="gospel-box">
+      <b>Aplicação prática</b>
+      <p id="gospelApplication">Aguardando o Evangelho do dia.</p>
+    </div>
+
+    <details style="margin-top:10px">
+      <summary style="font-size:11px;font-weight:800;cursor:pointer">Ler o texto do Evangelho</summary>
+      <div id="gospelText" class="gospel-text">O texto será carregado quando houver conexão.</div>
+    </details>
+
+    <div class="gospel-actions">
+      <button id="gospelReadBtn" class="gospel-read" onclick="toggleGospelRead()">Marcar como lido</button>
+    </div>
+    <div class="gospel-source" id="gospelSource">Fonte: liturgia diária online.</div>
+  </div>
+
+  <div class="prayer-list">
+    <div class="prayer-item">
+      <div class="prayer-item-head">
+        <div class="prayer-item-title">
+          <span>🌅</span>
+          <div><h3>Oração da manhã</h3><p>Começar o dia com gratidão, proteção e discernimento.</p></div>
+        </div>
+        <button id="prayerMorningBtn" class="prayer-check" onclick="togglePrayer('prayerMorning')">✓</button>
+      </div>
+      <div class="prayer-text">
+        Senhor, obrigado pela vida e por este novo dia. Conduza minhas decisões, proteja minha família e meus deslocamentos, dê-me saúde, serenidade, sabedoria para liderar e humildade para ouvir. Que eu possa fazer o bem às pessoas que encontrar hoje. Amém.
+      </div>
+    </div>
+
+    <div class="prayer-item">
+      <div class="prayer-item-head">
+        <div class="prayer-item-title">
+          <span>☀️</span>
+          <div><h3>Angelus</h3><p>Uma pausa no meio do dia para recordar a presença de Deus.</p></div>
+        </div>
+        <button id="prayerAngelusBtn" class="prayer-check" onclick="togglePrayer('prayerAngelus')">✓</button>
+      </div>
+      <div class="prayer-text">
+        O Anjo do Senhor anunciou a Maria, e ela concebeu do Espírito Santo. Ave Maria... Eis aqui a serva do Senhor; faça-se em mim segundo a vossa palavra. Ave Maria... E o Verbo se fez carne e habitou entre nós. Ave Maria...
+      </div>
+    </div>
+
+    <div class="prayer-item">
+      <div class="prayer-item-head">
+        <div class="prayer-item-title">
+          <span>🌙</span>
+          <div><h3>Oração da noite</h3><p>Agradecer o dia e entregar a Deus o que ficou pendente.</p></div>
+        </div>
+        <button id="prayerNightBtn" class="prayer-check" onclick="togglePrayer('prayerNight')">✓</button>
+      </div>
+      <div class="prayer-text">
+        Senhor, obrigado por este dia. Perdoa minhas falhas, acolhe minhas preocupações e concede descanso ao meu corpo e à minha mente. Protege minha família durante a noite e prepara meu coração para um novo dia. Amém.
+      </div>
+    </div>
+  </div>
+
+  <div class="prayer-intention">
+    <b>Intenção de hoje</b>
+    <textarea id="prayerIntentionInput" placeholder="Por quem ou por qual intenção você quer rezar hoje?"></textarea>
+    <button class="primary" style="margin-top:8px;width:100%" onclick="savePrayerIntention()">Salvar intenção</button>
+  </div>
 </section>
 
 <section class="panel" id="alimentacao">
@@ -597,7 +758,7 @@ function showPanel(id){
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
   const el=document.getElementById(id); if(el) el.classList.add("active");
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.target===id));
-  if(id==="treinos") renderWorkouts(); if(id==="biblioteca") renderLibrary(); if(id==="alimentacao") renderFood();
+  if(id==="treinos") renderWorkouts(); if(id==="biblioteca") renderLibrary(); if(id==="alimentacao") renderFood(); if(id==="oracoes"){ renderPrayers(); loadDailyGospel(false); }
 }
 function registerMeal(){
   const d=day();
@@ -662,6 +823,198 @@ function renderApprovedHome(){
 }
 
 
+
+
+
+const LITURGY_API_BASE="https://liturgia.up.railway.app/v2/";
+
+function isoToday(){
+  const d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function gospelCacheKey(){ return `minhaRotina:gospel:${isoToday()}`; }
+
+function normalizeGospelPayload(data){
+  const readings=data?.leituras||data?.readings||{};
+  let g=readings.evangelho||readings.gospel||data?.evangelho||data?.gospel||null;
+  if(Array.isArray(g)) g=g[0]||null;
+  if(typeof g==="string") return {reference:"Evangelho do dia",text:g};
+
+  const reference =
+    g?.referencia||g?.reference||g?.ref||g?.titulo||g?.title||
+    data?.referencia||data?.reference||"Evangelho do dia";
+
+  const text =
+    g?.texto||g?.text||g?.conteudo||g?.content||
+    (Array.isArray(g?.versiculos)?g.versiculos.map(v=>v.texto||v.text||v).join(" "):"");
+
+  const reflection =
+    g?.reflexao||g?.reflection||data?.reflexao||data?.reflection||"";
+
+  return {
+    reference,
+    text: typeof text==="string" ? text.replace(/\s+/g," ").trim() : "",
+    reflection: typeof reflection==="string" ? reflection.trim() : "",
+    liturgicalDay:data?.liturgia||data?.liturgical_day||data?.celebracao||data?.celebration||"",
+    source:data?.fonte||data?.source||"liturgia.up.railway.app"
+  };
+}
+function sentenceChunks(text){
+  return (text||"")
+    .replace(/\s+/g," ")
+    .split(/(?<=[.!?])\s+/)
+    .map(x=>x.trim())
+    .filter(Boolean);
+}
+function shortFaithfulSummary(text){
+  const s=sentenceChunks(text);
+  if(!s.length) return "O resumo não pôde ser gerado automaticamente hoje.";
+  const chosen=s.slice(0,2).join(" ");
+  return chosen.length>380 ? chosen.slice(0,377)+"..." : chosen;
+}
+function centralMessage(gospel){
+  if(gospel.reflection) return gospel.reflection;
+  return "Escutar a Palavra de Jesus com atenção e transformá-la em uma atitude concreta ao longo do dia.";
+}
+function practicalApplication(){
+  return "Escolha uma frase do Evangelho que mais chamou sua atenção e transforme-a em uma ação concreta de caridade, paciência, humildade ou serviço hoje.";
+}
+function applyGospelToUI(gospel,fromCache=false){
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  set("gospelReference",gospel.reference||"Evangelho do dia");
+  set("gospelLiturgicalDay",gospel.liturgicalDay||"Liturgia de hoje");
+  set("gospelSummary",shortFaithfulSummary(gospel.text));
+  set("gospelMessage",centralMessage(gospel));
+  set("gospelApplication",practicalApplication());
+  set("gospelText",gospel.text||"O texto completo do Evangelho não foi disponibilizado pela fonte neste momento.");
+  set("gospelStatus",fromCache?"Exibindo a última versão carregada hoje.":"Liturgia atualizada pela internet.");
+  set("gospelSource",`Fonte: ${gospel.source||"liturgia diária online"}.`);
+}
+async function loadDailyGospel(force=false){
+  const status=document.getElementById("gospelStatus");
+  if(status) status.textContent="Buscando a liturgia católica de hoje...";
+  const key=gospelCacheKey();
+
+  if(!force){
+    try{
+      const cached=JSON.parse(localStorage.getItem(key)||"null");
+      if(cached?.text || cached?.reference){
+        applyGospelToUI(cached,true);
+      }
+    }catch(e){}
+  }
+
+  const d=new Date();
+  const url=`${LITURGY_API_BASE}?dia=${d.getDate()}&mes=${d.getMonth()+1}&ano=${d.getFullYear()}`;
+  try{
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),9000);
+    const res=await fetch(url,{signal:controller.signal,cache:"no-store"});
+    clearTimeout(timer);
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data=await res.json();
+    const gospel=normalizeGospelPayload(data);
+    if(!gospel.text && !gospel.reference) throw new Error("Resposta sem Evangelho");
+    localStorage.setItem(key,JSON.stringify(gospel));
+    applyGospelToUI(gospel,false);
+  }catch(e){
+    let cached=null;
+    try{cached=JSON.parse(localStorage.getItem(key)||"null");}catch(_){}
+    if(cached){
+      applyGospelToUI(cached,true);
+      if(status) status.textContent="Sem conexão agora. Exibindo a versão salva de hoje.";
+    }else{
+      const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+      set("gospelReference","Evangelho do dia indisponível");
+      set("gospelLiturgicalDay","Não foi possível confirmar a liturgia agora");
+      set("gospelSummary","Não vou inventar a leitura. Tente atualizar quando houver conexão.");
+      set("gospelMessage","Assim que a fonte responder, a mensagem central aparecerá aqui.");
+      set("gospelApplication","Enquanto isso, reserve alguns minutos para oração e silêncio.");
+      set("gospelText","O texto do Evangelho não pôde ser confirmado com segurança.");
+      if(status) status.textContent="Falha ao acessar a fonte da liturgia.";
+    }
+  }
+}
+function toggleGospelRead(){
+  const d=day();
+  d.gospelRead=!d.gospelRead;
+  persist();
+}
+function renderGospelRead(){
+  const d=day();
+  const btn=document.getElementById("gospelReadBtn");
+  if(!btn) return;
+  btn.classList.toggle("done",!!d.gospelRead);
+  btn.textContent=d.gospelRead?"✓ Evangelho lido":"Marcar como lido";
+}
+
+const DAILY_VERSES=[
+  {text:"“Tudo posso naquele que me fortalece.”",ref:"Filipenses 4,13"},
+  {text:"“O Senhor é o meu pastor, nada me faltará.”",ref:"Salmo 23,1"},
+  {text:"“Entrega o teu caminho ao Senhor; confia nele, e ele agirá.”",ref:"Salmo 37,5"},
+  {text:"“Não temas, porque eu estou contigo.”",ref:"Isaías 41,10"},
+  {text:"“Alegrai-vos na esperança, sede pacientes na tribulação, perseverai na oração.”",ref:"Romanos 12,12"},
+  {text:"“A minha graça te basta.”",ref:"2 Coríntios 12,9"},
+  {text:"“Sede fortes e corajosos.”",ref:"Josué 1,9"},
+  {text:"“Buscai primeiro o Reino de Deus.”",ref:"Mateus 6,33"},
+  {text:"“O Senhor é minha luz e minha salvação.”",ref:"Salmo 27,1"},
+  {text:"“Bem-aventurados os que promovem a paz.”",ref:"Mateus 5,9"},
+  {text:"“Tudo o que fizerdes, fazei-o de coração.”",ref:"Colossenses 3,23"},
+  {text:"“Permanecei no meu amor.”",ref:"João 15,9"}
+];
+function verseForToday(){
+  const d=new Date();
+  const start=new Date(d.getFullYear(),0,0);
+  const dayOfYear=Math.floor((d-start)/86400000);
+  return DAILY_VERSES[dayOfYear % DAILY_VERSES.length];
+}
+function togglePrayer(key){
+  const d=day();
+  d[key]=!d[key];
+  persist();
+}
+function savePrayerIntention(){
+  const d=day();
+  const input=document.getElementById("prayerIntentionInput");
+  if(input) d.prayerIntention=input.value.trim();
+  persist();
+}
+function renderPrayers(){
+  const d=day();
+  const verse=verseForToday();
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  set("dailyVerseText",verse.text);
+  set("dailyVerseRef",verse.ref);
+
+  const statuses=[
+    ["prayerMorning","prayerMorningBtn"],
+    ["prayerAngelus","prayerAngelusBtn"],
+    ["prayerNight","prayerNightBtn"]
+  ];
+  let done=0;
+  statuses.forEach(([key,id])=>{
+    const el=document.getElementById(id);
+    if(d[key]) done++;
+    if(el) el.classList.toggle("done",!!d[key]);
+  });
+  set("prayerProgressText",`${done}/3`);
+  const bar=document.getElementById("prayerProgressBar");
+  if(bar) bar.style.width=`${Math.round(done/3*100)}%`;
+
+  const input=document.getElementById("prayerIntentionInput");
+  if(input && document.activeElement!==input) input.value=d.prayerIntention||"";
+
+  const homeVerse=document.querySelector(".verse-card strong");
+  const homeRef=document.querySelector(".verse-card span");
+  if(homeVerse) homeVerse.textContent=verse.text;
+  if(homeRef) homeRef.textContent=verse.ref;
+
+  renderGospelRead();
+  const prayerStatus=document.querySelector(".prayer-status");
+  const prayerCopy=document.querySelector(".prayer-copy small");
+  if(prayerStatus) prayerStatus.textContent=done===3?"✓":`${done}/3`;
+  if(prayerCopy) prayerCopy.textContent=done===3?"Orações concluídas hoje.":"Comece seu dia com Deus.";
+}
 
 let pendingMealPhotoBlob=null;
 let pendingMealPhotoUrl=null;
@@ -1049,6 +1402,8 @@ function render(){
  renderTodayProgress();
  renderWeekSummary();
  renderApprovedHome();
+ renderPrayers();
+ loadDailyGospel(false);
  renderFood();
  syncBookHome();
  renderLibrary();
@@ -1206,6 +1561,11 @@ Object.assign(window,{
   setBookFilter,
   addPagesToBook,
   deleteBook,
+  togglePrayer,
+  savePrayerIntention,
+  renderPrayers,
+  loadDailyGospel,
+  toggleGospelRead,
   openMealForm,
   closeMealForm,
   pickMealPhoto,
