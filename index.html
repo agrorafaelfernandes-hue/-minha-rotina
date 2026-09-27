@@ -202,6 +202,37 @@ input,select,textarea{min-height:44px}
   .book-form .full{grid-column:auto}
 }
 </style>
+
+<style id="v18-food-photo">
+.meal-list{display:grid;gap:8px;margin-top:10px}
+.meal-item{background:#fff;border:1px solid var(--line);border-radius:16px;padding:11px}
+.meal-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.meal-top h4{margin:0;font-size:13px}
+.meal-top small{color:var(--muted)}
+.meal-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.meal-tag{font-size:9px;padding:5px 7px;border-radius:999px;background:#f3f5f7}
+.meal-form{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:10px}
+.meal-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.meal-form-grid .full{grid-column:1/-1}
+.food-summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0}
+.food-summary-grid>div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center}
+.food-summary-grid b{display:block;font-size:15px}
+.food-summary-grid span{font-size:9px;color:var(--muted)}
+.choice-row{display:flex;gap:6px;flex-wrap:wrap}
+.choice-row label{display:flex;align-items:center;gap:5px;background:#f8fafb;border:1px solid var(--line);padding:7px 9px;border-radius:10px;font-size:10px}
+.food-note{background:#fff9ef;border:1px solid #f2e4c7;border-radius:14px;padding:10px;font-size:10px;color:#6c604a}
+.photo-picker{display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:center}
+.photo-preview{width:92px;height:92px;border-radius:14px;border:1px dashed var(--line);background:#f8fafb;display:grid;place-items:center;overflow:hidden;color:var(--muted);font-size:10px;text-align:center}
+.photo-preview img{width:100%;height:100%;object-fit:cover}
+.photo-actions{display:grid;gap:7px}
+.photo-note{font-size:9px;color:var(--muted);line-height:1.35}
+.meal-photo{width:100%;max-height:220px;object-fit:cover;border-radius:12px;margin-top:9px;background:#f4f5f6}
+@media(max-width:760px){
+  .meal-form-grid{grid-template-columns:1fr}
+  .meal-form-grid .full{grid-column:auto}
+}
+</style>
+
 </head>
 <body>
 <div class="app" id="authScreen">
@@ -224,7 +255,7 @@ input,select,textarea{min-height:44px}
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V16 · Cloud</div>
+<div class="status offline" id="syncStatus">V18 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -251,7 +282,7 @@ input,select,textarea{min-height:44px}
 <button class="metric-box" onclick="showArea('agua')">
 <span class="metric-emoji">💧</span><b>Água</b><small id="homeWater">0,0 / 3,0 L</small><em id="homeWaterPct">0%</em>
 </button>
-<button class="metric-box" onclick="showArea('alimentacao')">
+<button class="metric-box" onclick="showPanel('alimentacao')">
 <span class="metric-emoji">🍴</span><b>Alimentação</b><small id="homeMeals">0 / 3</small><em id="homeMealsPct">0%</em>
 </button>
 <button class="metric-box" onclick="showArea('treino')">
@@ -272,7 +303,7 @@ input,select,textarea{min-height:44px}
 <div class="food-card">
 <div class="section-head">
 <div><span class="section-icon orange">🍴</span><b>Alimentação do dia</b><small id="foodHeadline">0 de 3 refeições registradas</small></div>
-<button onclick="showArea('alimentacao')">›</button>
+<button onclick="showPanel('alimentacao')">›</button>
 </div>
 <div class="macro-grid">
 <div><span>Proteína</span><b id="macroProtein">0/3</b></div>
@@ -280,7 +311,7 @@ input,select,textarea{min-height:44px}
 <div><span>Vegetais</span><b id="macroVeg">0/3</b></div>
 <div><span>Gorduras</span><b id="macroFat">0/3</b></div>
 </div>
-<button class="wide-action" onclick="registerMeal()">＋ Registrar refeição</button>
+<button class="wide-action" onclick="openMealForm()">＋ Registrar refeição</button>
 </div>
 <div class="two-col">
 <div class="compact-card workout-summary">
@@ -317,7 +348,7 @@ input,select,textarea{min-height:44px}
 <div class="areas-title"><b>Áreas da Rotina</b><small>Acesse os detalhes de cada área</small></div>
 <div class="areas-grid">
 <button onclick="showArea('agua')">💧<span>Água</span></button>
-<button onclick="showArea('alimentacao')">🍴<span>Alimentação</span></button>
+<button onclick="showPanel('alimentacao')">🍴<span>Alimentação</span></button>
 <button onclick="showArea('treino')">🏋️<span>Treino</span></button>
 <button onclick="showPanel('biblioteca')">📖<span>Leitura</span></button>
 <button onclick="showArea('estudo')">🎓<span>Estudo</span></button>
@@ -330,7 +361,7 @@ input,select,textarea{min-height:44px}
 <div class="section-title"><h2>Áreas da Rotina</h2><span>Detalhes por área</span></div>
 <div class="areas-grid large">
 <button onclick="showArea('agua')">💧<span>Água</span></button>
-<button onclick="showArea('alimentacao')">🍴<span>Alimentação</span></button>
+<button onclick="showPanel('alimentacao')">🍴<span>Alimentação</span></button>
 <button onclick="showArea('treino')">🏋️<span>Treino</span></button>
 <button onclick="showPanel('biblioteca')">📖<span>Leitura</span></button>
 <button onclick="showArea('estudo')">🎓<span>Estudo</span></button>
@@ -344,6 +375,66 @@ input,select,textarea{min-height:44px}
 </div>
 <div id="areaContent"></div>
 </section>
+
+<section class="panel" id="alimentacao">
+<div class="section-title">
+<h2>Alimentação</h2>
+<button class="primary" onclick="openMealForm()">+ Refeição</button>
+</div>
+
+<div class="food-summary-grid">
+<div><b id="foodMealsCount">0/3</b><span>Refeições</span></div>
+<div><b id="foodProteinCount">0/3</b><span>Proteína</span></div>
+<div><b id="foodVegCount">0/3</b><span>Vegetais</span></div>
+<div><b id="foodWaterLink">0,0 L</b><span>Água</span></div>
+</div>
+
+<div class="food-note">
+Registro simples e flexível para acompanhar a qualidade das refeições, sem contar calorias.
+</div>
+
+<div class="hidden" id="mealFormWrap" style="margin-top:10px">
+<div class="meal-form">
+<h3>Registrar refeição</h3>
+<div class="meal-form-grid">
+<select id="mealTypeInput">
+<option value="Café da manhã">Café da manhã</option>
+<option value="Almoço">Almoço</option>
+<option value="Jantar">Jantar</option>
+<option value="Lanche">Lanche</option>
+</select>
+<input id="mealTimeInput" type="time">
+
+<div class="full choice-row">
+<label><input id="mealProteinInput" type="checkbox"> Proteína</label>
+<label><input id="mealCarbInput" type="checkbox"> Carboidrato</label>
+<label><input id="mealVegInput" type="checkbox"> Vegetais</label>
+<label><input id="mealFatInput" type="checkbox"> Gordura boa</label>
+</div>
+
+<div class="full photo-picker">
+<div class="photo-preview" id="mealPhotoPreview">Sem foto</div>
+<div class="photo-actions">
+<input class="hidden" id="mealPhotoInput" type="file" accept="image/*" capture="environment">
+<button type="button" onclick="pickMealPhoto()">📷 Adicionar foto</button>
+<button type="button" onclick="clearMealPhoto()">Remover foto</button>
+<div class="photo-note">Opcional. A foto é comprimida para economizar espaço.</div>
+</div>
+</div>
+
+<textarea class="full" id="mealDescInput" placeholder="O que você comeu? Ex.: arroz, feijão, frango grelhado e salada"></textarea>
+<textarea class="full" id="mealNoteInput" placeholder="Observação opcional"></textarea>
+</div>
+<div style="display:flex;gap:8px;margin-top:10px">
+<button class="primary" onclick="saveMeal()">Salvar</button>
+<button onclick="closeMealForm()">Cancelar</button>
+</div>
+</div>
+</div>
+
+<div class="meal-list" id="mealList"></div>
+</section>
+
 <section class="panel" id="biblioteca">
 <div class="section-title">
 <h2>Biblioteca</h2>
@@ -506,7 +597,7 @@ function showPanel(id){
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
   const el=document.getElementById(id); if(el) el.classList.add("active");
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.target===id));
-  if(id==="treinos") renderWorkouts(); if(id==="biblioteca") renderLibrary();
+  if(id==="treinos") renderWorkouts(); if(id==="biblioteca") renderLibrary(); if(id==="alimentacao") renderFood();
 }
 function registerMeal(){
   const d=day();
@@ -526,7 +617,7 @@ function showArea(area){
   if(area==="agua"){
     html=`<div class="area-card"><h3>Água</h3><p><b>${(d.water||0).toFixed(1)} L</b> de 3,0 L</p><div class="row"><button onclick="day().water=Math.max(0,(day().water||0)-0.5);persist()">−0,5 L</button><button class="primary" onclick="quickWater()">+0,5 L</button></div></div>`;
   }else if(area==="alimentacao"){
-    html=`<div class="area-card"><h3>Alimentação</h3><p>${d.mealsCount||0} de 3 refeições registradas</p><div class="row"><span>Proteína</span><b>${d.proteinCount||0}/3</b></div><div class="row"><span>Carboidrato</span><b>${d.carbCount||0}/3</b></div><div class="row"><span>Vegetais</span><b>${d.vegCount||0}/3</b></div><div class="row"><span>Gorduras</span><b>${d.fatCount||0}/3</b></div><button class="primary" style="width:100%;margin-top:10px" onclick="registerMeal()">Registrar refeição</button></div>`;
+    html=`<div class="area-card"><h3>Alimentação</h3><p>${d.mealsCount||0} de 3 refeições registradas</p><div class="row"><span>Proteína</span><b>${d.proteinCount||0}/3</b></div><div class="row"><span>Carboidrato</span><b>${d.carbCount||0}/3</b></div><div class="row"><span>Vegetais</span><b>${d.vegCount||0}/3</b></div><div class="row"><span>Gorduras</span><b>${d.fatCount||0}/3</b></div><button class="primary" style="width:100%;margin-top:10px" onclick="openMealForm()">Registrar refeição</button></div>`;
   }else if(area==="treino"){
     html=`<div class="area-card"><h3>Treino</h3><p>Selecione o treino do dia e registre cargas e repetições.</p><button class="primary" onclick="showPanel('treinos')">Abrir ficha de treino</button></div>`;
   }else if(area==="leitura"){
@@ -570,6 +661,209 @@ function renderApprovedHome(){
   set("studyHomeTopic",`Tema de hoje: ${d.studyTopic||"—"}`);
 }
 
+
+
+let pendingMealPhotoBlob=null;
+let pendingMealPhotoUrl=null;
+
+function ensureMeals(){
+  const d=day();
+  if(!Array.isArray(d.mealEntries)) d.mealEntries=[];
+}
+function openPhotoDb(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open("minhaRotinaMedia",1);
+    req.onupgradeneeded=()=>{
+      const db=req.result;
+      if(!db.objectStoreNames.contains("mealPhotos")) db.createObjectStore("mealPhotos");
+    };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function putMealPhoto(key,blob){
+  const db=await openPhotoDb();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction("mealPhotos","readwrite");
+    tx.objectStore("mealPhotos").put(blob,key);
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+async function getMealPhoto(key){
+  if(!key) return null;
+  const db=await openPhotoDb();
+  return new Promise((resolve,reject)=>{
+    const req=db.transaction("mealPhotos","readonly").objectStore("mealPhotos").get(key);
+    req.onsuccess=()=>resolve(req.result||null);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function removeMealPhoto(key){
+  if(!key) return;
+  const db=await openPhotoDb();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction("mealPhotos","readwrite");
+    tx.objectStore("mealPhotos").delete(key);
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+function compressMealPhoto(file,maxSide=900,quality=.72){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    const src=URL.createObjectURL(file);
+    img.onload=()=>{
+      let w=img.width,h=img.height;
+      const scale=Math.min(1,maxSide/Math.max(w,h));
+      w=Math.max(1,Math.round(w*scale));
+      h=Math.max(1,Math.round(h*scale));
+      const canvas=document.createElement("canvas");
+      canvas.width=w; canvas.height=h;
+      canvas.getContext("2d").drawImage(img,0,0,w,h);
+      canvas.toBlob(blob=>{
+        URL.revokeObjectURL(src);
+        if(blob) resolve(blob); else reject(new Error("Falha ao comprimir foto"));
+      },"image/jpeg",quality);
+    };
+    img.onerror=()=>{URL.revokeObjectURL(src);reject(new Error("Falha ao ler foto"));};
+    img.src=src;
+  });
+}
+function pickMealPhoto(){
+  const input=document.getElementById("mealPhotoInput");
+  if(input) input.click();
+}
+function clearMealPhoto(){
+  pendingMealPhotoBlob=null;
+  if(pendingMealPhotoUrl){URL.revokeObjectURL(pendingMealPhotoUrl);pendingMealPhotoUrl=null;}
+  const host=document.getElementById("mealPhotoPreview");
+  if(host) host.innerHTML="Sem foto";
+  const input=document.getElementById("mealPhotoInput");
+  if(input) input.value="";
+}
+async function handleMealPhotoSelected(file){
+  if(!file) return;
+  try{
+    pendingMealPhotoBlob=await compressMealPhoto(file);
+    if(pendingMealPhotoUrl) URL.revokeObjectURL(pendingMealPhotoUrl);
+    pendingMealPhotoUrl=URL.createObjectURL(pendingMealPhotoBlob);
+    const host=document.getElementById("mealPhotoPreview");
+    if(host) host.innerHTML=`<img src="${pendingMealPhotoUrl}" alt="Prévia da refeição">`;
+  }catch(e){
+    clearMealPhoto();
+    alert("Não foi possível preparar a foto.");
+  }
+}
+function openMealForm(){
+  ensureMeals();
+  showPanel("alimentacao");
+  const wrap=document.getElementById("mealFormWrap");
+  if(wrap) wrap.classList.remove("hidden");
+  const now=new Date();
+  const time=document.getElementById("mealTimeInput");
+  if(time) time.value=String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
+}
+function closeMealForm(){
+  const el=document.getElementById("mealFormWrap");
+  if(el) el.classList.add("hidden");
+  clearMealPhoto();
+}
+async function saveMeal(){
+  ensureMeals();
+  const d=day();
+  const mealId="meal_"+Date.now().toString(36);
+  let photoKey=null;
+  if(pendingMealPhotoBlob){
+    photoKey=`meal-photo:${mealId}`;
+    try{await putMealPhoto(photoKey,pendingMealPhotoBlob);}
+    catch(e){photoKey=null;alert("A refeição será salva sem a foto, pois não foi possível armazená-la.");}
+  }
+  const entry={
+    id:mealId,
+    photoKey,
+    type:document.getElementById("mealTypeInput").value,
+    time:document.getElementById("mealTimeInput").value,
+    description:document.getElementById("mealDescInput").value.trim(),
+    note:document.getElementById("mealNoteInput").value.trim(),
+    protein:document.getElementById("mealProteinInput").checked,
+    carb:document.getElementById("mealCarbInput").checked,
+    veg:document.getElementById("mealVegInput").checked,
+    fat:document.getElementById("mealFatInput").checked
+  };
+  d.mealEntries.unshift(entry);
+  recalcMeals(d);
+  document.getElementById("mealDescInput").value="";
+  document.getElementById("mealNoteInput").value="";
+  ["mealProteinInput","mealCarbInput","mealVegInput","mealFatInput"].forEach(id=>document.getElementById(id).checked=false);
+  clearMealPhoto();
+  persist();
+  const wrap=document.getElementById("mealFormWrap");
+  if(wrap) wrap.classList.add("hidden");
+  renderFood();
+}
+function recalcMeals(d=day()){
+  ensureMeals();
+  d.mealsCount=d.mealEntries.length;
+  d.meals=d.mealsCount>=3;
+  d.proteinCount=d.mealEntries.filter(x=>x.protein).length;
+  d.carbCount=d.mealEntries.filter(x=>x.carb).length;
+  d.vegCount=d.mealEntries.filter(x=>x.veg).length;
+  d.fatCount=d.mealEntries.filter(x=>x.fat).length;
+}
+async function deleteMeal(id){
+  const d=day(); ensureMeals();
+  const found=d.mealEntries.find(x=>x.id===id);
+  if(found?.photoKey){try{await removeMealPhoto(found.photoKey);}catch(e){}}
+  d.mealEntries=d.mealEntries.filter(x=>x.id!==id);
+  recalcMeals(d);
+  persist();
+  renderFood();
+}
+async function hydrateMealPhotos(){
+  const imgs=[...document.querySelectorAll("img[data-meal-photo-key]")];
+  for(const img of imgs){
+    const key=img.dataset.mealPhotoKey;
+    if(!key||img.dataset.loaded==="1") continue;
+    try{
+      const blob=await getMealPhoto(key);
+      if(blob){
+        img.src=URL.createObjectURL(blob);
+        img.dataset.loaded="1";
+      }else{
+        img.style.display="none";
+      }
+    }catch(e){img.style.display="none";}
+  }
+}
+function renderFood(){
+  const d=day(); ensureMeals();
+  const entries=d.mealEntries;
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  set("foodMealsCount",`${entries.length}/3`);
+  set("foodProteinCount",`${entries.filter(x=>x.protein).length}/3`);
+  set("foodVegCount",`${entries.filter(x=>x.veg).length}/3`);
+  set("foodWaterLink",`${Number(d.water||0).toFixed(1).replace(".",",")} L`);
+  const list=document.getElementById("mealList");
+  if(!list) return;
+  if(!entries.length){
+    list.innerHTML=`<div class="library-empty">Nenhuma refeição registrada hoje.<br><button class="primary" style="margin-top:10px" onclick="openMealForm()">Registrar refeição</button></div>`;
+    return;
+  }
+  list.innerHTML=entries.map(m=>{
+    const tags=[m.protein?"Proteína":null,m.carb?"Carboidrato":null,m.veg?"Vegetais":null,m.fat?"Gordura boa":null]
+      .filter(Boolean).map(t=>`<span class="meal-tag">${t}</span>`).join("");
+    return `<div class="meal-item">
+      <div class="meal-top"><h4>${m.type}</h4><small>${m.time||""}</small></div>
+      ${m.photoKey?`<img class="meal-photo" data-meal-photo-key="${m.photoKey}" alt="Foto da refeição">`:""}
+      ${m.description?`<p style="font-size:11px;margin:7px 0 0">${m.description}</p>`:""}
+      <div class="meal-tags">${tags}</div>
+      ${m.note?`<p style="font-size:10px;color:var(--muted);margin:7px 0 0">${m.note}</p>`:""}
+      <button style="margin-top:8px" onclick="deleteMeal('${m.id}')">Excluir</button>
+    </div>`;
+  }).join("");
+  hydrateMealPhotos();
+}
 
 let bookFilter="lendo";
 let editingBookId=null;
@@ -755,9 +1049,13 @@ function render(){
  renderTodayProgress();
  renderWeekSummary();
  renderApprovedHome();
+ renderFood();
  syncBookHome();
  renderLibrary();
 }
+const mealPhotoInput=document.getElementById("mealPhotoInput");
+if(mealPhotoInput) mealPhotoInput.addEventListener("change",e=>handleMealPhotoSelected(e.target.files?.[0]));
+
 ["workout","cardio","pages","studyTopic","weight","screenTime","instagramTime","note"].forEach(id=>{
  const el=document.getElementById(id);
  if(el) el.addEventListener("input",e=>{day()[id]=e.target.value;persist()});
@@ -908,6 +1206,13 @@ Object.assign(window,{
   setBookFilter,
   addPagesToBook,
   deleteBook,
+  openMealForm,
+  closeMealForm,
+  pickMealPhoto,
+  clearMealPhoto,
+  saveMeal,
+  deleteMeal,
+  renderFood,
   day,
   persist
 });

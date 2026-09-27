@@ -117,3 +117,13 @@ Depois:
 - O JavaScript continua como módulo, mas as funções necessárias agora são expostas explicitamente para a interface.
 - Mantida toda a Biblioteca da V15.
 - Cache atualizado para V16.
+
+
+## V18 — Alimentação com fotos
+- Módulo completo de alimentação diária.
+- Registro de tipo, horário, descrição e observações.
+- Marcação de proteína, carboidrato, vegetais e gordura boa.
+- Foto opcional da refeição usando câmera ou biblioteca do aparelho.
+- Fotos comprimidas e armazenadas localmente em IndexedDB para não inflar o JSON do Supabase.
+- Dados textuais continuam sincronizados normalmente.
+- Próxima evolução planejada: Supabase Storage para sincronização das fotos entre dispositivos.

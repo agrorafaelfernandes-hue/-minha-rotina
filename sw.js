@@ -1,4 +1,4 @@
-const CACHE="minha-rotina-v16";
+const CACHE="minha-rotina-v18";
 const ASSETS=["./manifest.json","./icon-192.png","./icon-512.png"];
 
 self.addEventListener("install",event=>{
