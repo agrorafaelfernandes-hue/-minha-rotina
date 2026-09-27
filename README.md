@@ -163,6 +163,11 @@ Depois:
 - 7 e 30 dias agora incluem corretamente os dias sem registro, evitando inconsistências de período.
 - O histórico Geral usa apenas dias com data válida.
 - Gráficos longos são compactados visualmente para caber melhor no celular, sem alterar os cálculos dos indicadores.
--    Disparo de deploy Teste-22
--    
-- 
+
+
+## V23 — Filtros de Evolução robustos
+- Troca os filtros 7/30/Geral para event listeners diretos no módulo JavaScript.
+- Remove dependência de onclick inline nos botões de período.
+- Corrige chamada indevida de renderEvolution ao abrir qualquer painel.
+- Adiciona rótulo visível do período selecionado para facilitar a validação.
+- Mantém a V22 como base de cálculo e tratamento das datas.

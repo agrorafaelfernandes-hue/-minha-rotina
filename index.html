@@ -333,7 +333,7 @@ input,select,textarea{min-height:44px}
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V22 · Cloud</div>
+<div class="status offline" id="syncStatus">V23 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -666,11 +666,12 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
   <div class="section-title"><h2>Evolução</h2><span>Consistência e tendência</span></div>
 
   <div class="evo-range">
-    <button class="active" data-evo-range="7" onclick="setEvolutionRange(7,this)">7 dias</button>
-    <button data-evo-range="30" onclick="setEvolutionRange(30,this)">30 dias</button>
-    <button data-evo-range="all" onclick="setEvolutionRange('all',this)">Geral</button>
+    <button class="active" data-evo-range="7" >7 dias</button>
+    <button data-evo-range="30" >30 dias</button>
+    <button data-evo-range="all" >Geral</button>
   </div>
 
+  <div id="evoPeriodLabel" style="font-size:10px;color:var(--muted);margin:-2px 0 10px">Período: últimos 7 dias</div>
   <div class="evo-summary">
     <div><b id="evoAdherence">0%</b><span>Aderência média</span></div>
     <div><b id="evoWorkoutCount">0</b><span>Treinos</span></div>
@@ -845,8 +846,11 @@ function showPanel(id){
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
   const el=document.getElementById(id); if(el) el.classList.add("active");
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.target===id));
-  if(id==="treinos") renderWorkouts(); if(id==="biblioteca") renderLibrary();
- renderEvolution(); if(id==="alimentacao") renderFood(); if(id==="oracoes"){ renderPrayers(); loadDailyGospel(false); }
+  if(id==="treinos") renderWorkouts();
+  if(id==="biblioteca") renderLibrary();
+  if(id==="evolucao") renderEvolution();
+  if(id==="alimentacao") renderFood();
+  if(id==="oracoes"){ renderPrayers(); loadDailyGospel(false); }
 }
 function registerMeal(){
   const d=day();
@@ -1523,13 +1527,19 @@ function shortDateLabel(dateStr){
   const d=parseDayKey(dateStr);
   return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}`;
 }
-function setEvolutionRange(range,btn){
+function setEvolutionRange(range){
   evolutionRange=range;
   document.querySelectorAll("[data-evo-range]").forEach(x=>{
     const raw=x.dataset.evoRange;
     const selected=(evolutionRange==="all" && raw==="all") || (String(evolutionRange)===raw);
     x.classList.toggle("active",selected);
   });
+  const label=document.getElementById("evoPeriodLabel");
+  if(label){
+    label.textContent=evolutionRange==="all"
+      ? "Período: histórico geral"
+      : `Período: últimos ${evolutionRange} dias`;
+  }
   renderEvolution();
 }
 function renderBars(hostId,items,valueFn,maxVal,className=""){
@@ -1645,7 +1655,16 @@ function render(){
  renderFood();
  syncBookHome();
  renderLibrary();
+ renderEvolution();
 }
+
+document.querySelectorAll("[data-evo-range]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const raw=btn.dataset.evoRange;
+    setEvolutionRange(raw==="all" ? "all" : Number(raw));
+  });
+});
+
 const mealPhotoInput=document.getElementById("mealPhotoInput");
 if(mealPhotoInput) mealPhotoInput.addEventListener("change",e=>handleMealPhotoSelected(e.target.files?.[0]));
 
