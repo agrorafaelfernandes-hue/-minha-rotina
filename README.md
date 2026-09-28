@@ -328,3 +328,13 @@ Depois:
 - Corrige erro da V38 que impedia o app de abrir.
 - A função do modo de treino estava sendo executada antes da variável de controle ser inicializada.
 - Mantém Treino Livre, Treino guiado e Vida Espiritual 2.0.
+
+## V39 — Biblioteca 2.0 + Metas + Evolução inteligente
+- Biblioteca pesquisa simultaneamente Open Library e Google Books.
+- Busca por título, autor ou ISBN.
+- Resultados são mesclados e deduplicados, priorizando registros com capa, ISBN, páginas, editora e descrição.
+- Cadastro preserva IDs das duas fontes quando disponíveis.
+- Novas metas configuráveis: água, refeições, leitura, estudo e treinos/semana.
+- Home, aderência e Evolução passam a usar as metas configuradas.
+- Nova leitura automática do período na Evolução.
+- Atalhos rápidos na Home para água, peso, refeição, treino e estudo.

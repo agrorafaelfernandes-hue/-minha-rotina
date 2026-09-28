@@ -477,6 +477,26 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 .free-activity-meta{color:var(--muted);font-size:9px;margin-top:2px}
 </style>
 
+
+<style id="v39-improvements">
+.quick-actions{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:0 0 10px}
+.quick-action{background:#fff;border:1px solid var(--line);border-radius:13px;padding:9px 4px;font-size:9px;font-weight:800;display:grid;gap:3px;place-items:center}
+.quick-action span{font-size:18px}
+.goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.goal-field{background:#f8faf9;border-radius:12px;padding:9px}
+.goal-field label{display:block;font-size:9px;color:var(--muted);margin-bottom:5px}
+.goal-field input{width:100%}
+.evo-insights{display:grid;gap:7px;margin-top:8px}
+.evo-insight{background:#f8faf9;border-radius:12px;padding:9px 10px;font-size:10px;line-height:1.45}
+.book-source{display:inline-flex!important;width:auto!important;padding:2px 6px;border-radius:999px;background:#eef5f1;color:var(--accent);font-size:8px!important;font-weight:800;margin-top:3px}
+.book-search-result{cursor:pointer}
+.book-search-result:hover{background:#f8faf9}
+@media(max-width:760px){
+  .quick-actions{grid-template-columns:repeat(5,1fr)}
+  .goal-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+
 </head>
 <body>
 <div class="app" id="authScreen">
@@ -499,7 +519,7 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V38.1 · Cloud</div>
+<div class="status offline" id="syncStatus">V39 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -544,6 +564,15 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 <span class="prayer-copy"><b>Vida espiritual</b><small>Comece seu dia com Deus.</small></span>
 <span class="prayer-status">✓</span>
 </button>
+
+
+<div class="quick-actions">
+  <button class="quick-action" type="button" data-water-change="0.5"><span>💧</span>+0,5 L</button>
+  <button class="quick-action" type="button" data-home-action="weight"><span>⚖️</span>Peso</button>
+  <button class="quick-action" type="button" data-meal-action="open"><span>🍴</span>Refeição</button>
+  <button class="quick-action" type="button" data-open-area="treino"><span>🏋️</span>Treino</button>
+  <button class="quick-action" type="button" data-open-area="estudo"><span>🎓</span>Estudo</button>
+</div>
 
 <div class="daily-weight-card">
   <div class="section-head">
@@ -845,8 +874,8 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 </div>
 <div class="book-search-box">
   <b>Pesquisar livro na internet</b>
-  <div class="muted" style="margin-top:3px">Digite o título. O app busca dados, capa e edição automaticamente.</div>
-  <input id="bookGlobalSearchInput" placeholder="Ex.: A Regra 10X" style="margin-top:8px"/>
+  <div class="muted" style="margin-top:3px">Pesquise por título, autor ou ISBN. O app combina Open Library e Google Books.</div>
+  <input id="bookGlobalSearchInput" placeholder="Título, autor ou ISBN" style="margin-top:8px"/>
   <div id="bookGlobalSearchStatus" class="muted" style="margin-top:6px"></div>
   <div id="bookGlobalSearchResults" class="book-search-results"></div>
 </div>
@@ -916,6 +945,13 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 <div><b id="evoStudyMinutes">0 min</b><span>Estudo</span></div>
 <div><b id="evoPages">0 pág.</b><span>Leitura</span></div>
 </div>
+
+<div class="evo-card">
+<h3>Leitura do período</h3>
+<div class="muted">Resumo automático dos seus registros.</div>
+<div class="evo-insights" id="evoInsights"></div>
+</div>
+
 <div class="evo-card">
 <h3>Consistência diária</h3>
 <div class="evo-chart" id="evoConsistencyChart"></div>
@@ -924,7 +960,7 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 <h3>Água</h3>
 <div class="evo-kpi-row">
 <div class="evo-mini"><b id="evoWaterAvg">0,0 L</b><span>Média diária</span></div>
-<div class="evo-mini"><b id="evoWaterGoal">0%</b><span>Dias na meta de 3 L</span></div>
+<div class="evo-mini"><b id="evoWaterGoal">0%</b><span id="evoWaterGoalLabel">Dias na meta</span></div>
 </div>
 <div class="evo-chart" id="evoWaterChart"></div>
 </div>
@@ -1056,6 +1092,21 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 <button class="primary" id="runDiagnosticsBtn" type="button">Executar diagnóstico</button>
 <div id="diagnosticsResult" class="diag-list"></div>
 </div>
+
+<div class="card" style="margin-top:14px">
+<h3>Minhas metas</h3>
+<p class="muted">Ajuste as metas usadas na Home, na aderência e na Evolução.</p>
+<div class="goal-grid">
+  <div class="goal-field"><label>Água por dia (L)</label><input id="goalWaterInput" type="number" min="0.5" max="10" step="0.5"></div>
+  <div class="goal-field"><label>Refeições por dia</label><input id="goalMealsInput" type="number" min="1" max="8" step="1"></div>
+  <div class="goal-field"><label>Páginas por dia</label><input id="goalReadingInput" type="number" min="1" max="500" step="1"></div>
+  <div class="goal-field"><label>Estudo por dia (min)</label><input id="goalStudyInput" type="number" min="5" max="600" step="5"></div>
+  <div class="goal-field"><label>Treinos por semana</label><input id="goalWorkoutInput" type="number" min="1" max="14" step="1"></div>
+</div>
+<button class="primary" id="saveGoalsBtn" type="button" style="margin-top:10px;width:100%">Salvar metas</button>
+<div class="muted" id="goalsStatus" style="margin-top:7px"></div>
+</div>
+
 <div class="card" style="margin-top:14px">
 <h3>Perfil &amp; Medidas</h3>
 <p class="muted">Registre peso e medidas corporais e acompanhe sua evolução ao longo do tempo.</p>
@@ -1097,6 +1148,50 @@ const today=new Date().toISOString().slice(0,10);
 document.getElementById("dateLabel").textContent=new Intl.DateTimeFormat("pt-BR",{weekday:"long",day:"2-digit",month:"long"}).format(new Date());
 let state=JSON.parse(localStorage.getItem("rotinaV3")||'{"days":{},"exerciseLogs":{}}');
 if(!state.days)state.days={};if(!state.exerciseLogs)state.exerciseLogs={};if(!state.days[today])state.days[today]={};
+
+if(!state.goals || typeof state.goals!=="object") state.goals={};
+state.goals={
+  water:Number(state.goals.water||3),
+  meals:Number(state.goals.meals||3),
+  reading:Number(state.goals.reading||10),
+  study:Number(state.goals.study||30),
+  workoutsWeek:Number(state.goals.workoutsWeek||4)
+};
+function goals(){ return state.goals; }
+function renderGoals(){
+  const g=goals();
+  const vals={
+    goalWaterInput:g.water,
+    goalMealsInput:g.meals,
+    goalReadingInput:g.reading,
+    goalStudyInput:g.study,
+    goalWorkoutInput:g.workoutsWeek
+  };
+  Object.entries(vals).forEach(([id,val])=>{
+    const el=document.getElementById(id);
+    if(el && document.activeElement!==el) el.value=val;
+  });
+}
+function saveGoals(){
+  const n=id=>Number(document.getElementById(id)?.value||0);
+  const next={
+    water:n("goalWaterInput"),
+    meals:n("goalMealsInput"),
+    reading:n("goalReadingInput"),
+    study:n("goalStudyInput"),
+    workoutsWeek:n("goalWorkoutInput")
+  };
+  if(next.water<0.5 || next.meals<1 || next.reading<1 || next.study<5 || next.workoutsWeek<1){
+    const st=document.getElementById("goalsStatus");
+    if(st) st.textContent="Revise os valores das metas.";
+    return;
+  }
+  state.goals=next;
+  persist();
+  const st=document.getElementById("goalsStatus");
+  if(st) st.textContent="Metas salvas.";
+}
+
 
 const workouts={
 A:[
@@ -1311,10 +1406,10 @@ function renderTodayProgress(){
   const spiritualGoal=!!v.gospelRead && !!v.reflectionDone;
   const checks=[
     !!(v.workoutCompleted || v.workoutStatus==="completo" || v.workoutStatus==="parcial"),
-    Number(v.water||0)>=3,
-    Number(v.mealsCount||0)>=3,
-    Number(v.pages||0)>=10,
-    Number(v.studyMinutes||0)>=30,
+    Number(v.water||0)>=goals().water,
+    Number(v.mealsCount||0)>=goals().meals,
+    Number(v.pages||0)>=goals().reading,
+    Number(v.studyMinutes||0)>=goals().study,
     spiritualGoal
   ];
   const pct=Math.round(checks.filter(Boolean).length/checks.length*100);
@@ -1427,27 +1522,28 @@ function showArea(area){
 }
 function renderApprovedHome(){
   const d=day();
+  const g=goals();
   const water=Number(d.water||0);
   const meals=Number(d.mealsCount||0);
   const pages=Number(d.pages||0);
   const study=Number(d.studyMinutes||0);
   const workoutDone=!!(d.workoutCompleted || d.workoutStatus==="completo" || d.workoutStatus==="parcial");
   const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val};
-  set("homeWater",`${water.toFixed(1).replace(".",",")} / 3,0 L`);
-  set("homeWaterPct",`${Math.min(100,Math.round(water/3*100))}%`);
-  set("homeMeals",`${meals} / 3`);
-  set("homeMealsPct",`${Math.min(100,Math.round(meals/3*100))}%`);
+  set("homeWater",`${water.toFixed(1).replace(".",",")} / ${Number(g.water).toFixed(1).replace(".",",")} L`);
+  set("homeWaterPct",`${Math.min(100,Math.round(water/g.water*100))}%`);
+  set("homeMeals",`${meals} / ${g.meals}`);
+  set("homeMealsPct",`${Math.min(100,Math.round(meals/g.meals*100))}%`);
   set("homeWorkout",`${workoutDone?1:0} / 1`);
   set("homeWorkoutPct",workoutDone?"100%":"0%");
-  set("homeReading",`${pages} / 10`);
-  set("homeReadingPct",`${Math.min(100,Math.round(pages/10*100))}%`);
-  set("homeStudy",`${study} / 30 min`);
-  set("homeStudyPct",`${Math.min(100,Math.round(study/30*100))}%`);
-  set("foodHeadline",`${meals} de 3 refeições registradas`);
-  set("macroProtein",`${d.proteinCount||0}/3`);
-  set("macroCarb",`${d.carbCount||0}/3`);
-  set("macroVeg",`${d.vegCount||0}/3`);
-  set("macroFat",`${d.fatCount||0}/3`);
+  set("homeReading",`${pages} / ${g.reading}`);
+  set("homeReadingPct",`${Math.min(100,Math.round(pages/g.reading*100))}%`);
+  set("homeStudy",`${study} / ${g.study} min`);
+  set("homeStudyPct",`${Math.min(100,Math.round(study/g.study*100))}%`);
+  set("foodHeadline",`${meals} de ${g.meals} refeições registradas`);
+  set("macroProtein",`${d.proteinCount||0}/${g.meals}`);
+  set("macroCarb",`${d.carbCount||0}/${g.meals}`);
+  set("macroVeg",`${d.vegCount||0}/${g.meals}`);
+  set("macroFat",`${d.fatCount||0}/${g.meals}`);
   set("workoutSummaryText",
     d.workoutStatus==="active"?`Treino ${d.workout} em andamento`:
     d.workoutType==="free"&&d.workoutActivity?`${d.workoutActivity} · ${d.workoutMinutes||0} min`:
@@ -1455,7 +1551,7 @@ function renderApprovedHome(){
   set("currentBookTitle",d.bookTitle||"Livro atual");
   set("currentBookAuthor",d.bookAuthor||"Autor");
   set("currentBookProgress",`${d.bookCurrentPage||0} de ${d.bookTotalPages||0} páginas`);
-  set("studyHomeProgress",`${study} / 30 minutos`);
+  set("studyHomeProgress",`${study} / ${g.study} minutos`);
   set("studyHomeTopic",`Tema de hoje: ${d.studyTopic||"—"}`);
 }
 
@@ -2011,46 +2107,136 @@ let bookSearchTimer=null;
 let bookSearchAbort=null;
 let bookSearchResults=[];
 const OPEN_LIBRARY_SEARCH="https://openlibrary.org/search.json";
+const GOOGLE_BOOKS_SEARCH="https://www.googleapis.com/books/v1/volumes";
 
+function cleanIsbn(value){
+  return String(value||"").replace(/[^0-9Xx]/g,"").toUpperCase();
+}
+function looksLikeIsbn(value){
+  const x=cleanIsbn(value);
+  return x.length===10 || x.length===13;
+}
 function coverUrlFromDoc(doc,size="M"){
   if(doc?.cover_i) return `https://covers.openlibrary.org/b/id/${doc.cover_i}-${size}.jpg`;
   const isbn=Array.isArray(doc?.isbn)?doc.isbn[0]:null;
   return isbn?`https://covers.openlibrary.org/b/isbn/${isbn}-${size}.jpg`:"";
 }
 function normalizeOlDoc(doc){
+  const allIsbns=Array.isArray(doc?.isbn)?doc.isbn:[doc?.isbn].filter(Boolean);
   return {
+    source:"Open Library",
+    sourceId:doc?.key||"",
     openLibraryKey:doc?.key||"",
+    googleBooksId:"",
     title:doc?.title||"",
     author:Array.isArray(doc?.author_name)?doc.author_name.join(", "):"",
     publisher:Array.isArray(doc?.publisher)?doc.publisher[0]||"":(doc?.publisher||""),
     year:doc?.first_publish_year||"",
-    isbn:Array.isArray(doc?.isbn)?doc.isbn[0]||"":(doc?.isbn||""),
+    isbn:allIsbns.find(x=>cleanIsbn(x).length===13)||allIsbns[0]||"",
     totalPages:Number(doc?.number_of_pages_median||0),
     coverUrl:coverUrlFromDoc(doc,"M"),
+    description:"",
+    language:"",
     subjects:Array.isArray(doc?.subject)?doc.subject.slice(0,12):[]
   };
+}
+function normalizeGoogleDoc(item){
+  const v=item?.volumeInfo||{};
+  const ids=Array.isArray(v.industryIdentifiers)?v.industryIdentifiers:[];
+  const isbn13=ids.find(x=>x.type==="ISBN_13")?.identifier;
+  const isbn10=ids.find(x=>x.type==="ISBN_10")?.identifier;
+  const image=(v.imageLinks?.thumbnail||v.imageLinks?.smallThumbnail||"").replace("http://","https://");
+  return {
+    source:"Google Books",
+    sourceId:item?.id||"",
+    openLibraryKey:"",
+    googleBooksId:item?.id||"",
+    title:v.title||"",
+    author:Array.isArray(v.authors)?v.authors.join(", "):"",
+    publisher:v.publisher||"",
+    year:(v.publishedDate||"").slice(0,4),
+    isbn:isbn13||isbn10||"",
+    totalPages:Number(v.pageCount||0),
+    coverUrl:image,
+    description:v.description||"",
+    language:v.language||"",
+    subjects:Array.isArray(v.categories)?v.categories.slice(0,12):[]
+  };
+}
+function bookIdentity(b){
+  const isbn=cleanIsbn(b?.isbn);
+  if(isbn) return `isbn:${isbn}`;
+  return `ta:${String(b?.title||"").toLowerCase().replace(/\W/g,"")}|${String(b?.author||"").toLowerCase().split(",")[0].replace(/\W/g,"")}`;
+}
+function mergeBookResults(results){
+  const map=new Map();
+  results.forEach(b=>{
+    if(!b?.title) return;
+    const key=bookIdentity(b);
+    if(!map.has(key)){
+      map.set(key,b);
+      return;
+    }
+    const a=map.get(key);
+    map.set(key,{
+      ...a,
+      publisher:a.publisher||b.publisher,
+      year:a.year||b.year,
+      isbn:a.isbn||b.isbn,
+      totalPages:a.totalPages||b.totalPages,
+      coverUrl:a.coverUrl||b.coverUrl,
+      description:a.description||b.description,
+      subjects:[...new Set([...(a.subjects||[]),...(b.subjects||[])])].slice(0,12),
+      source:a.source===b.source?a.source:"Open Library + Google Books",
+      openLibraryKey:a.openLibraryKey||b.openLibraryKey,
+      googleBooksId:a.googleBooksId||b.googleBooksId
+    });
+  });
+  return [...map.values()].sort((a,b)=>{
+    const score=x=>
+      (x.language==="pt"?3:0)+
+      (x.isbn?2:0)+(x.coverUrl?2:0)+(x.totalPages?1:0)+(x.publisher?1:0)+(x.description?1:0);
+    return score(b)-score(a);
+  }).slice(0,12);
 }
 async function searchBooksOnline(query){
   const q=(query||"").trim();
   const status=document.getElementById("bookGlobalSearchStatus");
   const host=document.getElementById("bookGlobalSearchResults");
-  if(q.length<3){
+  if(q.length<2){
     if(host) host.innerHTML="";
     if(status) status.textContent="";
     return;
   }
   if(bookSearchAbort) bookSearchAbort.abort();
   bookSearchAbort=new AbortController();
-  if(status) status.textContent="Buscando livros...";
+  if(status) status.textContent="Buscando em Open Library + Google Books...";
+
+  const isbnMode=looksLikeIsbn(q);
+  const isbn=cleanIsbn(q);
+  const fields="key,title,author_name,cover_i,first_publish_year,isbn,publisher,number_of_pages_median,subject";
+  const olQuery=isbnMode?`isbn:${isbn}`:q;
+  const googleQuery=isbnMode?`isbn:${isbn}`:q;
+
   try{
-    const fields="key,title,author_name,cover_i,first_publish_year,isbn,publisher,number_of_pages_median,subject";
-    const url=`${OPEN_LIBRARY_SEARCH}?title=${encodeURIComponent(q)}&limit=6&lang=pt&fields=${encodeURIComponent(fields)}`;
-    const res=await fetch(url,{signal:bookSearchAbort.signal});
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data=await res.json();
-    bookSearchResults=(data?.docs||[]).map(normalizeOlDoc);
+    const [olResult,googleResult]=await Promise.allSettled([
+      fetch(`${OPEN_LIBRARY_SEARCH}?q=${encodeURIComponent(olQuery)}&limit=10&fields=${encodeURIComponent(fields)}`,{signal:bookSearchAbort.signal})
+        .then(r=>{if(!r.ok) throw new Error(`OL ${r.status}`); return r.json();}),
+      fetch(`${GOOGLE_BOOKS_SEARCH}?q=${encodeURIComponent(googleQuery)}&maxResults=10&langRestrict=pt&printType=books`,{signal:bookSearchAbort.signal})
+        .then(r=>{if(!r.ok) throw new Error(`GB ${r.status}`); return r.json();})
+    ]);
+
+    const ol=olResult.status==="fulfilled"?(olResult.value?.docs||[]).map(normalizeOlDoc):[];
+    const gb=googleResult.status==="fulfilled"?(googleResult.value?.items||[]).map(normalizeGoogleDoc):[];
+    bookSearchResults=mergeBookResults([...ol,...gb]);
     renderBookSearchResults();
-    if(status) status.textContent=bookSearchResults.length?`${bookSearchResults.length} resultado(s)`:"Nenhum resultado encontrado.";
+
+    const sources=[];
+    if(ol.length) sources.push("Open Library");
+    if(gb.length) sources.push("Google Books");
+    if(status) status.textContent=bookSearchResults.length
+      ? `${bookSearchResults.length} resultado(s) · ${sources.join(" + ")||"busca online"}`
+      : "Nenhum resultado encontrado. Tente título + autor ou ISBN.";
   }catch(err){
     if(err?.name==="AbortError") return;
     if(status) status.textContent="Não foi possível pesquisar agora.";
@@ -2065,7 +2251,8 @@ function renderBookSearchResults(){
       <div>
         <b>${b.title||"Sem título"}</b>
         <span>${b.author||"Autor não informado"}${b.year?` · ${b.year}`:""}</span>
-        <span style="display:block">${b.publisher||""}</span>
+        <span style="display:block">${b.publisher||""}${b.isbn?` · ISBN ${b.isbn}`:""}${b.totalPages?` · ${b.totalPages} pág.`:""}</span>
+        <span class="book-source">${b.source||"Online"}</span>
       </div>
     </div>`).join("");
 }
@@ -2081,11 +2268,15 @@ async function selectOnlineBook(index){
   setVal("bookIsbnInput",b.isbn);
   setVal("bookPagesInput",b.totalPages||"");
   setVal("bookCoverInput",b.coverUrl);
+  setVal("bookDescriptionInput",b.description||"");
   const wrap=document.getElementById("bookFormWrap");
-  if(wrap) wrap.dataset.openLibraryKey=b.openLibraryKey||"";
-  if(wrap) wrap.dataset.subjects=JSON.stringify(b.subjects||[]);
+  if(wrap){
+    wrap.dataset.openLibraryKey=b.openLibraryKey||"";
+    wrap.dataset.googleBooksId=b.googleBooksId||"";
+    wrap.dataset.subjects=JSON.stringify(b.subjects||[]);
+  }
 
-  if(b.openLibraryKey){
+  if(b.openLibraryKey && !b.description){
     try{
       const res=await fetch(`https://openlibrary.org${b.openLibraryKey}.json`);
       if(res.ok){
@@ -2228,6 +2419,7 @@ function openBookForm(bookId=null){
   const wrap=document.getElementById("bookFormWrap");
   if(wrap){
     wrap.dataset.openLibraryKey=book?.openLibraryKey||"";
+    wrap.dataset.googleBooksId=book?.googleBooksId||"";
     wrap.dataset.subjects=JSON.stringify(book?.subjects||[]);
   }
 }
@@ -2255,6 +2447,7 @@ function saveBook(){
     coverUrl:document.getElementById("bookCoverInput").value.trim(),
     description:document.getElementById("bookDescriptionInput").value.trim(),
     openLibraryKey:document.getElementById("bookFormWrap")?.dataset.openLibraryKey||"",
+    googleBooksId:document.getElementById("bookFormWrap")?.dataset.googleBooksId||"",
     subjects:(()=>{try{return JSON.parse(document.getElementById("bookFormWrap")?.dataset.subjects||"[]")}catch(e){return []}})(),
     notes:document.getElementById("bookNotesInput").value.trim(),
     updatedAt:new Date().toISOString()
@@ -2539,14 +2732,14 @@ function getEvolutionDays(){
   return result;
 }
 function dayAdherence(d){
+  const g=goals();
   const checks=[
-    Math.min(1,Number(d.water||0)/3),
-    Math.min(1,Number(d.mealsCount||0)/3),
-    (d.workout&&d.workout!=="Descanso")?1:0,
-    Math.min(1,Number(d.pages||0)/10),
-    Math.min(1,Number(d.studyMinutes||0)/30),
-    [d.gospelRead,d.reflectionDone].filter(Boolean).length/2,
-    d.gospelRead?1:0
+    Math.min(1,Number(d.water||0)/g.water),
+    Math.min(1,Number(d.mealsCount||0)/g.meals),
+    (d.workoutCompleted || d.workoutStatus==="completo" || d.workoutStatus==="parcial")?1:0,
+    Math.min(1,Number(d.pages||0)/g.reading),
+    Math.min(1,Number(d.studyMinutes||0)/g.study),
+    [d.gospelRead,d.reflectionDone].filter(Boolean).length/2
   ];
   return Math.round(checks.reduce((a,b)=>a+b,0)/checks.length*100);
 }
@@ -2600,6 +2793,7 @@ function renderEvolution(){
   const items=getEvolutionDays();
   const data=items.map(x=>x.data);
   const n=data.length||1;
+  const g=goals();
   const avg=a=>a.length?a.reduce((s,v)=>s+v,0)/a.length:0;
   const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val};
 
@@ -2624,17 +2818,47 @@ function renderEvolution(){
 
   const waters=data.map(d=>Number(d.water||0));
   set("evoWaterAvg",`${avg(waters).toFixed(1).replace(".",",")} L`);
-  set("evoWaterGoal",`${Math.round(data.filter(d=>Number(d.water||0)>=3).length/n*100)}%`);
+  set("evoWaterGoal",`${Math.round(data.filter(d=>Number(d.water||0)>=g.water).length/n*100)}%`);
+  set("evoWaterGoalLabel",`Dias na meta de ${String(g.water).replace(".",",")} L`);
 
-  set("evoMealsGoal",`${Math.round(data.filter(d=>Number(d.mealsCount||0)>=3).length/n*100)}%`);
+  set("evoMealsGoal",`${Math.round(data.filter(d=>Number(d.mealsCount||0)>=g.meals).length/n*100)}%`);
 
   const prayerPct=data.map(d=>[d.gospelRead,d.reflectionDone].filter(Boolean).length/2*100);
   set("evoPrayerAvg",`${Math.round(avg(prayerPct))}%`);
   set("evoGospelRead",`${Math.round(data.filter(d=>d.gospelRead).length/n*100)}%`);
+  
   set("evoStreak",`${calcStreak(items)} dias`);
 
+  const insightHost=document.getElementById("evoInsights");
+  if(insightHost){
+    const waterAvg=avg(waters);
+    const studyAvg=studyTotal/n;
+    const readAvg=pagesTotal/n;
+    const workoutGoalForPeriod=evolutionRange==="7"
+      ? g.workoutsWeek
+      : evolutionRange==="30"
+        ? Math.round(g.workoutsWeek*30/7)
+        : null;
+    const weightItemsForInsight=items.filter(it=>Number(it.data.weight||0)>0);
+    let weightText="Peso sem registros suficientes no período.";
+    if(weightItemsForInsight.length>=2){
+      const first=Number(weightItemsForInsight[0].data.weight);
+      const last=Number(weightItemsForInsight[weightItemsForInsight.length-1].data.weight);
+      const diff=last-first;
+      weightText=`Peso: ${diff===0?"sem variação":`${diff>0?"+":""}${diff.toFixed(1).replace(".",",")} kg`} no período.`;
+    }
+    const lines=[
+      `Treinos: ${workouts}${workoutGoalForPeriod?` de aproximadamente ${workoutGoalForPeriod} previstos pela sua meta`:""} .`,
+      `Água: média de ${waterAvg.toFixed(1).replace(".",",")} L/dia, meta ${String(g.water).replace(".",",")} L.`,
+      `Leitura: média de ${Math.round(readAvg)} páginas/dia, meta ${g.reading}.`,
+      `Estudo: média de ${Math.round(studyAvg)} min/dia, meta ${g.study} min.`,
+      weightText
+    ];
+    insightHost.innerHTML=lines.map(x=>`<div class="evo-insight">${x.replace(" .",".")}</div>`).join("");
+  }
+
   renderBars("evoConsistencyChart",items,it=>dayAdherence(it.data),100,"");
-  renderBars("evoWaterChart",items,it=>Number(it.data.water||0),3,"alt");
+  renderBars("evoWaterChart",items,it=>Number(it.data.water||0),g.water,"alt");
 
   const weightItems=items.filter(it=>Number(it.data.weight||0)>0);
   if(weightItems.length){
@@ -2705,6 +2929,7 @@ function renderFast(){
   renderTodayProgress();
   renderApprovedHome();
   renderDailyWeight();
+  renderGoals();
   syncBookHome();
   renderPrayers();
   renderActivePanel();
@@ -2750,6 +2975,15 @@ document.addEventListener("click",async e=>{
   if(mealDelete){
     const id=mealDelete.dataset.mealDelete;
     if(id) await deleteMeal(id);
+    return;
+  }
+
+  const homeAction=e.target.closest("[data-home-action]");
+  if(homeAction){
+    if(homeAction.dataset.homeAction==="weight"){
+      document.getElementById("dailyWeightInput")?.focus();
+      document.getElementById("dailyWeightInput")?.scrollIntoView({behavior:"smooth",block:"center"});
+    }
     return;
   }
 
@@ -2914,6 +3148,9 @@ if(saveMeasurementBtn) saveMeasurementBtn.addEventListener("click",()=>saveMeasu
 
 const saveDailyWeightBtn=document.getElementById("saveDailyWeightBtn");
 if(saveDailyWeightBtn) saveDailyWeightBtn.addEventListener("click",()=>saveDailyWeight());
+
+const saveGoalsBtn=document.getElementById("saveGoalsBtn");
+if(saveGoalsBtn) saveGoalsBtn.addEventListener("click",()=>saveGoals());
 
 document.querySelectorAll("[data-workout-plan]").forEach(btn=>{
   btn.addEventListener("click",()=>selectWorkoutPlan(btn.dataset.workoutPlan));
@@ -3367,6 +3604,7 @@ async function runDiagnostics(){
   }catch(e){add("Banco local de fotos",false);}
 
   add("Estrutura dos dados",!!state && typeof state==="object" && !!state.days && !!state.exerciseLogs);
+  add("Metas configuráveis",!!state.goals && Number(state.goals.water)>0 && Number(state.goals.study)>0);
   ensureWorkoutSessions();
   add("Sessões de treino",Array.isArray(state.workoutSessions));
   add("Supabase configurado",!!(cfg?.supabaseUrl && cfg?.supabaseAnonKey), mode==="cloud"?"modo nuvem":"modo local");
