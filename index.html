@@ -519,7 +519,7 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V39 · Cloud</div>
+<div class="status offline" id="syncStatus">V39.1 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -870,7 +870,7 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 <section class="panel" id="biblioteca">
 <div class="section-title">
 <h2>Biblioteca</h2>
-<button class="primary" data-book-action="open">+ Livro</button>
+<button class="primary" type="button" data-book-action="open">+ Livro</button>
 </div>
 <div class="book-search-box">
   <b>Pesquisar livro na internet</b>
@@ -917,8 +917,8 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 <textarea class="full" id="bookNotesInput" placeholder="Observações, aprendizados, frases..."></textarea>
 </input></input></input></input></input></input></div>
 <div style="display:flex;gap:8px;margin-top:10px">
-<button class="primary" data-book-action="save">Salvar</button>
-<button data-book-action="close">Cancelar</button>
+<button class="primary" type="button" data-book-action="save">Salvar</button>
+<button type="button" data-book-action="close">Cancelar</button>
 </div>
 </div>
 </div>
@@ -1157,7 +1157,25 @@ state.goals={
   study:Number(state.goals.study||30),
   workoutsWeek:Number(state.goals.workoutsWeek||4)
 };
-function goals(){ return state.goals; }
+function ensureStateShape(){
+  if(!state || typeof state!=="object") state={};
+  if(!state.days || typeof state.days!=="object") state.days={};
+  if(!state.exerciseLogs || typeof state.exerciseLogs!=="object") state.exerciseLogs={};
+  if(!state.days[today] || typeof state.days[today]!=="object") state.days[today]={};
+  if(!state.goals || typeof state.goals!=="object") state.goals={};
+  state.goals={
+    water:Number(state.goals.water||3),
+    meals:Number(state.goals.meals||3),
+    reading:Number(state.goals.reading||10),
+    study:Number(state.goals.study||30),
+    workoutsWeek:Number(state.goals.workoutsWeek||4)
+  };
+  if(!Array.isArray(state.library)) state.library=[];
+  if(!Array.isArray(state.workoutSessions)) state.workoutSessions=[];
+  if(!Array.isArray(state.rosaryEntries)) state.rosaryEntries=[];
+}
+ensureStateShape();
+function goals(){ ensureStateShape(); return state.goals; }
 function renderGoals(){
   const g=goals();
   const vals={
@@ -2397,31 +2415,37 @@ function starsText(n){
   return "★".repeat(x)+"☆".repeat(5-x);
 }
 function openBookForm(bookId=null){
+  ensureStateShape();
   ensureLibrary();
   editingBookId=bookId;
   const book=bookId?state.library.find(b=>b.id===bookId):null;
-  document.getElementById("bookFormWrap").classList.remove("hidden");
-  document.getElementById("bookFormTitle").textContent=book?"Editar livro":"Adicionar livro";
-  document.getElementById("bookTitleInput").value=book?.title||"";
-  document.getElementById("bookAuthorInput").value=book?.author||"";
-  document.getElementById("bookPublisherInput").value=book?.publisher||"";
-  document.getElementById("bookYearInput").value=book?.year||"";
-  document.getElementById("bookIsbnInput").value=book?.isbn||"";
-  document.getElementById("bookPagesInput").value=book?.totalPages||"";
-  document.getElementById("bookCurrentInput").value=book?.currentPage||"";
-  document.getElementById("bookStatusInput").value=book?.status||"lendo";
-  document.getElementById("bookRatingInput").value=book?.rating||"";
-  document.getElementById("bookStartDateInput").value=book?.startDate||"";
-  document.getElementById("bookEndDateInput").value=book?.endDate||"";
-  document.getElementById("bookCoverInput").value=book?.coverUrl||"";
-  document.getElementById("bookDescriptionInput").value=book?.description||"";
-  document.getElementById("bookNotesInput").value=book?.notes||"";
-  const wrap=document.getElementById("bookFormWrap");
-  if(wrap){
-    wrap.dataset.openLibraryKey=book?.openLibraryKey||"";
-    wrap.dataset.googleBooksId=book?.googleBooksId||"";
-    wrap.dataset.subjects=JSON.stringify(book?.subjects||[]);
-  }
+  const formWrap=document.getElementById("bookFormWrap");
+  if(!formWrap) return;
+  formWrap.classList.remove("hidden");
+  const titleEl=document.getElementById("bookFormTitle");
+  if(titleEl) titleEl.textContent=book?"Editar livro":"Adicionar livro";
+  const setVal=(id,val)=>{
+    const el=document.getElementById(id);
+    if(el) el.value=val??"";
+  };
+  setVal("bookTitleInput",book?.title||"");
+  setVal("bookAuthorInput",book?.author||"");
+  setVal("bookPublisherInput",book?.publisher||"");
+  setVal("bookYearInput",book?.year||"");
+  setVal("bookIsbnInput",book?.isbn||"");
+  setVal("bookPagesInput",book?.totalPages||"");
+  setVal("bookCurrentInput",book?.currentPage||"");
+  setVal("bookStatusInput",book?.status||"lendo");
+  setVal("bookRatingInput",book?.rating||"");
+  setVal("bookStartDateInput",book?.startDate||"");
+  setVal("bookEndDateInput",book?.endDate||"");
+  setVal("bookCoverInput",book?.coverUrl||"");
+  setVal("bookDescriptionInput",book?.description||"");
+  setVal("bookNotesInput",book?.notes||"");
+  formWrap.dataset.openLibraryKey=book?.openLibraryKey||"";
+  formWrap.dataset.googleBooksId=book?.googleBooksId||"";
+  formWrap.dataset.subjects=JSON.stringify(book?.subjects||[]);
+  formWrap.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function closeBookForm(){
   document.getElementById("bookFormWrap").classList.add("hidden");
@@ -2907,6 +2931,7 @@ function renderActivePanel(){
   }
 }
 function renderFast(){
+  ensureStateShape();
   const d=day();
   const setValue=(id,val)=>{const el=document.getElementById(id); if(el && document.activeElement!==el) el.value=val;};
   const setText=(id,val)=>{const el=document.getElementById(id); if(el) el.textContent=val;};
@@ -3025,6 +3050,7 @@ document.addEventListener("click",async e=>{
 
   const bookAction=e.target.closest("[data-book-action]");
   if(bookAction){
+    if(e.__bookActionHandled) return;
     const action=bookAction.dataset.bookAction;
     if(action==="open") openBookForm();
     else if(action==="close") closeBookForm();
@@ -3103,9 +3129,9 @@ document.addEventListener("click",async e=>{
     return;
   }
 
-  const waterBtn=e.target.closest("[data-quick-water]");
+  const waterBtn=e.target.closest("[data-quick-water],[data-water-change]");
   if(waterBtn){
-    quickWater(Number(waterBtn.dataset.quickWater||0.5));
+    quickWater(Number(waterBtn.dataset.quickWater||waterBtn.dataset.waterChange||0.5));
     return;
   }
 
@@ -3129,6 +3155,17 @@ if(historyDateInput) historyDateInput.addEventListener("change",e=>setHistoryDat
 
 const runDiagnosticsBtn=document.getElementById("runDiagnosticsBtn");
 if(runDiagnosticsBtn) runDiagnosticsBtn.addEventListener("click",()=>runDiagnostics());
+
+document.querySelectorAll("[data-book-action]").forEach(btn=>{
+  btn.addEventListener("click",e=>{
+    e.__bookActionHandled=true;
+    const action=btn.dataset.bookAction;
+    if(action==="open") openBookForm();
+    else if(action==="close") closeBookForm();
+    else if(action==="save") saveBook();
+    else if(action==="quickread") quickReadCurrentBook();
+  });
+});
 
 const bookGlobalSearchInput=document.getElementById("bookGlobalSearchInput");
 if(bookGlobalSearchInput){
@@ -3721,7 +3758,7 @@ async function syncCloud(){
 async function loadCloud(){
  if(!supabase||!user)return;
  const {data,error}=await supabase.from("user_state").select("data").eq("user_id",user.id).maybeSingle();
- if(data?.data){state=data.data;if(!state.days)state.days={};if(!state.exerciseLogs)state.exerciseLogs={};if(!state.days[today])state.days[today]={};persist()}
+ if(data?.data){state=data.data;ensureStateShape();persist()}
 }
 function enterApp(local=false){
  document.getElementById("authScreen").classList.add("hidden");

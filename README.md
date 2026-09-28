@@ -338,3 +338,11 @@ Depois:
 - Home, aderência e Evolução passam a usar as metas configuradas.
 - Nova leitura automática do período na Evolução.
 - Atalhos rápidos na Home para água, peso, refeição, treino e estudo.
+
+## V39.1 — estabilidade e botões
+- Corrige inicialização das metas após carregar dados antigos da nuvem.
+- Reidrata automaticamente a estrutura do estado após sync/import.
+- Reforça o botão “+ Livro”, Salvar e Cancelar com listeners diretos de fallback.
+- Torna o formulário de livro resiliente a dados antigos/incompletos.
+- Corrige o atalho +0,5 L da Home.
+- Mantém Biblioteca 2.0, metas configuráveis, evolução inteligente e atalhos.
