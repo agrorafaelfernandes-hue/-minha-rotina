@@ -48,6 +48,18 @@ button{border:0;border-radius:12px;padding:10px 12px;font-weight:700;cursor:poin
 .notice{padding:12px 14px;border-radius:14px;background:#eef6ff;color:#24547a;font-size:13px}
 .hidden{display:none!important}
 @media(max-width:760px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}.exercise-grid{grid-template-columns:1fr 1fr}.exercise-grid input:last-child{grid-column:1/-1}}
+
+
+/* V40.2 - Leitura completa do poema */
+.poem-reader-overlay{position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,.55);display:none;padding:18px;overflow:auto}
+.poem-reader-overlay.open{display:flex;align-items:center;justify-content:center}
+.poem-reader{width:min(760px,100%);max-height:calc(100vh - 36px);overflow:auto;background:#fff;border-radius:22px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.poem-reader-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:20px}
+.poem-reader-head h2{margin:0 0 5px;font-size:26px}
+.poem-reader-head small{color:#667085}
+.poem-reader-close{border:0;background:#f2f4f7;border-radius:50%;width:40px;height:40px;font-size:22px;cursor:pointer}
+.poem-reader-text{font-family:Georgia,serif;font-size:19px;line-height:1.85;white-space:pre-line;color:#222;max-width:650px;margin:0 auto 24px}
+.poem-reader-footer{display:flex;justify-content:flex-end;gap:10px}
 </style>
 <style id="v12-ui">
 :root{
@@ -608,7 +620,7 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
   <div class="inspiration-grid">
     <div class="inspiration-item">
       <b>📖 Poema do dia</b><div class="quote" id="poemTextHome"></div><small id="poemMetaHome"></small>
-      <div class="inspiration-actions"><button data-inspiration-feedback="poem:like">👍 Gostei</button><button data-inspiration-feedback="poem:dislike">👎</button><button data-inspiration-action="poem-read">Marcar lido</button></div>
+      <div class="inspiration-actions"><button data-inspiration-feedback="poem:like">👍 Gostei</button><button data-inspiration-feedback="poem:dislike">👎</button><button data-inspiration-action="poem-open">Ler poema completo</button><button data-inspiration-action="poem-read">Marcar lido</button></div>
     </div>
     <div class="inspiration-item">
       <b>🎵 Música do dia</b><strong id="songTitleHome"></strong><small id="songArtistHome"></small>
@@ -1553,22 +1565,40 @@ function renderApprovedHome(){
 
 
 const DAILY_POEMS=[
-  {title:"Mar Português",author:"Fernando Pessoa",text:"Ó mar salgado, quanto do teu sal\nSão lágrimas de Portugal!"},
-  {title:"Soneto",author:"Luís de Camões",text:"Amor é fogo que arde sem se ver;\nÉ ferida que dói, e não se sente."},
-  {title:"Canção do Exílio",author:"Gonçalves Dias",text:"Minha terra tem palmeiras,\nOnde canta o Sabiá."},
-  {title:"Autopsicografia",author:"Fernando Pessoa",text:"O poeta é um fingidor.\nFinge tão completamente\nQue chega a fingir que é dor\nA dor que deveras sente."},
-  {title:"Meus oito anos",author:"Casimiro de Abreu",text:"Oh! que saudades que tenho\nDa aurora da minha vida."},
-  {title:"Via Láctea",author:"Olavo Bilac",text:"Ora (direis) ouvir estrelas! Certo\nPerdeste o senso!"},
-  {title:"Versos Íntimos",author:"Augusto dos Anjos",text:"Vês! Ninguém assistiu ao formidável\nEnterro de tua última quimera."}
+  {title:"Mar Português",author:"Fernando Pessoa",text:"Ó mar salgado, quanto do teu sal\nSão lágrimas de Portugal!\nPor te cruzarmos, quantas mães choraram,\nQuantos filhos em vão rezaram!\n\nQuantas noivas ficaram por casar\nPara que fosses nosso, ó mar!\nValeu a pena? Tudo vale a pena\nSe a alma não é pequena.\n\nQuem quer passar além do Bojador\nTem que passar além da dor.\nDeus ao mar o perigo e o abismo deu,\nMas nele é que espelhou o céu."},
+  {title:"Autopsicografia",author:"Fernando Pessoa",text:"O poeta é um fingidor.\nFinge tão completamente\nQue chega a fingir que é dor\nA dor que deveras sente.\n\nE os que leem o que escreve,\nNa dor lida sentem bem,\nNão as duas que ele teve,\nMas só a que eles não têm.\n\nE assim nas calhas de roda\nGira, a entreter a razão,\nEsse comboio de corda\nQue se chama coração."},
+  {title:"Soneto",author:"Luís de Camões",text:"Amor é fogo que arde sem se ver;\nÉ ferida que dói, e não se sente;\nÉ um contentamento descontente;\nÉ dor que desatina sem doer.\n\nÉ um não querer mais que bem querer;\nÉ um andar solitário entre a gente;\nÉ nunca contentar-se de contente;\nÉ um cuidar que ganha em se perder.\n\nÉ querer estar preso por vontade;\nÉ servir a quem vence, o vencedor;\nÉ ter com quem nos mata, lealdade.\n\nMas como causar pode seu favor\nNos corações humanos amizade,\nSe tão contrário a si é o mesmo Amor?"},
+  {title:"Canção do Exílio",author:"Gonçalves Dias",text:"Minha terra tem palmeiras,\nOnde canta o Sabiá;\nAs aves, que aqui gorjeiam,\nNão gorjeiam como lá.\n\nNosso céu tem mais estrelas,\nNossas várzeas têm mais flores,\nNossos bosques têm mais vida,\nNossa vida mais amores.\n\nEm cismar, sozinho, à noite,\nMais prazer encontro eu lá;\nMinha terra tem palmeiras,\nOnde canta o Sabiá.\n\nMinha terra tem primores,\nQue tais não encontro eu cá;\nEm cismar, sozinho, à noite,\nMais prazer encontro eu lá;\nMinha terra tem palmeiras,\nOnde canta o Sabiá.\n\nNão permita Deus que eu morra,\nSem que eu volte para lá;\nSem que desfrute os primores\nQue não encontro por cá;\nSem qu'inda aviste as palmeiras,\nOnde canta o Sabiá."},
+  {title:"Meus oito anos",author:"Casimiro de Abreu",text:"Oh! que saudades que tenho\nDa aurora da minha vida,\nDa minha infância querida\nQue os anos não trazem mais!\n\nQue amor, que sonhos, que flores,\nNaquelas tardes fagueiras\nÀ sombra das bananeiras,\nDebaixo dos laranjais!\n\nComo são belos os dias\nDo despontar da existência!\nRespira a alma inocência\nComo perfumes a flor;\n\nO mar é lago sereno,\nO céu um manto azulado,\nO mundo um sonho dourado,\nA vida um hino d'amor!"},
+  {title:"Via Láctea",author:"Olavo Bilac",text:"Ora (direis) ouvir estrelas! Certo\nPerdeste o senso! E eu vos direi, no entanto,\nQue, para ouvi-las, muita vez desperto\nE abro as janelas, pálido de espanto...\n\nE conversamos toda a noite, enquanto\nA Via-Láctea, como um pálio aberto,\nCintila. E, ao vir do sol, saudoso e em pranto,\nInda as procuro pelo céu deserto.\n\nDireis agora: Tresloucado amigo!\nQue conversas com elas? Que sentido\nTem o que dizem, quando estão contigo?\n\nE eu vos direi: Amai para entendê-las!\nPois só quem ama pode ter ouvido\nCapaz de ouvir e de entender estrelas."},
+  {title:"Versos Íntimos",author:"Augusto dos Anjos",text:"Vês! Ninguém assistiu ao formidável\nEnterro de tua última quimera.\nSomente a Ingratidão, esta pantera,\nFoi tua companheira inseparável!\n\nAcostuma-te à lama que te espera!\nO Homem, que, nesta terra miserável,\nMora, entre feras, sente inevitável\nNecessidade de também ser fera.\n\nToma um fósforo. Acende teu cigarro!\nO beijo, amigo, é a véspera do escarro,\nA mão que afaga é a mesma que apedreja.\n\nSe a alguém causa inda pena a tua chaga,\nApedreja essa mão vil que te afaga,\nEscarra nessa boca que te beija!"}
 ];
+
 const DAILY_SONGS=[
   {title:"Tocando em Frente",artist:"Almir Sater"},{title:"Dias Melhores",artist:"Jota Quest"},{title:"É Preciso Saber Viver",artist:"Titãs"},{title:"Anunciação",artist:"Alceu Valença"},{title:"O Sol",artist:"Vitor Kley"},{title:"Paciência",artist:"Lenine"},{title:"A Estrada",artist:"Cidade Negra"},{title:"Andar com Fé",artist:"Gilberto Gil"},{title:"Velha Infância",artist:"Tribalistas"},{title:"Epitáfio",artist:"Titãs"},{title:"Deus e Eu no Sertão",artist:"Victor & Leo"},{title:"Enquanto Houver Sol",artist:"Titãs"}
 ];
 function inspirationIndex(len,offset=0){ const d=new Date(); const start=new Date(d.getFullYear(),0,0); return (Math.floor((d-start)/86400000)+offset)%len; }
+function getDailyPoem(){ return DAILY_POEMS[inspirationIndex(DAILY_POEMS.length)]; }
+function openPoemReader(){
+  const poem=getDailyPoem();
+  const overlay=document.getElementById("poemReaderOverlay");
+  const title=document.getElementById("poemReaderTitle");
+  const meta=document.getElementById("poemReaderMeta");
+  const text=document.getElementById("poemReaderText");
+  if(!overlay||!title||!meta||!text) return;
+  title.textContent=poem.title;
+  meta.textContent=`${poem.author} · leitura completa`;
+  text.textContent=poem.text;
+  overlay.classList.add("open"); overlay.setAttribute("aria-hidden","false");
+}
+function closePoemReader(){
+  const overlay=document.getElementById("poemReaderOverlay");
+  if(overlay){ overlay.classList.remove("open"); overlay.setAttribute("aria-hidden","true"); }
+}
 function renderDailyInspiration(){
-  const d=day(), poem=DAILY_POEMS[inspirationIndex(DAILY_POEMS.length)], song=DAILY_SONGS[inspirationIndex(DAILY_SONGS.length,3)];
+  const d=day(), poem=getDailyPoem(), song=DAILY_SONGS[inspirationIndex(DAILY_SONGS.length,3)];
   const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val};
-  set("poemTextHome",poem.text); set("poemMetaHome",`${poem.title} · ${poem.author} · domínio público/trecho`);
+  set("poemTextHome",poem.text.split("\n").slice(0,2).join("\n")+"…"); set("poemMetaHome",`${poem.title} · ${poem.author}`);
   set("songTitleHome",song.title); set("songArtistHome",song.artist);
   const q=encodeURIComponent(`${song.title} ${song.artist}`);
   const sp=document.getElementById("songSpotifyHome"), yt=document.getElementById("songYoutubeHome");
@@ -1578,7 +1608,12 @@ function renderDailyInspiration(){
   const sh=document.querySelector('[data-inspiration-action="song-heard"]'); if(sh) sh.textContent=d.songHeard?"✓ Ouvida":"Marcar ouvida";
 }
 function handleInspirationFeedback(raw){ const [kind,val]=raw.split(":"); day()[`${kind}Feedback`]=day()[`${kind}Feedback`]===val?null:val; persist(); }
-function handleInspirationAction(action){ if(action==="poem-read") day().poemRead=!day().poemRead; if(action==="song-heard") day().songHeard=!day().songHeard; persist(); }
+function handleInspirationAction(action){
+  if(action==="poem-open"){ openPoemReader(); return; }
+  if(action==="poem-read"){ day().poemRead=!day().poemRead; }
+  if(action==="song-heard"){ day().songHeard=!day().songHeard; }
+  persist();
+}
 
 const LITURGY_API_BASE="https://liturgia.up.railway.app/v2/";
 
@@ -3119,6 +3154,14 @@ document.addEventListener("click",async e=>{
     return;
   }
 
+  const poemReaderAction=e.target.closest("[data-poem-reader]");
+  if(poemReaderAction){
+    const action=poemReaderAction.dataset.poemReader;
+    if(action==="close") closePoemReader();
+    else if(action==="read"){ day().poemRead=true; persist(); renderDailyInspiration(); closePoemReader(); }
+    return;
+  }
+
   const inspirationFeedback=e.target.closest("[data-inspiration-feedback]");
   if(inspirationFeedback){ handleInspirationFeedback(inspirationFeedback.dataset.inspirationFeedback); return; }
   const inspirationAction=e.target.closest("[data-inspiration-action]");
@@ -4011,6 +4054,22 @@ Object.assign(window,{
   day,
   persist
 });
+</script>
+
+<div id="poemReaderOverlay" class="poem-reader-overlay" aria-hidden="true">
+  <article class="poem-reader" role="dialog" aria-modal="true" aria-labelledby="poemReaderTitle">
+    <div class="poem-reader-head">
+      <div><h2 id="poemReaderTitle">Poema do dia</h2><small id="poemReaderMeta"></small></div>
+      <button class="poem-reader-close" type="button" data-poem-reader="close" aria-label="Fechar">×</button>
+    </div>
+    <div id="poemReaderText" class="poem-reader-text"></div>
+    <div class="poem-reader-footer"><button data-poem-reader="read">✓ Marcar como lido</button></div>
+  </article>
+</div>
+<script>
+const poemReaderOverlay=document.getElementById("poemReaderOverlay");
+if(poemReaderOverlay) poemReaderOverlay.addEventListener("click",e=>{ if(e.target===poemReaderOverlay) closePoemReader(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closePoemReader(); });
 </script>
 </body>
 </html>
