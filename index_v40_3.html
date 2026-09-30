@@ -1,0 +1,4077 @@
+```
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<meta content="#173f37" name="theme-color"/>
+<link href="manifest.json" rel="manifest"/>
+<link href="icon-192.png" rel="apple-touch-icon"/>
+<title>Minha Rotina — V40.3</title>
+<style>
+:root{
+  --bg:#f4f6f8;--card:#fff;--text:#172033;--muted:#6b7280;--line:#e5e7eb;
+  --accent:#1f6f5f;--accent2:#2b7a68;--soft:#e9f4f0;--shadow:0 10px 35px rgba(15,23,42,.08);--radius:22px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}
+.app{max-width:1080px;margin:0 auto;padding:18px 16px 108px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.brand h1{margin:0;font-size:24px}.brand p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.status{font-size:12px;padding:8px 10px;border-radius:999px;background:#eef1f4;color:#475569;font-weight:700}
+.status.online{background:#e9f4f0;color:#1f6f5f}.status.offline{background:#fff4e5;color:#8a5a00}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:0 2px 12px rgba(15,23,42,.04)}
+.hero{background:linear-gradient(135deg,#173f37,#2b7a68);color:#fff;border-radius:28px;padding:22px;box-shadow:var(--shadow);margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.metric{display:flex;justify-content:space-between;align-items:center;gap:10px}.metric strong{font-size:25px}
+.small{font-size:12px}.muted{color:var(--muted);font-size:12px}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;color:var(--text)}
+button{border:0;border-radius:12px;padding:10px 12px;font-weight:700;cursor:pointer;background:#eef1f4}
+.primary{background:var(--accent)!important;color:#fff!important}.soft{background:var(--soft)!important;color:var(--accent)!important}
+.check-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.check-row:first-of-type{border-top:0}
+.toggle{width:44px;height:24px;background:#d1d5db;border-radius:999px;position:relative;cursor:pointer;flex:0 0 auto}
+.toggle:after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.2s}
+.toggle.on{background:var(--accent)}.toggle.on:after{left:23px}
+.panel{display:none}.panel.active{display:block}
+.bottom-nav{position:fixed;z-index:30;left:50%;bottom:10px;transform:translateX(-50%);width:min(95%,760px);display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:8px;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}
+.nav-btn{background:transparent;color:var(--muted);font-size:12px;padding:10px 6px}.nav-btn.active{background:var(--soft);color:var(--accent)}
+.section-title{display:flex;justify-content:space-between;align-items:flex-end;margin:4px 0 12px}.section-title h2{font-size:20px;margin:0}
+.exercise{padding:12px 0;border-top:1px solid var(--line)}.exercise:first-child{border-top:0}
+.exercise-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
+.tag{font-size:11px;padding:6px 9px;border-radius:999px;background:var(--soft);color:var(--accent);font-weight:700}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:17px;padding:14px}.kpi strong{font-size:22px;display:block}
+.bar{height:7px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin-top:8px}.bar span{display:block;height:100%;background:var(--accent)}
+.auth-wrap{max-width:460px;margin:36px auto}.auth-wrap h2{margin-top:0}
+.notice{padding:12px 14px;border-radius:14px;background:#eef6ff;color:#24547a;font-size:13px}
+.hidden{display:none!important}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}.exercise-grid{grid-template-columns:1fr 1fr}.exercise-grid input:last-child{grid-column:1/-1}}
+
+
+/* V40.2 - Leitura completa do poema */
+.poem-reader-overlay{position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,.55);display:none;padding:18px;overflow:auto}
+.poem-reader-overlay.open{display:flex;align-items:center;justify-content:center}
+.poem-reader{width:min(760px,100%);max-height:calc(100vh - 36px);overflow:auto;background:#fff;border-radius:22px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.poem-reader-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:20px}
+.poem-reader-head h2{margin:0 0 5px;font-size:26px}
+.poem-reader-head small{color:#667085}
+.poem-reader-close{border:0;background:#f2f4f7;border-radius:50%;width:40px;height:40px;font-size:22px;cursor:pointer}
+.poem-reader-text{font-family:Georgia,serif;font-size:19px;line-height:1.85;white-space:pre-line;color:#222;max-width:650px;margin:0 auto 24px}
+.poem-reader-footer{display:flex;justify-content:flex-end;gap:10px}
+</style>
+<style id="v12-ui">
+:root{
+  --bg:#f5f7f9; --card:#fff; --text:#172033; --muted:#6b7280;
+  --line:#e4e7eb; --accent:#1f6f5f; --accent2:#2b7a68; --soft:#eaf4f0;
+}
+body{background:var(--bg)}
+.app{max-width:980px;padding:12px 12px 96px}
+.topbar{
+  position:sticky; top:0; z-index:15;
+  background:rgba(245,247,249,.95); backdrop-filter:blur(12px);
+  padding-top:max(8px,env(safe-area-inset-top)); margin-bottom:10px
+}
+.brand h1{font-size:22px}.brand p{font-size:12px}
+.hero{padding:16px 18px;border-radius:22px;margin-bottom:10px}
+.hero h2{font-size:22px}.hero p{font-size:13px}
+.card{padding:13px;border-radius:18px}
+.grid{gap:10px}
+input,select,textarea{min-height:44px}
+.check-row{padding:8px 0}
+.bottom-nav{bottom:max(8px,env(safe-area-inset-bottom));border-radius:16px;padding:6px}
+.nav-btn{padding:8px 4px;font-size:11px}
+.status{font-size:11px;padding:7px 9px}
+
+.quick-row{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:10px;
+}
+.quick-btn{
+  min-height:70px; border:1px solid var(--line); background:#fff; border-radius:16px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-size:11px; font-weight:800; color:var(--text); padding:8px 4px;
+}
+.quick-btn span{font-size:21px;line-height:1;margin-bottom:6px}
+
+.today-progress{
+  background:#fff;border:1px solid var(--line);border-radius:16px;
+  padding:11px 12px;margin-bottom:10px;
+}
+.today-progress-head{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.today-progress-head b{font-size:13px}.today-progress-head span{font-size:12px;color:var(--muted)}
+.today-progress-track{height:7px;background:#e8ebef;border-radius:999px;overflow:hidden;margin-top:7px}
+.today-progress-track span{display:block;height:100%;background:var(--accent)}
+
+.week-row{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px;
+}
+.week-stat{
+  background:#fff;border:1px solid var(--line);border-radius:14px;padding:7px 4px;text-align:center;
+}
+.week-stat b{display:block;font-size:13px}
+.week-stat small{display:block;font-size:9px;color:var(--muted);margin-top:2px}
+.mini-track{height:4px;background:#e8ebef;border-radius:999px;overflow:hidden;margin-top:5px}
+.mini-track span{display:block;height:100%;background:var(--accent)}
+
+.exercise-top{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:5px}
+.last-load{font-size:10px;color:var(--muted);white-space:nowrap}
+
+@media(max-width:760px){
+  .grid{grid-template-columns:1fr}
+  .exercise-grid{grid-template-columns:1fr 1fr}
+  .exercise-grid input:last-child{grid-column:1/-1}
+}
+</style>
+<style id="v13-approved-layout">
+.hero-photo{
+  background:
+    linear-gradient(90deg,rgba(12,44,35,.88),rgba(21,70,57,.32)),
+    url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80") center/cover;
+  min-height:128px;display:flex;align-items:flex-end;
+}
+.hero-overlay h2{font-size:30px;margin:0 0 3px}
+.hero-overlay p{font-size:15px;margin:0;line-height:1.25}
+.verse-card{display:flex;justify-content:space-between;align-items:center;background:#fff8ef;border:1px solid #f2e7d8;border-radius:16px;padding:12px 14px;margin-bottom:10px}
+.verse-card strong{display:block;font-size:13px}.verse-card span{font-size:11px;color:#7a8190}.verse-icon{font-size:22px}
+.metric-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:10px}
+.metric-box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px 4px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.metric-emoji{font-size:20px}.metric-box b{font-size:10px}.metric-box small{font-size:10px}.metric-box em{font-size:9px;color:var(--muted);font-style:normal}
+.prayer-card{width:100%;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:11px 12px;margin-bottom:10px}
+.prayer-icon{width:38px;height:38px;border-radius:12px;background:#fff0de;display:grid;place-items:center;font-size:20px}
+.prayer-copy{display:flex;flex-direction:column;align-items:flex-start;flex:1}.prayer-copy b{font-size:14px}.prayer-copy small{font-size:11px;color:var(--muted)}
+.prayer-status{width:28px;height:28px;border-radius:50%;background:#4aa67a;color:#fff;display:grid;place-items:center}
+.food-card,.compact-card,.study-card,.areas-drawer{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:10px}
+.section-head{display:flex;justify-content:space-between;align-items:center}.section-head>div{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.section-head b{font-size:14px}.section-head small{font-size:11px;color:var(--muted);flex-basis:100%;padding-left:42px}
+.section-icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:18px}.orange{background:#fff0df}.blue{background:#e7efff}.teal{background:#e4f4ef}.purple{background:#efe9ff}
+.macro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0}.macro-grid>div{background:#f8f9fb;border-radius:10px;padding:7px}.macro-grid span{display:block;font-size:9px}.macro-grid b{font-size:11px}
+.wide-action{width:100%;background:var(--accent);color:#fff;border-radius:11px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.compact-list{display:grid;gap:4px;margin:8px 0}.compact-list span{font-size:10px;color:#57606e}
+.soft-action{width:100%;background:var(--soft);color:var(--accent);border-radius:10px}
+.book-mini{display:grid;grid-template-columns:56px 1fr;gap:8px;align-items:center;margin:8px 0}.book-cover{height:78px;background:#17324a;color:#fff;border-radius:6px;display:grid;place-items:center;font-size:9px}.book-mini b{display:block;font-size:11px}.book-mini small,.book-mini span{display:block;font-size:9px;color:var(--muted)}
+.study-card{display:grid;grid-template-columns:38px 1fr auto;gap:8px;align-items:center}.study-main b{display:block}.study-main span,.study-main small{display:block;font-size:10px;color:var(--muted)}
+.areas-title b,.areas-title small{display:block}.areas-title small{font-size:10px;color:var(--muted)}
+.areas-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:9px}.areas-grid button{background:#f8fafb;border:1px solid var(--line);border-radius:10px;padding:7px 3px;font-size:17px}.areas-grid button span{display:block;font-size:8px;margin-top:3px}
+.areas-grid.large{grid-template-columns:repeat(2,1fr)}.areas-grid.large button{min-height:90px;font-size:26px}.areas-grid.large button span{font-size:12px}
+.area-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:10px}
+.area-card h3{margin-top:0}
+.area-card .row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+@media(max-width:760px){
+  .metric-strip{grid-template-columns:repeat(5,1fr)}
+  .two-col{grid-template-columns:1fr 1fr}
+  .areas-grid{grid-template-columns:repeat(6,1fr)}
+}
+</style>
+<style id="v15-library">
+.library-toolbar{
+  display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:10px;
+}
+.library-tab{
+  flex:0 0 auto; border:1px solid var(--line); background:#fff; color:var(--text);
+  border-radius:999px; padding:8px 12px; font-size:11px; font-weight:800;
+}
+.library-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.library-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.book-card{
+  background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px;
+  display:grid;grid-template-columns:66px 1fr;gap:9px;align-items:start;
+}
+.book-cover-real{
+  width:66px;height:96px;border-radius:7px;background:linear-gradient(160deg,#17324a,#2b5d74);
+  color:#fff;display:grid;place-items:center;text-align:center;font-size:9px;font-weight:800;padding:6px;
+  background-size:cover;background-position:center;overflow:hidden;
+}
+.book-card h4{margin:0 0 3px;font-size:12px}
+.book-card p{margin:0;color:var(--muted);font-size:10px;line-height:1.35}
+.book-progress{height:6px;background:#e8ebef;border-radius:999px;overflow:hidden;margin:7px 0}
+.book-progress span{display:block;height:100%;background:var(--accent)}
+.book-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.book-actions button{padding:6px 8px;font-size:9px;border-radius:9px}
+.library-empty{
+  background:#fff;border:1px dashed var(--line);border-radius:16px;padding:18px;text-align:center;color:var(--muted);font-size:12px
+}
+.book-form{
+  background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:10px;
+}
+.book-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.book-form textarea{min-height:80px}
+.book-form .full{grid-column:1/-1}
+.library-header-row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.current-reading-hero{
+  display:grid;grid-template-columns:78px 1fr;gap:12px;background:#fff;border:1px solid var(--line);
+  border-radius:18px;padding:12px;margin-bottom:10px
+}
+.current-reading-hero .cover{width:78px;height:112px;border-radius:8px;background:linear-gradient(160deg,#17324a,#2b5d74);
+  background-size:cover;background-position:center;color:white;display:grid;place-items:center;text-align:center;font-size:10px;padding:8px}
+.current-reading-hero h3{margin:0 0 3px;font-size:15px}
+.current-reading-hero p{margin:0;color:var(--muted);font-size:11px}
+.current-reading-hero .big-progress{font-size:11px;margin-top:8px}
+.stars{letter-spacing:1px;font-size:13px}
+@media(max-width:760px){
+  .library-grid{grid-template-columns:1fr}
+  .book-form-grid{grid-template-columns:1fr}
+  .book-form .full{grid-column:auto}
+}
+</style>
+<style id="v18-food-photo">
+.meal-list{display:grid;gap:8px;margin-top:10px}
+.meal-item{background:#fff;border:1px solid var(--line);border-radius:16px;padding:11px}
+.meal-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.meal-top h4{margin:0;font-size:13px}
+.meal-top small{color:var(--muted)}
+.meal-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.meal-tag{font-size:9px;padding:5px 7px;border-radius:999px;background:#f3f5f7}
+.meal-form{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:10px}
+.meal-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.meal-form-grid .full{grid-column:1/-1}
+.food-summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0}
+.food-summary-grid>div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center}
+.food-summary-grid b{display:block;font-size:15px}
+.food-summary-grid span{font-size:9px;color:var(--muted)}
+.choice-row{display:flex;gap:6px;flex-wrap:wrap}
+.choice-row label{display:flex;align-items:center;gap:5px;background:#f8fafb;border:1px solid var(--line);padding:7px 9px;border-radius:10px;font-size:10px}
+.food-note{background:#fff9ef;border:1px solid #f2e4c7;border-radius:14px;padding:10px;font-size:10px;color:#6c604a}
+.photo-picker{display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:center}
+.photo-preview{width:92px;height:92px;border-radius:14px;border:1px dashed var(--line);background:#f8fafb;display:grid;place-items:center;overflow:hidden;color:var(--muted);font-size:10px;text-align:center}
+.photo-preview img{width:100%;height:100%;object-fit:cover}
+.photo-actions{display:grid;gap:7px}
+.photo-note{font-size:9px;color:var(--muted);line-height:1.35}
+.meal-photo{width:100%;max-height:220px;object-fit:cover;border-radius:12px;margin-top:9px;background:#f4f5f6}
+@media(max-width:760px){
+  .meal-form-grid{grid-template-columns:1fr}
+  .meal-form-grid .full{grid-column:auto}
+}
+</style>
+<style id="v19-prayers">
+.prayer-hero{
+  background:linear-gradient(135deg,#fff8ee,#f4eadb);
+  border:1px solid #eadcc8;border-radius:18px;padding:14px;margin-bottom:10px
+}
+.prayer-hero small{display:block;color:var(--muted);margin-bottom:5px}
+.prayer-hero blockquote{margin:0;font-size:14px;font-weight:800;line-height:1.45}
+.prayer-hero cite{display:block;margin-top:6px;font-size:10px;color:var(--muted);font-style:normal}
+.prayer-progress{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
+.prayer-progress-line{height:8px;background:#e9ecef;border-radius:999px;overflow:hidden;margin-top:8px}
+.prayer-progress-line span{display:block;height:100%;background:var(--accent)}
+.prayer-list{display:grid;gap:9px}
+.prayer-item{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px}
+.prayer-item-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.prayer-item-title{display:flex;align-items:center;gap:9px}
+.prayer-item-title span:first-child{font-size:20px}
+.prayer-item h3{margin:0;font-size:13px}
+.prayer-item p{margin:5px 0 0;font-size:10px;color:var(--muted)}
+.prayer-check{
+  width:34px;height:34px;border-radius:50%;border:1px solid var(--line);
+  background:#fff;display:grid;place-items:center;font-weight:900
+}
+.prayer-check.done{background:var(--accent);color:#fff;border-color:var(--accent)}
+.prayer-text{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:11px;line-height:1.55;color:#404956}
+.prayer-intention{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:10px}
+.prayer-intention textarea{min-height:80px}
+</style>
+<style id="v20-gospel">
+.gospel-card{
+  background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px;margin-bottom:10px
+}
+.gospel-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.gospel-head h3{margin:0;font-size:14px}
+.gospel-head small{display:block;color:var(--muted);margin-top:3px}
+.gospel-chip{
+  display:inline-flex;align-items:center;gap:5px;background:#f3f6f4;color:var(--accent);
+  border-radius:999px;padding:5px 8px;font-size:9px;font-weight:800
+}
+.gospel-status{font-size:10px;color:var(--muted);margin-top:7px}
+.gospel-box{margin-top:10px;padding:10px;border-radius:13px;background:#f8faf9}
+.gospel-box b{display:block;font-size:10px;margin-bottom:4px;color:#344139}
+.gospel-box p{margin:0;font-size:11px;line-height:1.5;color:#47514a}
+.gospel-text{
+  margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:13px;
+  max-height:230px;overflow:auto;font-size:11px;line-height:1.55;color:#3f4742;background:#fff
+}
+.gospel-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.gospel-read.done{background:var(--accent);color:#fff}
+.gospel-source{margin-top:8px;font-size:9px;color:var(--muted)}
+</style>
+<style id="v21-evolution">
+.evo-range{display:flex;gap:7px;margin-bottom:10px;overflow-x:auto}
+.evo-range button{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;font-size:10px;font-weight:800}
+.evo-range button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.evo-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.evo-summary>div{background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px}
+.evo-summary b{display:block;font-size:16px}
+.evo-summary span{font-size:9px;color:var(--muted)}
+.evo-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:10px}
+.evo-card h3{margin:0 0 8px;font-size:13px}
+.evo-chart{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:10px}
+.evo-bar-wrap{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;height:100%}
+.evo-bar{width:100%;max-width:28px;border-radius:7px 7px 3px 3px;background:var(--accent);min-height:2px}
+.evo-bar.alt{background:#7f98d1}.evo-bar.orange{background:#d7975b}
+.evo-label{font-size:8px;color:var(--muted)}
+.evo-kpi-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.evo-mini{background:#f8fafb;border-radius:13px;padding:10px}
+.evo-mini b{display:block;font-size:14px}
+.evo-mini span{font-size:9px;color:var(--muted)}
+.evo-streak{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#f8faf9;border-radius:13px;padding:10px;margin-top:8px}
+@media(max-width:760px){.evo-summary{grid-template-columns:repeat(2,1fr)}}
+</style>
+<style id="v24-history">
+.history-controls{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+.history-controls input[type="date"]{flex:1}
+.history-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:10px}
+.history-card h3{margin:0 0 8px;font-size:13px}
+.history-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.history-mini{background:#f8faf9;border-radius:13px;padding:10px}
+.history-mini b{display:block;font-size:14px}
+.history-mini span{font-size:9px;color:var(--muted)}
+.history-section{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.history-section:first-child{margin-top:0;padding-top:0;border-top:none}
+.history-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin:7px 0}
+.history-row span{font-size:10px;color:var(--muted)}
+.history-row b{font-size:11px;text-align:right}
+.history-empty{background:#fff;border:1px dashed var(--line);border-radius:18px;padding:18px;text-align:center;color:var(--muted);font-size:11px}
+.history-meal{padding:9px 0;border-top:1px solid var(--line)}
+.history-meal:first-child{border-top:none}
+.history-meal-photo{width:72px;height:72px;object-fit:cover;border-radius:10px;margin-top:7px;background:#f4f5f6}
+.history-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.history-tag{font-size:8px;padding:4px 6px;border-radius:999px;background:#f3f5f7}
+.history-prayer{display:flex;gap:6px;flex-wrap:wrap}
+.history-prayer span{font-size:9px;padding:5px 7px;border-radius:999px;background:#f3f5f7}
+.history-prayer span.done{background:#e8f5ec;color:#25683a}
+@media(max-width:760px){.history-grid{grid-template-columns:1fr 1fr}}
+</style>
+<style id="v26-account-backup">
+.account-status-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.account-mini{background:#f8faf9;border:1px solid var(--line);border-radius:14px;padding:10px}
+.account-mini b{display:block;font-size:12px}
+.account-mini span{font-size:9px;color:var(--muted)}
+.backup-warning{background:#fff8ee;border:1px solid #eadcc8;border-radius:14px;padding:10px;font-size:10px;color:#6b5b43;margin-top:10px}
+.backup-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.backup-meta{display:grid;gap:7px;margin-top:10px}
+.backup-meta-row{display:flex;justify-content:space-between;gap:10px;font-size:10px}
+.backup-meta-row span{color:var(--muted)}
+</style>
+<style id="v30-touch">
+button,[data-open-panel],[data-open-area],[data-meal-action],[data-book-action],[data-prayer-toggle],[data-gospel-action]{
+  -webkit-tap-highlight-color:transparent;
+}
+button:active,[data-open-panel]:active,[data-open-area]:active{
+  transform:scale(.985);
+}
+</style>
+
+<style id="v32-performance">
+.panel{content-visibility:auto;contain-intrinsic-size:700px}
+.panel.active{content-visibility:visible}
+</style>
+
+
+<style id="v33-area-history">
+.area-history{margin-top:12px}
+.area-history h4{margin:0 0 8px;font-size:12px}
+.area-history-list{display:grid;gap:7px}
+.area-history-item{background:#f8faf9;border:1px solid var(--line);border-radius:12px;padding:9px}
+.area-history-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.area-history-top b{font-size:10px}
+.area-history-top span{font-size:9px;color:var(--muted)}
+.area-history-item p{margin:5px 0 0;font-size:10px;color:#4b554e}
+.area-history-days{display:grid;gap:6px;margin-top:8px}
+.area-history-day{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:11px;padding:8px 9px}
+.area-history-day span{font-size:9px;color:var(--muted)}
+.area-history-day b{font-size:10px}
+</style>
+
+
+<style id="v34-diagnostics">
+.diag-list{display:grid;gap:7px;margin-top:10px}
+.diag-item{display:flex;justify-content:space-between;gap:10px;padding:8px 9px;border-radius:11px;background:#f8faf9;font-size:10px}
+.diag-ok{color:#26703e;font-weight:800}.diag-warn{color:#9a6729;font-weight:800}
+</style>
+
+
+<style id="v35-library-profile">
+.book-search-box{background:#f8faf9;border:1px solid var(--line);border-radius:14px;padding:10px;margin-bottom:10px}
+.book-search-results{display:grid;gap:7px;margin-top:8px}
+.book-search-result{display:grid;grid-template-columns:48px 1fr;gap:9px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;cursor:pointer}
+.book-search-result img{width:48px;height:68px;object-fit:cover;border-radius:7px;background:#eef1ef}
+.book-search-result b{font-size:10px;display:block}
+.book-search-result span{font-size:9px;color:var(--muted)}
+.book-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.book-meta-grid .full{grid-column:1/-1}
+.recommend-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin:10px 0}
+.recommend-list{display:grid;gap:8px;margin-top:8px}
+.recommend-item{display:grid;grid-template-columns:54px 1fr;gap:9px;background:#f8faf9;border-radius:13px;padding:8px}
+.recommend-item img{width:54px;height:76px;object-fit:cover;border-radius:8px;background:#eef1ef}
+.recommend-item h4{margin:0;font-size:11px}
+.recommend-item p{margin:4px 0;font-size:9px;color:var(--muted)}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.profile-grid .full{grid-column:1/-1}
+.measure-list{display:grid;gap:7px;margin-top:10px}
+.measure-item{background:#f8faf9;border:1px solid var(--line);border-radius:13px;padding:9px}
+.measure-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.measure-head b{font-size:10px}
+.measure-head span{font-size:9px;color:var(--muted)}
+.measure-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.measure-tag{font-size:8px;padding:4px 6px;border-radius:999px;background:#fff;border:1px solid var(--line)}
+@media(max-width:760px){
+  .book-meta-grid,.profile-grid{grid-template-columns:1fr}
+  .book-meta-grid .full,.profile-grid .full{grid-column:auto}
+}
+</style>
+
+
+<style id="v36-weight-workout">
+.daily-weight-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin:10px 0}
+.daily-weight-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.daily-weight-row input{min-width:0}
+.workout-launch{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:10px}
+.workout-plan-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:9px}
+.workout-plan-grid button{padding:10px 6px;border-radius:12px;font-weight:800}
+.workout-plan-grid button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.session-banner{background:#f8faf9;border:1px solid var(--line);border-radius:16px;padding:11px;margin:10px 0}
+.session-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.session-progress{height:8px;background:#e9ecef;border-radius:999px;overflow:hidden;margin-top:8px}
+.session-progress span{display:block;height:100%;background:var(--accent)}
+.exercise-step{background:#fff;border:1px solid var(--line);border-radius:16px;padding:11px;margin-bottom:9px}
+.exercise-step.done{background:#f1f8f3;border-color:#cfe8d5}
+.exercise-step-head{display:grid;grid-template-columns:34px 1fr auto;gap:9px;align-items:center}
+.exercise-check{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;font-weight:900}
+.exercise-check.done{background:var(--accent);color:#fff;border-color:var(--accent)}
+.exercise-name{font-size:12px;font-weight:800}
+.exercise-prescription{font-size:9px;color:var(--muted);margin-top:2px}
+.exercise-howto{margin-top:9px;padding:9px;background:#f8faf9;border-radius:12px;font-size:10px;line-height:1.45}
+.exercise-howto b{display:block;margin-bottom:4px}
+.exercise-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.session-footer{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:10px}
+.session-summary-list{display:grid;gap:7px;margin-top:8px}
+.session-summary-item{display:flex;justify-content:space-between;gap:10px;padding:8px;background:#f8faf9;border-radius:11px;font-size:10px}
+.workout-history-list{display:grid;gap:8px;margin-top:8px}
+.workout-history-item{background:#f8faf9;border:1px solid var(--line);border-radius:13px;padding:9px}
+.workout-history-item b{font-size:10px}
+.workout-history-item span{font-size:9px;color:var(--muted)}
+@media(max-width:760px){.workout-plan-grid{grid-template-columns:repeat(4,1fr)}}
+</style>
+
+
+<style id="v37-spiritual">
+.spiritual-goals{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
+.spiritual-goals-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.spiritual-goals-line{height:8px;background:#e9ecef;border-radius:999px;overflow:hidden;margin-top:8px}
+.spiritual-goals-line span{display:block;height:100%;background:var(--accent)}
+.gospel-full{margin-top:10px;padding:12px;border-radius:14px;background:#fbfcfb;border:1px solid var(--line);font-size:11px;line-height:1.65;color:#344139;white-space:pre-line}
+.reflection-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:10px}
+.reflection-card.done{background:#f1f8f3;border-color:#cfe8d5}
+.reflection-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.reflection-text{font-size:11px;line-height:1.58;color:#404956;margin-top:9px}
+.rosary-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:10px}
+.rosary-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.rosary-today{margin-top:8px;padding:9px 10px;background:#f8faf9;border-radius:12px;font-size:10px}
+.mystery-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.mystery-tabs button{padding:8px 4px;border-radius:10px;font-size:9px;font-weight:800}
+.mystery-tabs button.active{background:var(--accent);color:white;border-color:var(--accent)}
+.mystery-list{display:grid;gap:7px;margin-top:9px}
+.mystery-item{padding:9px 10px;background:#f8faf9;border-radius:11px;font-size:10px;line-height:1.4}
+.mystery-item b{display:block;font-size:10px;margin-bottom:2px}
+.rosary-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.rosary-history{display:grid;gap:6px;margin-top:9px}
+.rosary-history-item{display:flex;justify-content:space-between;gap:10px;padding:8px 9px;background:#f8faf9;border-radius:10px;font-size:9px}
+</style>
+
+
+<style id="v38-free-workout">
+.workout-mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
+.workout-mode-tabs button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.free-workout-form{display:grid;gap:8px;margin-top:10px}
+.free-workout-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.free-workout-form textarea{min-height:72px;resize:vertical}
+.free-activity-item{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:9px;background:#f8faf9;border-radius:11px;font-size:10px}
+.free-activity-item strong{display:block;font-size:10px}
+.free-activity-meta{color:var(--muted);font-size:9px;margin-top:2px}
+</style>
+
+
+<style id="v39-improvements">
+.quick-actions{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:0 0 10px}
+.quick-action{background:#fff;border:1px solid var(--line);border-radius:13px;padding:9px 4px;font-size:9px;font-weight:800;display:grid;gap:3px;place-items:center}
+.quick-action span{font-size:18px}
+.goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.goal-field{background:#f8faf9;border-radius:12px;padding:9px}
+.goal-field label{display:block;font-size:9px;color:var(--muted);margin-bottom:5px}
+.goal-field input{width:100%}
+.evo-insights{display:grid;gap:7px;margin-top:8px}
+.evo-insight{background:#f8faf9;border-radius:12px;padding:9px 10px;font-size:10px;line-height:1.45}
+.book-source{display:inline-flex!important;width:auto!important;padding:2px 6px;border-radius:999px;background:#eef5f1;color:var(--accent);font-size:8px!important;font-weight:800;margin-top:3px}
+.book-search-result{cursor:pointer}
+.book-search-result:hover{background:#f8faf9}
+@media(max-width:760px){
+  .quick-actions{grid-template-columns:repeat(5,1fr)}
+  .goal-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+
+
+<style id="v40-inspiration-spiritual">
+.inspiration-card,.personal-reflection,.personal-prayer,.reflection-video{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:10px}
+.inspiration-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px}
+.inspiration-item{background:#f8faf9;border-radius:13px;padding:11px;min-height:150px;display:flex;flex-direction:column;gap:6px}
+.inspiration-item .quote{font-family:Georgia,serif;font-size:12px;line-height:1.55;white-space:pre-line}
+.inspiration-item small{color:var(--muted);line-height:1.4}
+.inspiration-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.inspiration-actions a,.inspiration-actions button{font-size:9px;padding:7px 8px;border-radius:9px;text-decoration:none}
+.inspiration-actions a{border:1px solid var(--line);color:var(--text);font-weight:800;background:#fff}
+.inspiration-actions button.selected{background:var(--accent);color:#fff;border-color:var(--accent)}
+.personal-reflection textarea,.personal-prayer textarea{width:100%;min-height:86px;resize:vertical;margin-top:8px}
+.spiritual-section-title{margin:14px 0 5px;font-size:12px}
+.reflection-video a{display:inline-block;margin-top:8px;font-weight:800;color:var(--accent);text-decoration:none}
+@media(max-width:760px){.inspiration-grid{grid-template-columns:1fr}}
+</style>
+
+<style id="v40-1-password-reset">
+.auth-link{border:0;background:transparent;color:var(--accent);font-weight:800;font-size:11px;padding:7px 0;cursor:pointer;text-decoration:underline}
+.reset-overlay{position:fixed;inset:0;background:rgba(0,0,0,.38);display:grid;place-items:center;padding:18px;z-index:10000}
+.reset-card{width:min(420px,100%);background:#fff;border-radius:18px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.22)}
+.reset-card h3{margin:0 0 7px;font-size:18px}.reset-card p{font-size:11px;line-height:1.5;color:var(--muted)}
+.reset-card input{width:100%;margin:6px 0}.reset-actions{display:flex;gap:8px;margin-top:8px}.reset-actions button{flex:1}
+</style>
+</head>
+<body>
+<div class="app" id="authScreen">
+<div class="auth-wrap card">
+<h2>Minha Rotina</h2>
+<p class="muted">Entre para sincronizar seus registros entre dispositivos. Sem configuração de nuvem, o app continua funcionando localmente.</p>
+<div class="notice" id="cloudNotice" style="margin-bottom:12px">
+      Supabase conectado. Entre ou crie sua conta para sincronizar os registros entre dispositivos.
+    </div>
+<input id="email" placeholder="E-mail" style="margin-bottom:8px" type="email"/>
+<input id="password" placeholder="Senha" style="margin-bottom:8px" type="password"/>
+<div style="display:flex;gap:8px">
+<button class="primary" id="loginBtn">Entrar</button>
+<button id="signupBtn">Criar conta</button>
+</div>
+<button class="auth-link" id="forgotPasswordBtn" type="button">Esqueci minha senha</button>
+<button class="soft" id="localBtn" style="margin-top:10px;width:100%">Continuar em modo local</button>
+<div class="muted" id="authMsg" style="margin-top:10px"></div>
+</div>
+</div>
+<div class="reset-overlay hidden" id="resetOverlay">
+  <div class="reset-card">
+    <h3>Redefinir senha</h3>
+    <p>Digite uma nova senha para sua conta. Depois de salvar, você poderá continuar usando a mesma conta e acessar seus dados existentes.</p>
+    <input id="newPassword" type="password" placeholder="Nova senha" autocomplete="new-password"/>
+    <input id="newPasswordConfirm" type="password" placeholder="Confirme a nova senha" autocomplete="new-password"/>
+    <div class="reset-actions">
+      <button id="cancelResetBtn">Cancelar</button>
+      <button class="primary" id="saveNewPasswordBtn">Salvar senha</button>
+    </div>
+    <div class="muted" id="resetMsg" style="margin-top:9px"></div>
+  </div>
+</div>
+<div class="app hidden" id="mainApp">
+<div class="topbar">
+<div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
+<div class="status offline" id="syncStatus">V40.3 · Cloud</div>
+</div>
+<section class="panel active" id="hoje">
+<div class="hero hero-photo">
+<div class="hero-overlay">
+<h2>Hoje</h2>
+<p>Consistência primeiro.<br/>Perfeição depois.</p>
+</div>
+</div>
+<div class="verse-card">
+<div>
+<strong>“Tudo posso naquele que me fortalece.”</strong>
+<span>Filipenses 4,13</span>
+</div>
+<div class="verse-icon">☀️</div>
+</div>
+<div class="today-progress">
+<div class="today-progress-head">
+<b>Progresso do dia</b>
+<span id="todayProgressText">0%</span>
+</div>
+<div class="today-progress-track"><span id="todayProgressBar" style="width:0%"></span></div>
+</div>
+<div class="metric-strip">
+<button class="metric-box" data-open-area="agua">
+<span class="metric-emoji">💧</span><b>Água</b><small id="homeWater">0,0 / 3,0 L</small><em id="homeWaterPct">0%</em>
+</button>
+<button class="metric-box" data-open-panel="alimentacao">
+<span class="metric-emoji">🍴</span><b>Alimentação</b><small id="homeMeals">0 / 3</small><em id="homeMealsPct">0%</em>
+</button>
+<button class="metric-box" data-open-area="treino">
+<span class="metric-emoji">🏋️</span><b>Treino</b><small id="homeWorkout">0 / 1</small><em id="homeWorkoutPct">0%</em>
+</button>
+<button class="metric-box" data-open-panel="biblioteca">
+<span class="metric-emoji">📖</span><b>Leitura</b><small id="homeReading">0 / 70</small><em id="homeReadingPct">0%</em>
+</button>
+<button class="metric-box" data-open-area="estudo">
+<span class="metric-emoji">🎓</span><b>Estudo</b><small id="homeStudy">0 / 30 min</small><em id="homeStudyPct">0%</em>
+</button>
+</div>
+<button class="prayer-card" data-open-panel="oracoes">
+<span class="prayer-icon">✝️</span>
+<span class="prayer-copy"><b>Vida espiritual</b><small>Comece seu dia com Deus.</small></span>
+<span class="prayer-status">✓</span>
+</button>
+
+<div class="inspiration-card" id="dailyInspirationHome">
+  <div class="section-head"><div><span class="section-icon teal">✨</span><b>Inspiração do dia</b><small>Poema e música para acompanhar seu dia</small></div></div>
+  <div class="inspiration-grid">
+    <div class="inspiration-item">
+      <b>📖 Poema do dia</b><div class="quote" id="poemTextHome"></div><small id="poemMetaHome"></small>
+      <div class="inspiration-actions"><button data-inspiration-feedback="poem:like">👍 Gostei</button><button data-inspiration-feedback="poem:dislike">👎</button><button data-inspiration-action="poem-open">Ler poema completo</button><button data-inspiration-action="poem-read">Marcar lido</button></div>
+    </div>
+    <div class="inspiration-item">
+      <b>🎵 Música do dia</b><strong id="songTitleHome"></strong><small id="songArtistHome"></small>
+      <div class="inspiration-actions"><a id="songSpotifyHome" target="_blank" rel="noopener">Spotify</a><a id="songYoutubeHome" target="_blank" rel="noopener">YouTube</a><button data-inspiration-feedback="song:like">👍 Gostei</button><button data-inspiration-feedback="song:dislike">👎</button><button data-inspiration-action="song-heard">Marcar ouvida</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="quick-actions">
+  <button class="quick-action" type="button" data-water-change="0.5"><span>💧</span>+0,5 L</button>
+  <button class="quick-action" type="button" data-home-action="weight"><span>⚖️</span>Peso</button>
+  <button class="quick-action" type="button" data-meal-action="open"><span>🍴</span>Refeição</button>
+  <button class="quick-action" type="button" data-open-area="treino"><span>🏋️</span>Treino</button>
+  <button class="quick-action" type="button" data-open-area="estudo"><span>🎓</span>Estudo</button>
+</div>
+
+<div class="daily-weight-card">
+  <div class="section-head">
+    <div><span class="section-icon teal">⚖️</span><b>Peso de hoje</b><small id="dailyWeightLabel">Ainda não registrado</small></div>
+  </div>
+  <div class="daily-weight-row">
+    <input id="dailyWeightInput" type="number" step="0.1" min="0" inputmode="decimal" placeholder="Ex.: 85,7 kg">
+    <button class="primary" id="saveDailyWeightBtn" type="button">Registrar</button>
+  </div>
+</div>
+
+<div class="food-card">
+<div class="section-head">
+<div><span class="section-icon orange">🍴</span><b>Alimentação do dia</b><small id="foodHeadline">0 de 3 refeições registradas</small></div>
+<button data-open-panel="alimentacao">›</button>
+</div>
+<div class="macro-grid">
+<div><span>Proteína</span><b id="macroProtein">0/3</b></div>
+<div><span>Carboidrato</span><b id="macroCarb">0/3</b></div>
+<div><span>Vegetais</span><b id="macroVeg">0/3</b></div>
+<div><span>Gorduras</span><b id="macroFat">0/3</b></div>
+</div>
+<button class="wide-action" data-meal-action="open">＋ Registrar refeição</button>
+</div>
+<div class="two-col">
+<div class="compact-card workout-summary">
+<div class="section-head">
+<div><span class="section-icon blue">🏋️</span><b>Treino de hoje</b><small id="workoutSummaryText">Selecione o treino</small></div>
+</div>
+<div class="compact-list" id="workoutPreview">
+<span>Agachamento</span><span>Leg Press</span><span>Cadeira Extensora</span><span>+ mais 3 exercícios</span>
+</div>
+<button class="soft-action" data-open-area="treino">Iniciar treino</button>
+</div>
+<div class="compact-card reading-summary">
+<div class="section-head">
+<div><span class="section-icon teal">📖</span><b>Leitura atual</b></div>
+<button data-open-panel="biblioteca">›</button>
+</div>
+<div class="book-mini">
+<div class="book-cover">LIVRO</div>
+<div><b id="currentBookTitle">Livro atual</b><small id="currentBookAuthor">Autor</small><span id="currentBookProgress">0 de 0 páginas</span></div>
+</div>
+<button class="soft-action" data-book-action="quickread">+10 páginas</button>
+</div>
+</div>
+<div class="study-card">
+<div><span class="section-icon purple">🎓</span></div>
+<div class="study-main">
+<b>Estudo</b>
+<span id="studyHomeProgress">0 / 30 minutos</span>
+<small id="studyHomeTopic">Tema de hoje: —</small>
+</div>
+<button class="soft-action" data-open-area="estudo">Iniciar estudo</button>
+</div>
+<div class="areas-drawer">
+<div class="areas-title"><b>Áreas da Rotina</b><small>Acesse os detalhes de cada área</small></div>
+<div class="areas-grid">
+<button data-open-area="agua">💧<span>Água</span></button>
+<button data-open-panel="alimentacao">🍴<span>Alimentação</span></button>
+<button data-open-area="treino">🏋️<span>Treino</span></button>
+<button data-open-panel="biblioteca">📖<span>Leitura</span></button>
+<button data-open-area="estudo">🎓<span>Estudo</span></button>
+<button data-open-panel="oracoes">✝️<span>Espiritual</span></button>
+<button id="historyOpenBtnHome" type="button">🗓️<span>Histórico</span></button>
+</div>
+</div>
+</section>
+
+<section class="panel" id="treinos">
+  <div class="section-title">
+    <h2>Treino</h2>
+    <span>Sessão guiada A/B/C/D</span>
+  </div>
+
+  
+<div class="workout-launch">
+  <h3 style="margin:0">Adicionar treino</h3>
+  <div class="muted" style="margin-top:4px">Escolha uma ficha guiada ou registre uma atividade livre.</div>
+
+  <div class="workout-mode-tabs">
+    <button type="button" data-workout-mode="plan" class="active">Ficha A/B/C/D</button>
+    <button type="button" data-workout-mode="free">Treino livre</button>
+  </div>
+
+  <div id="plannedWorkoutForm">
+    <div class="workout-plan-grid">
+      <button type="button" data-workout-plan="A">A</button>
+      <button type="button" data-workout-plan="B">B</button>
+      <button type="button" data-workout-plan="C">C</button>
+      <button type="button" data-workout-plan="D">D</button>
+    </div>
+    <button class="primary" id="startWorkoutBtn" type="button" style="width:100%;margin-top:9px">Iniciar treino</button>
+  </div>
+
+  <div id="freeWorkoutForm" class="free-workout-form" style="display:none">
+    <input id="freeWorkoutActivity" type="text" placeholder="Atividade — ex.: Esteira, caminhada, bike">
+    <div class="free-workout-row">
+      <input id="freeWorkoutMinutes" type="number" min="1" step="1" inputmode="numeric" placeholder="Duração (min)">
+      <input id="freeWorkoutDistance" type="number" min="0" step="0.1" inputmode="decimal" placeholder="Distância (km) opcional">
+    </div>
+    <textarea id="freeWorkoutNote" placeholder="Observação opcional — ex.: ritmo leve, inclinação 5%, treino regenerativo"></textarea>
+    <button class="primary" id="saveFreeWorkoutBtn" type="button">Registrar treino livre</button>
+  </div>
+</div>
+
+<div id="workoutSessionHost"></div>
+
+
+  <div class="card" style="margin-top:10px">
+    <h3>Histórico de treinos</h3>
+    <div id="workoutHistoryList" class="workout-history-list"></div>
+  </div>
+
+  <details style="margin-top:10px">
+    <summary style="font-size:11px;font-weight:800;cursor:pointer">Ver fichas e cargas</summary>
+    <div id="workouts" style="margin-top:10px"></div>
+  </details>
+</section>
+
+<section class="panel" id="areas">
+<div class="section-title"><h2>Áreas da Rotina</h2><span>Detalhes por área</span></div>
+<div class="areas-grid large">
+<button data-open-area="agua">💧<span>Água</span></button>
+<button data-open-panel="alimentacao">🍴<span>Alimentação</span></button>
+<button data-open-area="treino">🏋️<span>Treino</span></button>
+<button data-open-panel="biblioteca">📖<span>Leitura</span></button>
+<button data-open-area="estudo">🎓<span>Estudo</span></button>
+<button data-open-panel="oracoes">✝️<span>Espiritual</span></button>
+<button id="historyOpenBtnAreas" type="button">🗓️<span>Histórico</span></button>
+</div>
+</section>
+<section class="panel" id="areaDetail">
+<div class="section-title">
+<h2 id="areaTitle">Área</h2>
+<button data-open-panel="areas">Voltar</button>
+</div>
+<div id="areaContent"></div>
+</section>
+
+<section class="panel" id="oracoes">
+<div class="section-title"><h2>Vida espiritual</h2><span>Um espaço para oração e reflexão</span></div>
+<div class="prayer-hero"><small>Versículo do dia</small><blockquote id="dailyVerseText">“Tudo posso naquele que me fortalece.”</blockquote><cite id="dailyVerseRef">Filipenses 4,13</cite></div>
+<div class="gospel-card">
+  <div class="gospel-head"><div><span class="gospel-chip">📖 Evangelho de hoje</span><h3 id="gospelReference" style="margin-top:7px">Carregando...</h3><small id="gospelLiturgicalDay">Buscando a liturgia de hoje</small></div><button data-gospel-action="reload">Atualizar</button></div>
+  <div class="gospel-status" id="gospelStatus">Conectando à fonte da liturgia...</div>
+  <div class="gospel-full" id="gospelText">O Evangelho será carregado quando houver conexão.</div>
+  <div class="gospel-actions"><button class="gospel-read" data-gospel-action="toggle-read" id="gospelReadBtn">Marcar Evangelho como lido</button></div>
+  <div class="gospel-source" id="gospelSource">Fonte: liturgia diária online.</div>
+</div>
+<div class="reflection-card" id="dailyReflectionCard">
+  <div class="reflection-head"><div><span class="gospel-chip">💭 Entenda o Evangelho</span><h3 style="margin:7px 0 0">Mensagem central</h3></div><button class="prayer-check" data-reflection-toggle id="reflectionDoneBtn">✓</button></div>
+  <div class="reflection-text" id="dailyReflectionText">A explicação será apresentada após o carregamento do Evangelho.</div>
+  <div class="gospel-box" style="margin-top:9px"><b>Para levar para o dia</b><p id="gospelApplication">Aguardando o Evangelho do dia.</p></div>
+</div>
+<div class="reflection-video"><span class="gospel-chip">▶️ Reflexão em vídeo</span><h3 style="margin:7px 0 0">Ouça uma reflexão sobre a Palavra</h3><small>Busca priorizada para Frei Gilson. Confirme o tema do vídeo antes de associá-lo ao Evangelho do dia.</small><a id="reflectionVideoLink" target="_blank" rel="noopener">Buscar reflexão de hoje no YouTube</a></div>
+<div class="personal-reflection"><span class="gospel-chip">✍️ Minha reflexão</span><h3 style="margin:7px 0 0">O que Deus falou comigo hoje?</h3><textarea id="personalReflectionInput" placeholder="Escreva uma ou duas frases para formar seu diário espiritual."></textarea><button class="primary" data-prayer-action="save-reflection" style="margin-top:8px;width:100%">Salvar reflexão</button></div>
+<div class="personal-prayer"><span class="gospel-chip">🙏 Minha oração</span><h3 style="margin:7px 0 0">Oração para o dia</h3><div class="reflection-text" id="personalPrayerText">Senhor, obrigado pela vida e pelas oportunidades deste dia. Protege minha família, meus deslocamentos e minha saúde. Dá-me sabedoria e discernimento nas decisões, serenidade nas dificuldades e bênçãos no trabalho. Ensina-me a liderar com humildade, ouvir com atenção e fazer o bem às pessoas que eu encontrar. Amém.</div></div>
+<div class="rosary-card">
+  <div class="rosary-head"><div><span class="gospel-chip">📿 Terço</span><h3 style="margin:7px 0 0">Mistérios do Rosário</h3><div class="muted">Registro opcional, sem transformar oração em obrigação.</div></div><span class="tag" id="todayRosaryMysteryLabel">Hoje</span></div>
+  <div class="rosary-today" id="todayRosaryMysteryText"></div>
+  <div class="mystery-tabs"><button type="button" data-mystery-type="gozosos">Gozosos</button><button type="button" data-mystery-type="luminosos">Luminosos</button><button type="button" data-mystery-type="dolorosos">Dolorosos</button><button type="button" data-mystery-type="gloriosos">Gloriosos</button></div>
+  <div id="mysteryList" class="mystery-list"></div><div class="rosary-actions"><button class="primary" type="button" data-rosary-action="register">✓ Registrar terço rezado</button></div>
+  <div style="margin-top:12px"><b style="font-size:11px">Últimos registros</b><div id="rosaryHistory" class="rosary-history"></div></div>
+</div>
+<div class="prayer-intention"><b>Intenção de hoje</b><textarea id="prayerIntentionInput" placeholder="Por quem ou por qual intenção você quer rezar hoje?"></textarea><button class="primary" data-prayer-action="save-intention" style="margin-top:8px;width:100%">Salvar intenção</button></div>
+</section>
+
+<section class="panel" id="alimentacao">
+<div class="section-title">
+<h2>Alimentação</h2>
+<button class="primary" data-meal-action="open">+ Refeição</button>
+</div>
+<div class="food-summary-grid">
+<div><b id="foodMealsCount">0/3</b><span>Refeições</span></div>
+<div><b id="foodProteinCount">0/3</b><span>Proteína</span></div>
+<div><b id="foodVegCount">0/3</b><span>Vegetais</span></div>
+<div><b id="foodWaterLink">0,0 L</b><span>Água</span></div>
+</div>
+<div class="food-note">
+Registro simples e flexível para acompanhar a qualidade das refeições, sem contar calorias.
+</div>
+<div class="hidden" id="mealFormWrap" style="margin-top:10px">
+<div class="meal-form">
+<h3>Registrar refeição</h3>
+<div class="meal-form-grid">
+<select id="mealTypeInput">
+<option value="Café da manhã">Café da manhã</option>
+<option value="Almoço">Almoço</option>
+<option value="Jantar">Jantar</option>
+<option value="Lanche">Lanche</option>
+</select>
+<input id="mealTimeInput" type="time"/>
+<div class="full choice-row">
+<label><input id="mealProteinInput" type="checkbox"/> Proteína</label>
+<label><input id="mealCarbInput" type="checkbox"/> Carboidrato</label>
+<label><input id="mealVegInput" type="checkbox"/> Vegetais</label>
+<label><input id="mealFatInput" type="checkbox"/> Gordura boa</label>
+</div>
+<div class="full photo-picker">
+<div class="photo-preview" id="mealPhotoPreview">Sem foto</div>
+<div class="photo-actions">
+<input accept="image/*" capture="environment" class="hidden" id="mealPhotoInput" type="file"/>
+<button data-meal-action="photo" type="button">📷 Adicionar foto</button>
+<button data-meal-action="clear-photo" type="button">Remover foto</button>
+<div class="photo-note">Opcional. A foto é comprimida para economizar espaço.</div>
+</div>
+</div>
+<textarea class="full" id="mealDescInput" placeholder="O que você comeu? Ex.: arroz, feijão, frango grelhado e salada"></textarea>
+<textarea class="full" id="mealNoteInput" placeholder="Observação opcional"></textarea>
+</div>
+<div style="display:flex;gap:8px;margin-top:10px">
+<button class="primary" data-meal-action="save">Salvar</button>
+<button data-meal-action="close">Cancelar</button>
+</div>
+</div>
+</div>
+<div class="meal-list" id="mealList"></div>
+</section>
+<section class="panel" id="biblioteca">
+<div class="section-title">
+<h2>Biblioteca</h2>
+<button class="primary" type="button" data-book-action="open">+ Livro</button>
+</div>
+<div class="book-search-box">
+  <b>Pesquisar livro na internet</b>
+  <div class="muted" style="margin-top:3px">Pesquise por título, autor ou ISBN. O app combina Open Library e Google Books.</div>
+  <input id="bookGlobalSearchInput" placeholder="Título, autor ou ISBN" style="margin-top:8px"/>
+  <div id="bookGlobalSearchStatus" class="muted" style="margin-top:6px"></div>
+  <div id="bookGlobalSearchResults" class="book-search-results"></div>
+</div>
+
+<div class="recommend-card">
+  <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+    <div>
+      <h3 style="margin:0">Sugestões para você</h3>
+      <div class="muted">Baseadas nos livros, autores, temas e avaliações da sua biblioteca.</div>
+    </div>
+    <button id="refreshRecommendationsBtn" type="button">Atualizar</button>
+  </div>
+  <div id="recommendationsList" class="recommend-list"></div>
+</div>
+
+<div id="currentReadingHero"></div>
+<div class="hidden" id="bookFormWrap">
+<div class="book-form">
+<h3 id="bookFormTitle">Adicionar livro</h3>
+<div class="book-form-grid">
+<input id="bookTitleInput" placeholder="Título do livro">
+<input id="bookAuthorInput" placeholder="Autor">
+<input id="bookPublisherInput" placeholder="Editora">
+<input id="bookYearInput" placeholder="Ano" type="number" min="0">
+<input id="bookIsbnInput" placeholder="ISBN">
+<input id="bookPagesInput" min="1" placeholder="Total de páginas" type="number">
+<input id="bookCurrentInput" min="0" placeholder="Página atual" type="number">
+<select id="bookStatusInput">
+<option value="lendo">Lendo</option>
+<option value="quero_ler">Quero ler</option>
+<option value="concluido">Concluído</option>
+<option value="pausado">Pausado</option>
+</select>
+<input id="bookRatingInput" max="5" min="0" placeholder="Nota 0–5" step="1" type="number">
+<input id="bookStartDateInput" placeholder="Data de início" type="date">
+<input id="bookEndDateInput" placeholder="Data de conclusão" type="date"/>
+<input class="full" id="bookCoverInput" placeholder="URL da capa (opcional)"/>
+<textarea class="full" id="bookDescriptionInput" placeholder="Descrição do livro"></textarea>
+<textarea class="full" id="bookNotesInput" placeholder="Observações, aprendizados, frases..."></textarea>
+</input></input></input></input></input></input></div>
+<div style="display:flex;gap:8px;margin-top:10px">
+<button class="primary" type="button" data-book-action="save">Salvar</button>
+<button type="button" data-book-action="close">Cancelar</button>
+</div>
+</div>
+</div>
+<div class="library-toolbar">
+<button class="library-tab active" data-book-filter="lendo">Lendo</button>
+<button class="library-tab" data-book-filter="quero_ler">Quero ler</button>
+<button class="library-tab" data-book-filter="concluido">Concluídos</button>
+<button class="library-tab" data-book-filter="pausado">Pausados</button>
+<button class="library-tab" data-book-filter="todos">Todos</button>
+</div>
+<div class="library-grid" id="libraryGrid"></div>
+</section>
+<section class="panel" id="evolucao">
+<div class="section-title"><h2>Evolução</h2><span>Consistência e tendência</span></div>
+<div class="evo-range">
+<button class="active" data-evo-range="7">7 dias</button>
+<button data-evo-range="30">30 dias</button>
+<button data-evo-range="all">Geral</button>
+</div>
+<div id="evoPeriodLabel" style="font-size:10px;color:var(--muted);margin:-2px 0 10px">Período: últimos 7 dias</div>
+<div class="evo-summary">
+<div><b id="evoAdherence">0%</b><span>Aderência média</span></div>
+<div><b id="evoWorkoutCount">0</b><span>Treinos</span></div>
+<div><b id="evoStudyMinutes">0 min</b><span>Estudo</span></div>
+<div><b id="evoPages">0 pág.</b><span>Leitura</span></div>
+</div>
+
+<div class="evo-card">
+<h3>Leitura do período</h3>
+<div class="muted">Resumo automático dos seus registros.</div>
+<div class="evo-insights" id="evoInsights"></div>
+</div>
+
+<div class="evo-card">
+<h3>Consistência diária</h3>
+<div class="evo-chart" id="evoConsistencyChart"></div>
+</div>
+<div class="evo-card">
+<h3>Água</h3>
+<div class="evo-kpi-row">
+<div class="evo-mini"><b id="evoWaterAvg">0,0 L</b><span>Média diária</span></div>
+<div class="evo-mini"><b id="evoWaterGoal">0%</b><span id="evoWaterGoalLabel">Dias na meta</span></div>
+</div>
+<div class="evo-chart" id="evoWaterChart"></div>
+</div>
+<div class="evo-card">
+<h3>Treino, leitura e estudo</h3>
+<div class="evo-kpi-row">
+<div class="evo-mini"><b id="evoWorkoutWeek">0</b><span>Treinos no período</span></div>
+<div class="evo-mini"><b id="evoReadAvg">0</b><span>Páginas/dia</span></div>
+<div class="evo-mini"><b id="evoStudyAvg">0 min</b><span>Estudo/dia</span></div>
+<div class="evo-mini"><b id="evoMealsGoal">0%</b><span>Dias com 3 refeições</span></div>
+</div>
+</div>
+<div class="evo-card">
+<h3>Rotina espiritual</h3>
+<div class="evo-kpi-row">
+<div class="evo-mini"><b id="evoPrayerAvg">0%</b><span>Meta espiritual</span></div>
+<div class="evo-mini"><b id="evoGospelRead">0%</b><span>Evangelho lido</span></div>
+</div>
+<div class="evo-streak">
+<div><span style="font-size:18px">🔥</span></div>
+<div style="flex:1"><strong>Sequência atual</strong><div style="font-size:9px;color:var(--muted)">Dias com ao menos 60% da rotina concluída</div></div>
+<b id="evoStreak">0 dias</b>
+</div>
+</div>
+<div class="evo-card">
+<h3>Peso</h3>
+<div class="evo-kpi-row">
+<div class="evo-mini"><b id="evoWeightLatest">—</b><span>Último registro</span></div>
+<div class="evo-mini"><b id="evoWeightChange">—</b><span>Variação no período</span></div>
+</div>
+<div class="evo-chart" id="evoWeightChart"></div>
+</div>
+</section>
+<section class="panel" id="backup">
+<div class="section-title"><h2>Dados &amp; Backup</h2><span>Segurança dos registros</span></div>
+<div class="card">
+<h3>Estado dos dados</h3>
+<div class="backup-meta">
+<div class="backup-meta-row"><span>Registros diários</span><b id="backupDaysCount">0</b></div>
+<div class="backup-meta-row"><span>Livros cadastrados</span><b id="backupBooksCount">0</b></div>
+<div class="backup-meta-row"><span>Último salvamento local</span><b id="backupLocalTime">—</b></div>
+<div class="backup-meta-row"><span>Última sincronização na nuvem</span><b id="backupCloudTime">—</b></div>
+</div>
+<div class="backup-actions">
+<button class="primary" id="exportBtn">Exportar backup JSON</button>
+<label class="soft" style="display:inline-block;padding:10px 12px;border-radius:12px;font-weight:700;cursor:pointer">
+        Importar backup
+        <input accept=".json,application/json" id="importFile" style="display:none" type="file"/>
+</label>
+<button id="syncBtn">Sincronizar agora</button>
+</div>
+<div class="backup-warning">O backup JSON inclui os dados da rotina, biblioteca e histórico. Na V40, novas fotos tentam usar o Supabase Storage quando você está conectado e mantêm fallback local.</div>
+<div class="backup-actions" style="margin-top:8px"><button id="migratePhotosBtn">Migrar fotos locais para a nuvem</button></div>
+<div class="muted" id="backupMsg" style="margin-top:10px"></div>
+</div>
+</section>
+<section class="panel" id="historico">
+<div class="section-title">
+<h2>Histórico diário</h2>
+<span>Veja o que foi registrado em cada dia</span>
+</div>
+<div class="history-controls">
+<button id="historyPrevBtn" type="button">‹</button>
+<input id="historyDateInput" type="date"/>
+<button id="historyNextBtn" type="button">›</button>
+</div>
+<div id="historyContent"></div>
+</section>
+
+<section class="panel" id="perfil">
+  <div class="section-title"><h2>Perfil &amp; Medidas</h2><span>Dados pessoais de acompanhamento</span></div>
+
+  <div class="card">
+    <h3>Informações gerais</h3>
+    <div class="profile-grid">
+      <input id="profileHeightInput" type="number" step="0.1" min="0" placeholder="Altura (cm)">
+      <input id="profileGoalWeightInput" type="number" step="0.1" min="0" placeholder="Meta de peso (kg)">
+    </div>
+    <button class="primary" id="saveProfileBtn" type="button" style="margin-top:8px">Salvar informações</button>
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <h3>Nova medição</h3>
+    <div class="profile-grid">
+      <input id="measureDateInput" type="date">
+      <input id="measureWeightInput" type="number" step="0.1" min="0" placeholder="Peso (kg)">
+      <input id="measureWaistInput" type="number" step="0.1" min="0" placeholder="Cintura (cm)">
+      <input id="measureAbdomenInput" type="number" step="0.1" min="0" placeholder="Abdômen (cm)">
+      <input id="measureChestInput" type="number" step="0.1" min="0" placeholder="Peitoral (cm)">
+      <input id="measureArmInput" type="number" step="0.1" min="0" placeholder="Braço (cm)">
+      <input id="measureThighInput" type="number" step="0.1" min="0" placeholder="Coxa (cm)">
+      <input id="measureHipInput" type="number" step="0.1" min="0" placeholder="Quadril (cm)">
+    </div>
+    <button class="primary" id="saveMeasurementBtn" type="button" style="margin-top:8px">Salvar medição</button>
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <h3>Histórico de medidas</h3>
+    <div id="measurementList" class="measure-list"></div>
+  </div>
+</section>
+
+<section class="panel" id="conta">
+<div class="section-title"><h2>Conta</h2><span>PWA + nuvem</span></div>
+<div class="card">
+<div class="muted" id="accountInfo">Modo local.</div>
+<div class="account-status-grid">
+<div class="account-mini"><b id="accountModeLabel">Local</b><span>Modo atual</span></div>
+<div class="account-mini"><b id="accountSyncLabel">—</b><span>Último sync</span></div>
+</div>
+<button class="primary hidden" id="installBtn" style="margin-top:12px">Instalar app</button>
+<button id="logoutBtn" style="margin-top:12px">Sair</button>
+</div>
+<div class="card" style="margin-top:14px">
+<h3>Configurar sincronização em nuvem</h3>
+<p class="muted">Cole abaixo a URL do projeto e a chave <b>anon public</b> do Supabase. Esses dados ficam salvos apenas neste navegador.</p>
+<input id="cloudUrl" placeholder="https://SEU-PROJETO.supabase.co" style="margin-bottom:8px"/>
+<input id="cloudAnonKey" placeholder="Supabase anon public key" style="margin-bottom:8px"/>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="primary" id="saveCloudBtn">Salvar configuração</button>
+<button id="clearCloudBtn">Remover configuração</button>
+</div>
+<div class="muted" id="cloudConfigMsg" style="margin-top:10px"></div>
+</div>
+<div class="card" style="margin-top:14px">
+<h3>Diagnóstico rápido</h3>
+<p class="muted">Verifica estrutura do app, armazenamento local, fotos e configuração da nuvem.</p>
+<button class="primary" id="runDiagnosticsBtn" type="button">Executar diagnóstico</button>
+<div id="diagnosticsResult" class="diag-list"></div>
+</div>
+
+<div class="card" style="margin-top:14px">
+<h3>Minhas metas</h3>
+<p class="muted">Ajuste as metas usadas na Home, na aderência e na Evolução.</p>
+<div class="goal-grid">
+  <div class="goal-field"><label>Água por dia (L)</label><input id="goalWaterInput" type="number" min="0.5" max="10" step="0.5"></div>
+  <div class="goal-field"><label>Refeições por dia</label><input id="goalMealsInput" type="number" min="1" max="8" step="1"></div>
+  <div class="goal-field"><label>Páginas por dia</label><input id="goalReadingInput" type="number" min="1" max="500" step="1"></div>
+  <div class="goal-field"><label>Estudo por dia (min)</label><input id="goalStudyInput" type="number" min="5" max="600" step="5"></div>
+  <div class="goal-field"><label>Treinos por semana</label><input id="goalWorkoutInput" type="number" min="1" max="14" step="1"></div>
+</div>
+<button class="primary" id="saveGoalsBtn" type="button" style="margin-top:10px;width:100%">Salvar metas</button>
+<div class="muted" id="goalsStatus" style="margin-top:7px"></div>
+</div>
+
+<div class="card" style="margin-top:14px">
+<h3>Perfil &amp; Medidas</h3>
+<p class="muted">Registre peso e medidas corporais e acompanhe sua evolução ao longo do tempo.</p>
+<button class="primary" data-open-panel="perfil" type="button">Abrir Perfil &amp; Medidas</button>
+</div>
+<div class="card" style="margin-top:14px">
+<h3>Dados &amp; Backup</h3>
+<p class="muted">Exporte seus registros, importe um backup ou force uma sincronização com a nuvem.</p>
+<button class="primary" id="openBackupBtn" type="button">Abrir Dados &amp; Backup</button>
+</div>
+<div class="card" style="margin-top:14px">
+<h3>Instalar no iPhone</h3>
+<p class="muted">Depois de publicar em HTTPS, abra o site no Safari, toque em Compartilhar e escolha <b>Adicionar à Tela de Início</b>.</p>
+</div>
+</section>
+</div>
+<nav class="bottom-nav hidden" id="nav">
+<button class="nav-btn active" data-target="hoje">Hoje</button>
+<button class="nav-btn" data-target="areas">Áreas</button>
+<button class="nav-btn" data-target="evolucao">Evolução</button>
+<button class="nav-btn" data-target="conta">Conta</button>
+</nav>
+<script type="module">
+const savedCfg=JSON.parse(localStorage.getItem("rotinaCloudConfig")||"{}");
+const cfg={
+  supabaseUrl:savedCfg.supabaseUrl||"https://kmpaxqejfbebzdhqsodr.supabase.co",
+  supabaseAnonKey:savedCfg.supabaseAnonKey||"sb_publishable_pJuvalmN_N6khDTppj7RPQ_DGUeSLi7"
+};
+let supabase=null, user=null, mode="local";
+async function initSupabase(){
+  if(cfg.supabaseUrl&&cfg.supabaseAnonKey){
+    const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");
+    supabase=createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
+  }
+}
+await initSupabase();
+
+const today=new Date().toISOString().slice(0,10);
+document.getElementById("dateLabel").textContent=new Intl.DateTimeFormat("pt-BR",{weekday:"long",day:"2-digit",month:"long"}).format(new Date());
+let state=JSON.parse(localStorage.getItem("rotinaV3")||'{"days":{},"exerciseLogs":{}}');
+if(!state.days)state.days={};if(!state.exerciseLogs)state.exerciseLogs={};if(!state.days[today])state.days[today]={};
+
+if(!state.goals || typeof state.goals!=="object") state.goals={};
+state.goals={
+  water:Number(state.goals.water||3),
+  meals:Number(state.goals.meals||3),
+  reading:Number(state.goals.reading||10),
+  study:Number(state.goals.study||30),
+  workoutsWeek:Number(state.goals.workoutsWeek||4)
+};
+function ensureStateShape(){
+  if(!state || typeof state!=="object") state={};
+  if(!state.days || typeof state.days!=="object") state.days={};
+  if(!state.exerciseLogs || typeof state.exerciseLogs!=="object") state.exerciseLogs={};
+  if(!state.days[today] || typeof state.days[today]!=="object") state.days[today]={};
+  if(!state.goals || typeof state.goals!=="object") state.goals={};
+  state.goals={
+    water:Number(state.goals.water||3),
+    meals:Number(state.goals.meals||3),
+    reading:Number(state.goals.reading||10),
+    study:Number(state.goals.study||30),
+    workoutsWeek:Number(state.goals.workoutsWeek||4)
+  };
+  if(!Array.isArray(state.library)) state.library=[];
+  if(!Array.isArray(state.workoutSessions)) state.workoutSessions=[];
+  if(!Array.isArray(state.rosaryEntries)) state.rosaryEntries=[];
+}
+ensureStateShape();
+function goals(){ ensureStateShape(); return state.goals; }
+function renderGoals(){
+  const g=goals();
+  const vals={
+    goalWaterInput:g.water,
+    goalMealsInput:g.meals,
+    goalReadingInput:g.reading,
+    goalStudyInput:g.study,
+    goalWorkoutInput:g.workoutsWeek
+  };
+  Object.entries(vals).forEach(([id,val])=>{
+    const el=document.getElementById(id);
+    if(el && document.activeElement!==el) el.value=val;
+  });
+}
+function saveGoals(){
+  const n=id=>Number(document.getElementById(id)?.value||0);
+  const next={
+    water:n("goalWaterInput"),
+    meals:n("goalMealsInput"),
+    reading:n("goalReadingInput"),
+    study:n("goalStudyInput"),
+    workoutsWeek:n("goalWorkoutInput")
+  };
+  if(next.water<0.5 || next.meals<1 || next.reading<1 || next.study<5 || next.workoutsWeek<1){
+    const st=document.getElementById("goalsStatus");
+    if(st) st.textContent="Revise os valores das metas.";
+    return;
+  }
+  state.goals=next;
+  persist();
+  const st=document.getElementById("goalsStatus");
+  if(st) st.textContent="Metas salvas.";
+}
+
+
+const workouts={
+A:[
+["Chest press máquina","3×8–12","Ajuste o banco para as alças ficarem na linha média do peito. Mantenha escápulas apoiadas, empurre sem travar os cotovelos e retorne controlando.","Peito"],
+["Peck deck","3×10–12","Apoie bem as costas. Mantenha cotovelos levemente flexionados e feche os braços sem projetar os ombros à frente.","Peito"],
+["Supino inclinado máquina","3×8–12","Ajuste o banco para trabalhar a parte superior do peito. Pés firmes, escápulas apoiadas e movimento controlado.","Peito"],
+["Tríceps máquina/cabo","3×10–12","Mantenha os cotovelos próximos ao corpo. Estenda os braços sem movimentar os ombros e retorne lentamente.","Tríceps"],
+["Tríceps corda","2×12–15","Cotovelos fixos ao lado do corpo. Estenda e afaste levemente as pontas da corda ao final.","Tríceps"],
+["Face pull","3×12–15","Puxe a corda na direção do rosto, abrindo as mãos. Evite elevar os ombros e mantenha o tronco estável.","Postura"],
+["Crucifixo inverso","2×12–15","Peito apoiado quando possível. Abra os braços levando os cotovelos para trás sem encolher os ombros.","Posterior de ombro"]
+],
+B:[
+["Leg press","4×8–12","Apoie toda a lombar no encosto. Pés firmes, joelhos alinhados com os pés e amplitude confortável sem tirar o quadril do banco.","Pernas"],
+["Extensora","3×10–12","Alinhe o joelho ao eixo da máquina. Estenda controlando a subida e a descida, sem impulsionar o tronco.","Quadríceps"],
+["Flexora","3×10–12","Mantenha quadril e tronco apoiados. Flexione os joelhos sem levantar o quadril e retorne devagar.","Posterior de coxa"],
+["Glúteo máquina","3×10–15","Mantenha abdômen firme e evite girar o quadril. Empurre com o glúteo e retorne de forma controlada.","Glúteos"],
+["Abdutora","3×12–15","Mantenha tronco estável. Abra os joelhos sem embalo e controle o retorno.","Glúteos"],
+["Panturrilha","3×12–15","Use amplitude confortável: desça o calcanhar controlando e suba até contrair bem a panturrilha.","Panturrilha"],
+["Abdominal máquina","3×10–15","Contraia o abdômen aproximando costelas e pelve. Evite puxar apenas com braços ou pescoço.","Core"]
+],
+C:[
+["Puxada frontal","3×8–12","Puxe a barra em direção à parte superior do peito. Mantenha peito aberto e evite inclinar demais o tronco.","Costas"],
+["Remada sentada","3×8–12","Puxe levando cotovelos para trás. Evite arredondar a lombar e não projete os ombros à frente no final.","Costas"],
+["Remada com apoio de peito","3×10–12","Mantenha o peito apoiado e puxe com os cotovelos. Controle a volta sem perder a posição dos ombros.","Costas"],
+["Crucifixo inverso","3×12–15","Abra os braços mantendo os ombros baixos. Priorize controle e postura em vez de carga alta.","Posterior de ombro"],
+["Face pull","2×12–15","Puxe em direção ao rosto com cotovelos altos, mantendo escápulas controladas e sem encolher os ombros.","Postura"],
+["Rosca máquina","3×10–12","Mantenha braços apoiados e ombros estáveis. Flexione os cotovelos sem tirar o braço da posição.","Bíceps"],
+["Rosca no cabo","2×12–15","Cotovelos junto ao corpo. Suba e desça controlando, sem usar balanço do tronco.","Bíceps"]
+],
+D:[
+["Desenvolvimento máquina","3×8–12","Ajuste o banco para as mãos começarem próximas à altura dos ombros. Empurre mantendo tronco apoiado.","Ombros"],
+["Elevação lateral máquina","3×10–15","Eleve os braços até uma amplitude confortável, sem encolher os ombros e sem usar impulso.","Ombros"],
+["Crucifixo inverso","2×12–15","Abra os braços com controle e ombros baixos. Evite compensar com lombar ou pescoço.","Posterior de ombro"],
+["Hack squat/leg press","3×10–12","Pés firmes e joelhos acompanhando a direção dos pés. Desça em amplitude segura mantendo quadril apoiado.","Pernas"],
+["Flexora","3×10–12","Flexione os joelhos com quadril estável e controle a fase de retorno.","Posterior de coxa"],
+["Extensora","2×12–15","Alinhe joelhos ao eixo da máquina, estenda sem impulso e retorne controlando.","Quadríceps"],
+["Abdominal/prancha","3 séries","Mantenha abdômen ativo, coluna neutra e respiração contínua. Interrompa se perder a postura.","Core"]
+]
+};
+
+function day(){return state.days[today]}
+function persistQuiet(){
+  localStorage.setItem("rotinaV3",JSON.stringify(state));
+  markLocalSaved();
+  if(mode==="cloud") queueCloudSave();
+}
+function persist(){
+  persistQuiet();
+  renderFast();
+}
+let saveTimer;
+function queueCloudSave(){clearTimeout(saveTimer);saveTimer=setTimeout(syncCloud,700)}
+
+
+
+
+function nowTimeLabel(){
+  const d=new Date();
+  return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+}
+function ensureAreaLogs(d=day()){
+  if(!Array.isArray(d.waterEntries)) d.waterEntries=[];
+  if(!Array.isArray(d.studyEntries)) d.studyEntries=[];
+}
+function formatShortDay(key){
+  const dt=parseDayKey(key);
+  if(!dt) return key;
+  return dt.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+}
+function recentDayKeys(limit=7){
+  const out=[];
+  const base=new Date();
+  base.setHours(0,0,0,0);
+  for(let i=0;i<limit;i++){
+    const d=new Date(base);
+    d.setDate(base.getDate()-i);
+    out.push(dateKeyFromDate(d));
+  }
+  return out;
+}
+function waterHistoryHtml(){
+  const d=day();
+  ensureAreaLogs(d);
+  const todayItems=d.waterEntries.length
+    ? d.waterEntries.slice().reverse().map(x=>`
+      <div class="area-history-item">
+        <div class="area-history-top">
+          <b>${x.amount>0?"+":""}${Number(x.amount||0).toFixed(1).replace(".",",")} L</b>
+          <span>${x.time||"—"}</span>
+        </div>
+      </div>`).join("")
+    : `<div class="muted">Nenhum registro individual de água hoje.</div>`;
+
+  const days=recentDayKeys(7).map(key=>{
+    const x=(state.days||{})[key]||{};
+    return `<div class="area-history-day">
+      <span>${formatShortDay(key)}</span>
+      <b>${Number(x.water||0).toFixed(1).replace(".",",")} L</b>
+    </div>`;
+  }).join("");
+
+  return `
+    <div class="area-history">
+      <h4>Registros de hoje</h4>
+      <div class="area-history-list">${todayItems}</div>
+      <h4 style="margin-top:12px">Últimos 7 dias</h4>
+      <div class="area-history-days">${days}</div>
+    </div>`;
+}
+function studyHistoryHtml(){
+  const d=day();
+  ensureAreaLogs(d);
+
+  let todayItems="";
+  if(d.studyEntries.length){
+    todayItems=d.studyEntries.slice().reverse().map(x=>`
+      <div class="area-history-item">
+        <div class="area-history-top">
+          <b>${Number(x.minutes||0)} min</b>
+          <span>${x.time||"—"}</span>
+        </div>
+        <p>${x.topic||"Sem tema informado"}</p>
+        <button style="margin-top:6px" data-study-delete="${x.id}">Excluir</button>
+      </div>`).join("");
+  }else if(Number(d.studyMinutes||0)>0){
+    todayItems=`<div class="area-history-item">
+      <div class="area-history-top"><b>${Number(d.studyMinutes||0)} min</b><span>registro anterior</span></div>
+      <p>${d.studyTopic||"Sem tema informado"}</p>
+    </div>`;
+  }else{
+    todayItems=`<div class="muted">Nenhuma sessão de estudo registrada hoje.</div>`;
+  }
+
+  const days=recentDayKeys(7).map(key=>{
+    const x=(state.days||{})[key]||{};
+    const entries=Array.isArray(x.studyEntries)?x.studyEntries:[];
+    const minutes=entries.length
+      ? entries.reduce((s,e)=>s+Number(e.minutes||0),0)
+      : Number(x.studyMinutes||0);
+    const topics=entries.length
+      ? [...new Set(entries.map(e=>e.topic).filter(Boolean))].slice(0,2).join(" · ")
+      : (x.studyTopic||"");
+    return `<div class="area-history-day">
+      <span>${formatShortDay(key)}${topics?` · ${topics}`:""}</span>
+      <b>${minutes} min</b>
+    </div>`;
+  }).join("");
+
+  return `
+    <div class="area-history">
+      <h4>Sessões de hoje</h4>
+      <div class="area-history-list">${todayItems}</div>
+      <h4 style="margin-top:12px">Últimos 7 dias</h4>
+      <div class="area-history-days">${days}</div>
+    </div>`;
+}
+
+function changeWater(delta){
+  const d=day();
+  ensureAreaLogs(d);
+  const amount=Number(delta||0);
+  const current=Number(d.water||0);
+  const next=Math.max(0,Math.min(6,Math.round((current+amount)*10)/10));
+  const applied=Math.round((next-current)*10)/10;
+  d.water=next;
+  if(applied!==0){
+    d.waterEntries.push({
+      id:"water_"+Date.now().toString(36),
+      time:nowTimeLabel(),
+      amount:applied
+    });
+  }
+  persist();
+}
+function saveStudyArea(){
+  const minutesEl=document.getElementById("studyMinutesArea");
+  const topicEl=document.getElementById("studyTopicArea");
+  const minutes=Math.max(0,Number(minutesEl?.value||0));
+  const topic=(topicEl?.value||"").trim();
+  if(!minutes) return;
+
+  const d=day();
+  ensureAreaLogs(d);
+  d.studyEntries.push({
+    id:"study_"+Date.now().toString(36),
+    time:nowTimeLabel(),
+    minutes,
+    topic
+  });
+  d.studyMinutes=d.studyEntries.reduce((s,e)=>s+Number(e.minutes||0),0);
+  d.studyTopic=topic || d.studyTopic || "";
+  persist();
+  showArea("estudo");
+}
+function deleteStudyEntry(id){
+  const d=day();
+  ensureAreaLogs(d);
+  d.studyEntries=d.studyEntries.filter(x=>x.id!==id);
+  d.studyMinutes=d.studyEntries.reduce((s,e)=>s+Number(e.minutes||0),0);
+  d.studyTopic=d.studyEntries.length ? (d.studyEntries[d.studyEntries.length-1].topic||"") : "";
+  persist();
+  showArea("estudo");
+}
+
+function quickWater(amount=0.5){ changeWater(Number(amount)||0.5); }
+function quickRead(amount=10){ day().pages=Math.max(0,Number(day().pages||0)+(Number(amount)||10)); persist(); }
+function quickEnglish(){ day().english=!day().english; persist(); }
+function quickLeadership(){ day().leadership=!day().leadership; persist(); }
+
+function renderTodayProgress(){
+  const v=day();
+  const spiritualGoal=!!v.gospelRead && !!v.reflectionDone;
+  const checks=[
+    !!(v.workoutCompleted || v.workoutStatus==="completo" || v.workoutStatus==="parcial"),
+    Number(v.water||0)>=goals().water,
+    Number(v.mealsCount||0)>=goals().meals,
+    Number(v.pages||0)>=goals().reading,
+    Number(v.studyMinutes||0)>=goals().study,
+    spiritualGoal
+  ];
+  const pct=Math.round(checks.filter(Boolean).length/checks.length*100);
+  const text=document.getElementById("todayProgressText");
+  const bar=document.getElementById("todayProgressBar");
+  if(text) text.textContent=`${pct}%`;
+  if(bar) bar.style.width=`${pct}%`;
+}
+
+function renderWeekSummary(){
+  let tr=0,en=0,ld=0,pg=0,wa=0;
+  weekDates().forEach(k=>{
+    const v=state.days[k]||{};
+    if(v.workout&&v.workout!=="Descanso") tr++;
+    if(v.english) en++;
+    if(v.leadership) ld++;
+    pg+=Number(v.pages||0);
+    if(Number(v.water||0)>=3) wa++;
+  });
+  const items=[["Treino",tr,4],["Inglês",en,3],["PNL",ld,2],["Leitura",pg,70],["Água",wa,7]];
+  const el=document.getElementById("weekSummary");
+  if(!el) return;
+  el.innerHTML=items.map(([label,v,t])=>{
+    const pct=Math.round(v/t*100);
+    return `<div class="week-stat"><b>${v}/${t} · ${pct}%</b><small>${label}</small><div class="mini-track"><span style="width:${Math.min(100,pct)}%"></span></div></div>`;
+  }).join("");
+}
+
+
+function showPanel(id){
+  const el=document.getElementById(id);
+  if(!el) return;
+
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  el.classList.add("active");
+
+  try{window.scrollTo({top:0,behavior:"instant"});}catch(e){window.scrollTo(0,0);}
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.target===id));
+
+  try{
+    if(id==="treinos") renderWorkouts();
+    else if(id==="biblioteca") renderLibrary();
+    else if(id==="evolucao") renderEvolution();
+    else if(id==="historico") renderHistory();
+    else if(id==="backup" || id==="conta") renderBackupStatus();
+    else if(id==="perfil") renderProfile();
+    else if(id==="perfil") renderProfile();
+    else if(id==="alimentacao") renderFood();
+    else if(id==="oracoes"){
+      renderPrayers();
+      Promise.resolve(loadDailyGospel(false)).catch(err=>console.error("Evangelho",err));
+    }
+  }catch(err){
+    console.error("Falha ao renderizar painel",id,err);
+  }
+}
+function registerMeal(){
+  const d=day();
+  d.mealsCount=Math.min(3,Number(d.mealsCount||0)+1);
+  d.meals=d.mealsCount>=3;
+  d.proteinCount=Math.min(3,Number(d.proteinCount||0)+1);
+  d.carbCount=Math.min(3,Number(d.carbCount||0)+1);
+  d.vegCount=Math.min(3,Number(d.vegCount||0)+1);
+  d.fatCount=Math.min(3,Number(d.fatCount||0)+1);
+  persist();
+}
+function showArea(area){
+  const titleMap={agua:"Água",alimentacao:"Alimentação",treino:"Treino",leitura:"Leitura",estudo:"Estudo",oracoes:"Orações"};
+  const title=document.getElementById("areaTitle");
+  if(title) title.textContent=titleMap[area]||"Área";
+
+  // Áreas com telas próprias
+  if(area==="alimentacao"){ showPanel("alimentacao"); return; }
+  if(area==="leitura"){ showPanel("biblioteca"); return; }
+  if(area==="oracoes"){ showPanel("oracoes"); return; }
+
+  const d=day();
+  let content="";
+
+  if(area==="agua"){
+    content=`
+      <div class="area-card">
+        <h3>Água</h3>
+        <p><b>${Number(d.water||0).toFixed(1).replace(".",",")} L</b> de 3,0 L</p>
+        <div class="row">
+          <button data-area-action="water-minus">−0,5 L</button>
+          <button class="primary" data-area-action="water-plus">+0,5 L</button>
+        </div>
+        ${waterHistoryHtml()}
+      </div>`;
+  }else if(area==="treino"){
+    showPanel("treinos");
+    return;
+  }else if(area==="estudo"){
+    ensureAreaLogs(d);
+    content=`
+      <div class="area-card">
+        <h3>Estudo</h3>
+        <p><b>${Number(d.studyMinutes||0)} min</b> acumulados hoje · meta 30 min</p>
+        <input id="studyMinutesArea" type="number" min="1" inputmode="numeric" placeholder="Minutos desta sessão">
+        <input id="studyTopicArea" placeholder="Tema estudado" style="margin-top:8px">
+        <button class="primary" style="margin-top:8px;width:100%" data-area-action="study-save">Salvar sessão</button>
+        ${studyHistoryHtml()}
+      </div>`;
+  }
+
+  const host=document.getElementById("areaContent");
+  if(host) host.innerHTML=content;
+  showPanel("areaDetail");
+}
+function renderApprovedHome(){
+  const d=day();
+  const g=goals();
+  const water=Number(d.water||0);
+  const meals=Number(d.mealsCount||0);
+  const pages=Number(d.pages||0);
+  const study=Number(d.studyMinutes||0);
+  const workoutDone=!!(d.workoutCompleted || d.workoutStatus==="completo" || d.workoutStatus==="parcial");
+  const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val};
+  set("homeWater",`${water.toFixed(1).replace(".",",")} / ${Number(g.water).toFixed(1).replace(".",",")} L`);
+  set("homeWaterPct",`${Math.max(0,Math.round(water/g.water*100))}%`);
+  set("homeMeals",`${meals} / ${g.meals}`);
+  set("homeMealsPct",`${Math.max(0,Math.round(meals/g.meals*100))}%`);
+  set("homeWorkout",`${workoutDone?1:0} / 1`);
+  set("homeWorkoutPct",workoutDone?"100%":"0%");
+  set("homeReading",`${pages} / ${g.reading}`);
+  set("homeReadingPct",`${Math.max(0,Math.round(pages/g.reading*100))}%`);
+  set("homeStudy",`${study} / ${g.study} min`);
+  set("homeStudyPct",`${Math.max(0,Math.round(study/g.study*100))}%`);
+  set("foodHeadline",`${meals} de ${g.meals} refeições registradas`);
+  set("macroProtein",`${d.proteinCount||0}/${g.meals}`);
+  set("macroCarb",`${d.carbCount||0}/${g.meals}`);
+  set("macroVeg",`${d.vegCount||0}/${g.meals}`);
+  set("macroFat",`${d.fatCount||0}/${g.meals}`);
+  set("workoutSummaryText",
+    d.workoutStatus==="active"?`Treino ${d.workout} em andamento`:
+    d.workoutType==="free"&&d.workoutActivity?`${d.workoutActivity} · ${d.workoutMinutes||0} min`:
+    d.workout?`Treino ${d.workout} · ${d.workoutStatus||"registrado"}`:"Selecione o treino");
+  set("currentBookTitle",d.bookTitle||"Livro atual");
+  set("currentBookAuthor",d.bookAuthor||"Autor");
+  set("currentBookProgress",`${d.bookCurrentPage||0} de ${d.bookTotalPages||0} páginas`);
+  set("studyHomeProgress",`${study} / ${g.study} minutos`);
+  set("studyHomeTopic",`Tema de hoje: ${d.studyTopic||"—"}`);
+}
+
+
+
+
+
+const DAILY_POEMS=[
+  {title:"Mar Português",author:"Fernando Pessoa",text:"Ó mar salgado, quanto do teu sal\nSão lágrimas de Portugal!\nPor te cruzarmos, quantas mães choraram,\nQuantos filhos em vão rezaram!\n\nQuantas noivas ficaram por casar\nPara que fosses nosso, ó mar!\nValeu a pena? Tudo vale a pena\nSe a alma não é pequena.\n\nQuem quer passar além do Bojador\nTem que passar além da dor.\nDeus ao mar o perigo e o abismo deu,\nMas nele é que espelhou o céu."},
+  {title:"Autopsicografia",author:"Fernando Pessoa",text:"O poeta é um fingidor.\nFinge tão completamente\nQue chega a fingir que é dor\nA dor que deveras sente.\n\nE os que leem o que escreve,\nNa dor lida sentem bem,\nNão as duas que ele teve,\nMas só a que eles não têm.\n\nE assim nas calhas de roda\nGira, a entreter a razão,\nEsse comboio de corda\nQue se chama coração."},
+  {title:"Soneto",author:"Luís de Camões",text:"Amor é fogo que arde sem se ver;\nÉ ferida que dói, e não se sente;\nÉ um contentamento descontente;\nÉ dor que desatina sem doer.\n\nÉ um não querer mais que bem querer;\nÉ um andar solitário entre a gente;\nÉ nunca contentar-se de contente;\nÉ um cuidar que ganha em se perder.\n\nÉ querer estar preso por vontade;\nÉ servir a quem vence, o vencedor;\nÉ ter com quem nos mata, lealdade.\n\nMas como causar pode seu favor\nNos corações humanos amizade,\nSe tão contrário a si é o mesmo Amor?"},
+  {title:"Canção do Exílio",author:"Gonçalves Dias",text:"Minha terra tem palmeiras,\nOnde canta o Sabiá;\nAs aves, que aqui gorjeiam,\nNão gorjeiam como lá.\n\nNosso céu tem mais estrelas,\nNossas várzeas têm mais flores,\nNossos bosques têm mais vida,\nNossa vida mais amores.\n\nEm cismar, sozinho, à noite,\nMais prazer encontro eu lá;\nMinha terra tem palmeiras,\nOnde canta o Sabiá.\n\nMinha terra tem primores,\nQue tais não encontro eu cá;\nEm cismar, sozinho, à noite,\nMais prazer encontro eu lá;\nMinha terra tem palmeiras,\nOnde canta o Sabiá.\n\nNão permita Deus que eu morra,\nSem que eu volte para lá;\nSem que desfrute os primores\nQue não encontro por cá;\nSem qu'inda aviste as palmeiras,\nOnde canta o Sabiá."},
+  {title:"Meus oito anos",author:"Casimiro de Abreu",text:"Oh! que saudades que tenho\nDa aurora da minha vida,\nDa minha infância querida\nQue os anos não trazem mais!\n\nQue amor, que sonhos, que flores,\nNaquelas tardes fagueiras\nÀ sombra das bananeiras,\nDebaixo dos laranjais!\n\nComo são belos os dias\nDo despontar da existência!\nRespira a alma inocência\nComo perfumes a flor;\n\nO mar é lago sereno,\nO céu um manto azulado,\nO mundo um sonho dourado,\nA vida um hino d'amor!"},
+  {title:"Via Láctea",author:"Olavo Bilac",text:"Ora (direis) ouvir estrelas! Certo\nPerdeste o senso! E eu vos direi, no entanto,\nQue, para ouvi-las, muita vez desperto\nE abro as janelas, pálido de espanto...\n\nE conversamos toda a noite, enquanto\nA Via-Láctea, como um pálio aberto,\nCintila. E, ao vir do sol, saudoso e em pranto,\nInda as procuro pelo céu deserto.\n\nDireis agora: Tresloucado amigo!\nQue conversas com elas? Que sentido\nTem o que dizem, quando estão contigo?\n\nE eu vos direi: Amai para entendê-las!\nPois só quem ama pode ter ouvido\nCapaz de ouvir e de entender estrelas."},
+  {title:"Versos Íntimos",author:"Augusto dos Anjos",text:"Vês! Ninguém assistiu ao formidável\nEnterro de tua última quimera.\nSomente a Ingratidão, esta pantera,\nFoi tua companheira inseparável!\n\nAcostuma-te à lama que te espera!\nO Homem, que, nesta terra miserável,\nMora, entre feras, sente inevitável\nNecessidade de também ser fera.\n\nToma um fósforo. Acende teu cigarro!\nO beijo, amigo, é a véspera do escarro,\nA mão que afaga é a mesma que apedreja.\n\nSe a alguém causa inda pena a tua chaga,\nApedreja essa mão vil que te afaga,\nEscarra nessa boca que te beija!"}
+];
+
+const DAILY_SONGS=[
+  {title:"Tocando em Frente",artist:"Almir Sater"},{title:"Dias Melhores",artist:"Jota Quest"},{title:"É Preciso Saber Viver",artist:"Titãs"},{title:"Anunciação",artist:"Alceu Valença"},{title:"O Sol",artist:"Vitor Kley"},{title:"Paciência",artist:"Lenine"},{title:"A Estrada",artist:"Cidade Negra"},{title:"Andar com Fé",artist:"Gilberto Gil"},{title:"Velha Infância",artist:"Tribalistas"},{title:"Epitáfio",artist:"Titãs"},{title:"Deus e Eu no Sertão",artist:"Victor & Leo"},{title:"Enquanto Houver Sol",artist:"Titãs"}
+];
+function inspirationIndex(len,offset=0){ const d=new Date(); const start=new Date(d.getFullYear(),0,0); return (Math.floor((d-start)/86400000)+offset)%len; }
+function getDailyPoem(){ return DAILY_POEMS[inspirationIndex(DAILY_POEMS.length)]; }
+function openPoemReader(){
+  const poem=getDailyPoem();
+  const overlay=document.getElementById("poemReaderOverlay");
+  const title=document.getElementById("poemReaderTitle");
+  const meta=document.getElementById("poemReaderMeta");
+  const text=document.getElementById("poemReaderText");
+  if(!overlay||!title||!meta||!text) return;
+  title.textContent=poem.title;
+  meta.textContent=`${poem.author} · leitura completa`;
+  text.textContent=poem.text;
+  overlay.classList.add("open"); overlay.setAttribute("aria-hidden","false");
+}
+function closePoemReader(){
+  const overlay=document.getElementById("poemReaderOverlay");
+  if(overlay){ overlay.classList.remove("open"); overlay.setAttribute("aria-hidden","true"); }
+}
+function renderDailyInspiration(){
+  const d=day(), poem=getDailyPoem(), song=DAILY_SONGS[inspirationIndex(DAILY_SONGS.length,3)];
+  const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val};
+  set("poemTextHome",poem.text.split("\n").slice(0,2).join("\n")+"…"); set("poemMetaHome",`${poem.title} · ${poem.author}`);
+  set("songTitleHome",song.title); set("songArtistHome",song.artist);
+  const q=encodeURIComponent(`${song.title} ${song.artist}`);
+  const sp=document.getElementById("songSpotifyHome"), yt=document.getElementById("songYoutubeHome");
+  if(sp) sp.href=`https://open.spotify.com/search/${q}`; if(yt) yt.href=`https://www.youtube.com/results?search_query=${q}`;
+  document.querySelectorAll("[data-inspiration-feedback]").forEach(b=>{ const [kind,val]=b.dataset.inspirationFeedback.split(":"); b.classList.toggle("selected",d[`${kind}Feedback`]===val); });
+  const pr=document.querySelector('[data-inspiration-action="poem-read"]'); if(pr) pr.textContent=d.poemRead?"✓ Lido":"Marcar lido";
+  const sh=document.querySelector('[data-inspiration-action="song-heard"]'); if(sh) sh.textContent=d.songHeard?"✓ Ouvida":"Marcar ouvida";
+}
+function handleInspirationFeedback(raw){ const [kind,val]=raw.split(":"); day()[`${kind}Feedback`]=day()[`${kind}Feedback`]===val?null:val; persist(); }
+function handleInspirationAction(action){
+  if(action==="poem-open"){ openPoemReader(); return; }
+  if(action==="poem-read"){ day().poemRead=!day().poemRead; }
+  if(action==="song-heard"){ day().songHeard=!day().songHeard; }
+  persist();
+}
+
+const LITURGY_API_BASE="https://liturgia.up.railway.app/v2/";
+
+function isoToday(){
+  const d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function gospelCacheKey(){ return `minhaRotina:gospel:${isoToday()}`; }
+
+function normalizeGospelPayload(data){
+  const readings=data?.leituras||data?.readings||{};
+  let g=readings.evangelho||readings.gospel||data?.evangelho||data?.gospel||null;
+  if(Array.isArray(g)) g=g[0]||null;
+  if(typeof g==="string") return {reference:"Evangelho do dia",text:g};
+
+  const reference =
+    g?.referencia||g?.reference||g?.ref||g?.titulo||g?.title||
+    data?.referencia||data?.reference||"Evangelho do dia";
+
+  const text =
+    g?.texto||g?.text||g?.conteudo||g?.content||
+    (Array.isArray(g?.versiculos)?g.versiculos.map(v=>v.texto||v.text||v).join(" "):"");
+
+  const reflection =
+    g?.reflexao||g?.reflection||data?.reflexao||data?.reflection||"";
+
+  return {
+    reference,
+    text: typeof text==="string" ? text.replace(/\s+/g," ").trim() : "",
+    reflection: typeof reflection==="string" ? reflection.trim() : "",
+    liturgicalDay:data?.liturgia||data?.liturgical_day||data?.celebracao||data?.celebration||"",
+    source:data?.fonte||data?.source||"liturgia.up.railway.app"
+  };
+}
+function sentenceChunks(text){
+  return (text||"")
+    .replace(/\s+/g," ")
+    .split(/(?<=[.!?])\s+/)
+    .map(x=>x.trim())
+    .filter(Boolean);
+}
+function shortFaithfulSummary(text){
+  const s=sentenceChunks(text);
+  if(!s.length) return "O resumo não pôde ser gerado automaticamente hoje.";
+  const chosen=s.slice(0,2).join(" ");
+  return chosen.length>380 ? chosen.slice(0,377)+"..." : chosen;
+}
+function centralMessage(gospel){
+  if(gospel.reflection) return gospel.reflection;
+  const summary=shortFaithfulSummary(gospel.text);
+  if(summary && !summary.startsWith("O resumo não")) {
+    return `${summary} Hoje, procure acolher essa Palavra sem pressa: observe o que ela pede de você nas relações, nas decisões e na forma de servir.`;
+  }
+  return "Reserve alguns minutos de silêncio para acolher a Palavra e perceber qual atitude concreta ela inspira para o seu dia.";
+}
+function practicalApplication(){
+  return "Escolha uma frase do Evangelho que mais chamou sua atenção e transforme-a em uma ação concreta de caridade, paciência, humildade, perdão ou serviço hoje.";
+}
+function applyGospelToUI(gospel,fromCache=false){
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  set("gospelReference",gospel.reference||"Evangelho do dia");
+  set("gospelLiturgicalDay",gospel.liturgicalDay||"Liturgia de hoje");
+  set("gospelSummary",shortFaithfulSummary(gospel.text));
+  set("dailyReflectionText",centralMessage(gospel));
+  set("gospelApplication",practicalApplication());
+  set("gospelText",gospel.text||"O texto completo do Evangelho não foi disponibilizado pela fonte neste momento.");
+  set("gospelStatus",fromCache?"Exibindo a última versão carregada hoje.":"Liturgia atualizada pela internet.");
+  set("gospelSource",`Fonte: ${gospel.source||"liturgia diária online"}.`);
+}
+async function loadDailyGospel(force=false){
+  const status=document.getElementById("gospelStatus");
+  if(status) status.textContent="Buscando a liturgia católica de hoje...";
+  const key=gospelCacheKey();
+
+  if(!force){
+    try{
+      const cached=JSON.parse(localStorage.getItem(key)||"null");
+      if(cached?.text || cached?.reference){
+        applyGospelToUI(cached,true);
+      }
+    }catch(e){}
+  }
+
+  const d=new Date();
+  const url=`${LITURGY_API_BASE}?dia=${d.getDate()}&mes=${d.getMonth()+1}&ano=${d.getFullYear()}`;
+  try{
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),9000);
+    const res=await fetch(url,{signal:controller.signal,cache:"no-store"});
+    clearTimeout(timer);
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data=await res.json();
+    const gospel=normalizeGospelPayload(data);
+    if(!gospel.text && !gospel.reference) throw new Error("Resposta sem Evangelho");
+    localStorage.setItem(key,JSON.stringify(gospel));
+    applyGospelToUI(gospel,false);
+  }catch(e){
+    let cached=null;
+    try{cached=JSON.parse(localStorage.getItem(key)||"null");}catch(_){}
+    if(cached){
+      applyGospelToUI(cached,true);
+      if(status) status.textContent="Sem conexão agora. Exibindo a versão salva de hoje.";
+    }else{
+      const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+      set("gospelReference","Evangelho do dia indisponível");
+      set("gospelLiturgicalDay","Não foi possível confirmar a liturgia agora");
+      set("gospelSummary","Não vou inventar a leitura. Tente atualizar quando houver conexão.");
+      set("dailyReflectionText","Assim que a fonte responder, a reflexão aparecerá aqui.");
+      set("gospelApplication","Enquanto isso, reserve alguns minutos para oração e silêncio.");
+      set("gospelText","O texto do Evangelho não pôde ser confirmado com segurança.");
+      if(status) status.textContent="Falha ao acessar a fonte da liturgia.";
+    }
+  }
+}
+function toggleGospelRead(){
+  const d=day();
+  d.gospelRead=!d.gospelRead;
+  persist();
+}
+function renderGospelRead(){
+  const d=day();
+  const btn=document.getElementById("gospelReadBtn");
+  if(!btn) return;
+  btn.classList.toggle("done",!!d.gospelRead);
+  btn.textContent=d.gospelRead?"✓ Evangelho lido":"Marcar como lido";
+}
+
+
+function toggleReflectionDone(){
+  const d=day();
+  d.reflectionDone=!d.reflectionDone;
+  persist();
+}
+
+const ROSARY_MYSTERIES={
+  gozosos:{
+    title:"Mistérios Gozosos",
+    days:"Segunda-feira e sábado",
+    items:[
+      "A Anunciação do Anjo a Maria",
+      "A Visitação de Maria a Santa Isabel",
+      "O Nascimento de Jesus em Belém",
+      "A Apresentação do Menino Jesus no Templo",
+      "A perda e o encontro do Menino Jesus no Templo"
+    ]
+  },
+  luminosos:{
+    title:"Mistérios Luminosos",
+    days:"Quinta-feira",
+    items:[
+      "O Batismo de Jesus no Jordão",
+      "A autorrevelação de Jesus nas Bodas de Caná",
+      "O anúncio do Reino de Deus com o convite à conversão",
+      "A Transfiguração de Jesus",
+      "A instituição da Eucaristia"
+    ]
+  },
+  dolorosos:{
+    title:"Mistérios Dolorosos",
+    days:"Terça-feira e sexta-feira",
+    items:[
+      "A agonia de Jesus no Horto das Oliveiras",
+      "A flagelação de Jesus",
+      "A coroação de espinhos",
+      "Jesus carrega a cruz para o Calvário",
+      "A crucifixão e morte de Jesus"
+    ]
+  },
+  gloriosos:{
+    title:"Mistérios Gloriosos",
+    days:"Quarta-feira e domingo",
+    items:[
+      "A Ressurreição de Jesus",
+      "A Ascensão de Jesus ao Céu",
+      "A vinda do Espírito Santo sobre Maria e os Apóstolos",
+      "A Assunção de Maria ao Céu",
+      "A coroação de Maria como Rainha do Céu e da Terra"
+    ]
+  }
+};
+
+let selectedMysteryType="";
+
+function mysteryTypeForToday(){
+  const dayOfWeek=new Date().getDay();
+  if(dayOfWeek===1 || dayOfWeek===6) return "gozosos";
+  if(dayOfWeek===4) return "luminosos";
+  if(dayOfWeek===2 || dayOfWeek===5) return "dolorosos";
+  return "gloriosos";
+}
+
+function selectMysteryType(type){
+  if(!ROSARY_MYSTERIES[type]) return;
+  selectedMysteryType=type;
+  renderRosary();
+}
+
+function ensureRosaryEntries(){
+  if(!Array.isArray(state.rosaryEntries)) state.rosaryEntries=[];
+}
+
+function registerRosary(){
+  ensureRosaryEntries();
+  const type=selectedMysteryType || mysteryTypeForToday();
+  const now=new Date();
+  state.rosaryEntries.unshift({
+    id:"rosary_"+Date.now().toString(36),
+    date:today,
+    time:`${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`,
+    type,
+    title:ROSARY_MYSTERIES[type].title,
+    createdAt:now.toISOString()
+  });
+  const d=day();
+  if(!Array.isArray(d.rosaryEntries)) d.rosaryEntries=[];
+  d.rosaryEntries.unshift({type,time:state.rosaryEntries[0].time});
+  persist();
+}
+
+function renderRosary(){
+  ensureRosaryEntries();
+  const todayType=mysteryTypeForToday();
+  if(!selectedMysteryType) selectedMysteryType=todayType;
+  const selected=ROSARY_MYSTERIES[selectedMysteryType];
+  const todayMystery=ROSARY_MYSTERIES[todayType];
+
+  const todayLabel=document.getElementById("todayRosaryMysteryLabel");
+  const todayText=document.getElementById("todayRosaryMysteryText");
+  if(todayLabel) todayLabel.textContent=todayMystery.title.replace("Mistérios ","");
+  if(todayText) todayText.innerHTML=`<b>Para hoje:</b> ${todayMystery.title} <span class="muted">(${todayMystery.days})</span>`;
+
+  document.querySelectorAll("[data-mystery-type]").forEach(btn=>{
+    btn.classList.toggle("active",btn.dataset.mysteryType===selectedMysteryType);
+  });
+
+  const list=document.getElementById("mysteryList");
+  if(list){
+    list.innerHTML=`
+      <div class="muted" style="font-size:9px">${selected.title} · ${selected.days}</div>
+      ${selected.items.map((m,i)=>`<div class="mystery-item"><b>${i+1}º mistério</b>${m}</div>`).join("")}
+    `;
+  }
+
+  const history=document.getElementById("rosaryHistory");
+  if(history){
+    const items=state.rosaryEntries.slice(0,8);
+    history.innerHTML=items.length
+      ? items.map(x=>`<div class="rosary-history-item"><span>${String(x.date).split("-").reverse().join("/")} · ${x.time||""}</span><b>${ROSARY_MYSTERIES[x.type]?.title?.replace("Mistérios ","")||x.title||"Terço"}</b></div>`).join("")
+      : '<div class="muted">Nenhum terço registrado ainda.</div>';
+  }
+}
+
+const DAILY_VERSES=[
+  {text:"“Tudo posso naquele que me fortalece.”",ref:"Filipenses 4,13"},
+  {text:"“O Senhor é o meu pastor, nada me faltará.”",ref:"Salmo 23,1"},
+  {text:"“Entrega o teu caminho ao Senhor; confia nele, e ele agirá.”",ref:"Salmo 37,5"},
+  {text:"“Não temas, porque eu estou contigo.”",ref:"Isaías 41,10"},
+  {text:"“Alegrai-vos na esperança, sede pacientes na tribulação, perseverai na oração.”",ref:"Romanos 12,12"},
+  {text:"“A minha graça te basta.”",ref:"2 Coríntios 12,9"},
+  {text:"“Sede fortes e corajosos.”",ref:"Josué 1,9"},
+  {text:"“Buscai primeiro o Reino de Deus.”",ref:"Mateus 6,33"},
+  {text:"“O Senhor é minha luz e minha salvação.”",ref:"Salmo 27,1"},
+  {text:"“Bem-aventurados os que promovem a paz.”",ref:"Mateus 5,9"},
+  {text:"“Tudo o que fizerdes, fazei-o de coração.”",ref:"Colossenses 3,23"},
+  {text:"“Permanecei no meu amor.”",ref:"João 15,9"}
+];
+function verseForToday(){
+  const d=new Date();
+  const start=new Date(d.getFullYear(),0,0);
+  const dayOfYear=Math.floor((d-start)/86400000);
+  return DAILY_VERSES[dayOfYear % DAILY_VERSES.length];
+}
+function togglePrayer(key){
+  const d=day();
+  d[key]=!d[key];
+  persist();
+}
+function savePrayerIntention(){
+  const d=day();
+  const input=document.getElementById("prayerIntentionInput");
+  if(input) d.prayerIntention=input.value.trim();
+  persist();
+}
+function savePersonalReflection(){
+  const d=day();
+  const input=document.getElementById("personalReflectionInput");
+  if(input) d.personalReflection=input.value.trim();
+  persist();
+}
+function renderPrayers(){
+  const d=day();
+  const verse=verseForToday();
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  set("dailyVerseText",verse.text);
+  set("dailyVerseRef",verse.ref);
+
+  const goalsDone=[!!d.gospelRead,!!d.reflectionDone].filter(Boolean).length;
+
+  const reflectionBtn=document.getElementById("reflectionDoneBtn");
+  if(reflectionBtn){
+    reflectionBtn.classList.toggle("done",!!d.reflectionDone);
+    reflectionBtn.textContent=d.reflectionDone?"✓":"✓";
+  }
+  const reflectionCard=document.getElementById("dailyReflectionCard");
+  if(reflectionCard) reflectionCard.classList.toggle("done",!!d.reflectionDone);
+
+  const input=document.getElementById("prayerIntentionInput");
+  if(input && document.activeElement!==input) input.value=d.prayerIntention||"";
+  const personal=document.getElementById("personalReflectionInput");
+  if(personal && document.activeElement!==personal) personal.value=d.personalReflection||"";
+  const video=document.getElementById("reflectionVideoLink");
+  if(video){
+    const ref=document.getElementById("gospelReference")?.textContent||"Evangelho de hoje";
+    video.href=`https://www.youtube.com/results?search_query=${encodeURIComponent(`Frei Gilson reflexão ${ref}`)}`;
+  }
+
+  const homeVerse=document.querySelector(".verse-card strong");
+  const homeRef=document.querySelector(".verse-card span");
+  if(homeVerse) homeVerse.textContent=verse.text;
+  if(homeRef) homeRef.textContent=verse.ref;
+
+  renderGospelRead();
+  renderRosary();
+
+  const prayerStatus=document.querySelector(".prayer-status");
+  const prayerCopy=document.querySelector(".prayer-copy small");
+  if(prayerStatus) prayerStatus.textContent=goalsDone===2?"✓":`${goalsDone}/2`;
+  if(prayerCopy) prayerCopy.textContent=d.gospelRead?"Evangelho lido hoje.":"Evangelho, reflexão e oração para o dia.";
+}
+
+let pendingMealPhotoBlob=null;
+let pendingMealPhotoUrl=null;
+
+function ensureMeals(){
+  const d=day();
+  if(!Array.isArray(d.mealEntries)) d.mealEntries=[];
+}
+function openPhotoDb(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open("minhaRotinaMedia",1);
+    req.onupgradeneeded=()=>{
+      const db=req.result;
+      if(!db.objectStoreNames.contains("mealPhotos")) db.createObjectStore("mealPhotos");
+    };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function putMealPhoto(key,blob){
+  const db=await openPhotoDb();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction("mealPhotos","readwrite");
+    tx.objectStore("mealPhotos").put(blob,key);
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+async function getMealPhoto(key){
+  if(!key) return null;
+  const db=await openPhotoDb();
+  return new Promise((resolve,reject)=>{
+    const req=db.transaction("mealPhotos","readonly").objectStore("mealPhotos").get(key);
+    req.onsuccess=()=>resolve(req.result||null);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function removeMealPhoto(key){
+  if(!key) return;
+  const db=await openPhotoDb();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction("mealPhotos","readwrite");
+    tx.objectStore("mealPhotos").delete(key);
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+function compressMealPhoto(file,maxSide=900,quality=.72){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    const src=URL.createObjectURL(file);
+    img.onload=()=>{
+      let w=img.width,h=img.height;
+      const scale=Math.min(1,maxSide/Math.max(w,h));
+      w=Math.max(1,Math.round(w*scale));
+      h=Math.max(1,Math.round(h*scale));
+      const canvas=document.createElement("canvas");
+      canvas.width=w; canvas.height=h;
+      canvas.getContext("2d").drawImage(img,0,0,w,h);
+      canvas.toBlob(blob=>{
+        URL.revokeObjectURL(src);
+        if(blob) resolve(blob); else reject(new Error("Falha ao comprimir foto"));
+      },"image/jpeg",quality);
+    };
+    img.onerror=()=>{URL.revokeObjectURL(src);reject(new Error("Falha ao ler foto"));};
+    img.src=src;
+  });
+}
+function pickMealPhoto(){
+  const input=document.getElementById("mealPhotoInput");
+  if(input) input.click();
+}
+function clearMealPhoto(){
+  pendingMealPhotoBlob=null;
+  if(pendingMealPhotoUrl){URL.revokeObjectURL(pendingMealPhotoUrl);pendingMealPhotoUrl=null;}
+  const host=document.getElementById("mealPhotoPreview");
+  if(host) host.innerHTML="Sem foto";
+  const input=document.getElementById("mealPhotoInput");
+  if(input) input.value="";
+}
+async function handleMealPhotoSelected(file){
+  if(!file) return;
+  try{
+    pendingMealPhotoBlob=await compressMealPhoto(file);
+    if(pendingMealPhotoUrl) URL.revokeObjectURL(pendingMealPhotoUrl);
+    pendingMealPhotoUrl=URL.createObjectURL(pendingMealPhotoBlob);
+    const host=document.getElementById("mealPhotoPreview");
+    if(host) host.innerHTML=`<img src="${pendingMealPhotoUrl}" alt="Prévia da refeição">`;
+  }catch(e){
+    clearMealPhoto();
+    alert("Não foi possível preparar a foto.");
+  }
+}
+function openMealForm(){
+  try{
+    ensureMeals();
+    showPanel("alimentacao");
+    const wrap=document.getElementById("mealFormWrap");
+    if(!wrap){
+      console.error("mealFormWrap não encontrado");
+      return;
+    }
+    wrap.classList.remove("hidden");
+    wrap.style.display="block";
+    const now=new Date();
+    const time=document.getElementById("mealTimeInput");
+    if(time && !time.value) time.value=String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
+    requestAnimationFrame(()=>wrap.scrollIntoView({behavior:"smooth",block:"start"}));
+  }catch(err){
+    console.error("Falha ao abrir formulário de refeição",err);
+  }
+}
+function closeMealForm(){
+  const el=document.getElementById("mealFormWrap");
+  if(el){
+    el.classList.add("hidden");
+    el.style.display="";
+  }
+  clearMealPhoto();
+}
+async function uploadMealPhotoCloud(mealId,blob){
+  if(!supabase||!user||mode!=="cloud") return null;
+  const path=`${user.id}/${mealId}.jpg`;
+  const {error}=await supabase.storage.from("meal-photos").upload(path,blob,{contentType:"image/jpeg",upsert:true});
+  if(error) throw error;
+  return path;
+}
+async function signedMealPhotoUrl(path){
+  if(!supabase||!user||!path) return null;
+  const {data,error}=await supabase.storage.from("meal-photos").createSignedUrl(path,3600);
+  if(error) return null; return data?.signedUrl||null;
+}
+async function removeMealPhotoCloud(path){ if(!supabase||!user||!path)return; await supabase.storage.from("meal-photos").remove([path]); }
+async function migrateLocalMealPhotos(){
+  if(!supabase||!user||mode!=="cloud"){alert("Entre na sua conta antes de migrar as fotos.");return;}
+  let moved=0,failed=0;
+  for(const [date,d] of Object.entries(state.days||{})){
+    for(const m of (d.mealEntries||[])){
+      if(m.photoPath||!m.photoKey) continue;
+      try{ const blob=await getMealPhoto(m.photoKey); if(!blob) continue; m.photoPath=await uploadMealPhotoCloud(m.id,blob); moved++; }catch(e){failed++;}
+    }
+  }
+  persist(); alert(`Migração concluída: ${moved} foto(s) na nuvem${failed?`, ${failed} falha(s)`:""}.`);
+}
+
+async function saveMeal(){
+  ensureMeals();
+  const d=day();
+  const mealId="meal_"+Date.now().toString(36);
+  let photoKey=null, photoPath=null;
+  if(pendingMealPhotoBlob){
+    photoKey=`meal-photo:${mealId}`;
+    try{await putMealPhoto(photoKey,pendingMealPhotoBlob);}catch(e){photoKey=null;}
+    try{photoPath=await uploadMealPhotoCloud(mealId,pendingMealPhotoBlob);}catch(e){console.warn("Foto ficou apenas localmente",e);}
+    if(!photoKey&&!photoPath) alert("A refeição será salva sem a foto, pois não foi possível armazená-la.");
+  }
+  const entry={
+    id:mealId,
+    photoKey,
+    photoPath,
+    type:document.getElementById("mealTypeInput").value,
+    time:document.getElementById("mealTimeInput").value,
+    description:document.getElementById("mealDescInput").value.trim(),
+    note:document.getElementById("mealNoteInput").value.trim(),
+    protein:document.getElementById("mealProteinInput").checked,
+    carb:document.getElementById("mealCarbInput").checked,
+    veg:document.getElementById("mealVegInput").checked,
+    fat:document.getElementById("mealFatInput").checked
+  };
+  d.mealEntries.unshift(entry);
+  recalcMeals(d);
+  document.getElementById("mealDescInput").value="";
+  document.getElementById("mealNoteInput").value="";
+  ["mealProteinInput","mealCarbInput","mealVegInput","mealFatInput"].forEach(id=>document.getElementById(id).checked=false);
+  clearMealPhoto();
+  persist();
+  const wrap=document.getElementById("mealFormWrap");
+  if(wrap){
+    wrap.classList.add("hidden");
+    wrap.style.display="";
+  }
+  renderFood();
+}
+function recalcMeals(d=day()){
+  ensureMeals();
+  d.mealsCount=d.mealEntries.length;
+  d.meals=d.mealsCount>=3;
+  d.proteinCount=d.mealEntries.filter(x=>x.protein).length;
+  d.carbCount=d.mealEntries.filter(x=>x.carb).length;
+  d.vegCount=d.mealEntries.filter(x=>x.veg).length;
+  d.fatCount=d.mealEntries.filter(x=>x.fat).length;
+}
+async function deleteMeal(id){
+  const d=day(); ensureMeals();
+  const found=d.mealEntries.find(x=>x.id===id);
+  if(!found) return;
+
+  const ok=confirm("Excluir esta refeição?");
+  if(!ok) return;
+
+  if(found?.photoKey){ try{await removeMealPhoto(found.photoKey);}catch(e){} }
+  if(found?.photoPath){ try{await removeMealPhotoCloud(found.photoPath);}catch(e){} }
+  d.mealEntries=d.mealEntries.filter(x=>x.id!==id);
+  recalcMeals(d);
+  persist();
+}
+async function hydrateMealPhotos(){
+  const imgs=[...document.querySelectorAll("img[data-meal-photo-key],img[data-meal-photo-path]")];
+  for(const img of imgs){
+    const key=img.dataset.mealPhotoKey, path=img.dataset.mealPhotoPath;
+    if(img.dataset.loaded==="1") continue;
+    try{
+      if(path){ const remote=await signedMealPhotoUrl(path); if(remote){img.src=remote;img.dataset.loaded="1";continue;} }
+      if(key){ const blob=await getMealPhoto(key); if(blob){img.src=URL.createObjectURL(blob);img.dataset.loaded="1";continue;} }
+      img.style.display="none";
+    }catch(e){img.style.display="none";}
+  }
+}
+function renderFood(){
+  const d=day(); ensureMeals();
+  const entries=d.mealEntries;
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  set("foodMealsCount",`${entries.length}/3`);
+  set("foodProteinCount",`${entries.filter(x=>x.protein).length}/3`);
+  set("foodVegCount",`${entries.filter(x=>x.veg).length}/3`);
+  set("foodWaterLink",`${Number(d.water||0).toFixed(1).replace(".",",")} L`);
+  const list=document.getElementById("mealList");
+  if(!list) return;
+  if(!entries.length){
+    list.innerHTML=`<div class="library-empty">Nenhuma refeição registrada hoje.<br><button class="primary" style="margin-top:10px" data-meal-action="open">Registrar refeição</button></div>`;
+    return;
+  }
+  list.innerHTML=entries.map(m=>{
+    const tags=[m.protein?"Proteína":null,m.carb?"Carboidrato":null,m.veg?"Vegetais":null,m.fat?"Gordura boa":null]
+      .filter(Boolean).map(t=>`<span class="meal-tag">${t}</span>`).join("");
+    return `<div class="meal-item">
+      <div class="meal-top"><h4>${m.type}</h4><small>${m.time||""}</small></div>
+      ${(m.photoKey||m.photoPath)?`<img class="meal-photo" data-meal-photo-key="${m.photoKey||""}" data-meal-photo-path="${m.photoPath||""}" alt="Foto da refeição">`:""}
+      ${m.description?`<p style="font-size:11px;margin:7px 0 0">${m.description}</p>`:""}
+      <div class="meal-tags">${tags}</div>
+      ${m.note?`<p style="font-size:10px;color:var(--muted);margin:7px 0 0">${m.note}</p>`:""}
+      <button style="margin-top:8px" data-meal-delete="${m.id}">Excluir</button>
+    </div>`;
+  }).join("");
+  hydrateMealPhotos();
+}
+
+
+let bookSearchTimer=null;
+let bookSearchAbort=null;
+let bookSearchResults=[];
+const OPEN_LIBRARY_SEARCH="https://openlibrary.org/search.json";
+const GOOGLE_BOOKS_SEARCH="https://www.googleapis.com/books/v1/volumes";
+
+function cleanIsbn(value){
+  return String(value||"").replace(/[^0-9Xx]/g,"").toUpperCase();
+}
+function looksLikeIsbn(value){
+  const x=cleanIsbn(value);
+  return x.length===10 || x.length===13;
+}
+function coverUrlFromDoc(doc,size="M"){
+  if(doc?.cover_i) return `https://covers.openlibrary.org/b/id/${doc.cover_i}-${size}.jpg`;
+  const isbn=Array.isArray(doc?.isbn)?doc.isbn[0]:null;
+  return isbn?`https://covers.openlibrary.org/b/isbn/${isbn}-${size}.jpg`:"";
+}
+function normalizeOlDoc(doc){
+  const allIsbns=Array.isArray(doc?.isbn)?doc.isbn:[doc?.isbn].filter(Boolean);
+  return {
+    source:"Open Library",
+    sourceId:doc?.key||"",
+    openLibraryKey:doc?.key||"",
+    googleBooksId:"",
+    title:doc?.title||"",
+    author:Array.isArray(doc?.author_name)?doc.author_name.join(", "):"",
+    publisher:Array.isArray(doc?.publisher)?doc.publisher[0]||"":(doc?.publisher||""),
+    year:doc?.first_publish_year||"",
+    isbn:allIsbns.find(x=>cleanIsbn(x).length===13)||allIsbns[0]||"",
+    totalPages:Number(doc?.number_of_pages_median||0),
+    coverUrl:coverUrlFromDoc(doc,"M"),
+    description:"",
+    language:"",
+    subjects:Array.isArray(doc?.subject)?doc.subject.slice(0,12):[]
+  };
+}
+function normalizeGoogleDoc(item){
+  const v=item?.volumeInfo||{};
+  const ids=Array.isArray(v.industryIdentifiers)?v.industryIdentifiers:[];
+  const isbn13=ids.find(x=>x.type==="ISBN_13")?.identifier;
+  const isbn10=ids.find(x=>x.type==="ISBN_10")?.identifier;
+  const image=(v.imageLinks?.thumbnail||v.imageLinks?.smallThumbnail||"").replace("http://","https://");
+  return {
+    source:"Google Books",
+    sourceId:item?.id||"",
+    openLibraryKey:"",
+    googleBooksId:item?.id||"",
+    title:v.title||"",
+    author:Array.isArray(v.authors)?v.authors.join(", "):"",
+    publisher:v.publisher||"",
+    year:(v.publishedDate||"").slice(0,4),
+    isbn:isbn13||isbn10||"",
+    totalPages:Number(v.pageCount||0),
+    coverUrl:image,
+    description:v.description||"",
+    language:v.language||"",
+    subjects:Array.isArray(v.categories)?v.categories.slice(0,12):[]
+  };
+}
+function bookIdentity(b){
+  const isbn=cleanIsbn(b?.isbn);
+  if(isbn) return `isbn:${isbn}`;
+  return `ta:${String(b?.title||"").toLowerCase().replace(/\W/g,"")}|${String(b?.author||"").toLowerCase().split(",")[0].replace(/\W/g,"")}`;
+}
+function mergeBookResults(results){
+  const map=new Map();
+  results.forEach(b=>{
+    if(!b?.title) return;
+    const key=bookIdentity(b);
+    if(!map.has(key)){
+      map.set(key,b);
+      return;
+    }
+    const a=map.get(key);
+    map.set(key,{
+      ...a,
+      publisher:a.publisher||b.publisher,
+      year:a.year||b.year,
+      isbn:a.isbn||b.isbn,
+      totalPages:a.totalPages||b.totalPages,
+      coverUrl:a.coverUrl||b.coverUrl,
+      description:a.description||b.description,
+      subjects:[...new Set([...(a.subjects||[]),...(b.subjects||[])])].slice(0,12),
+      source:a.source===b.source?a.source:"Open Library + Google Books",
+      openLibraryKey:a.openLibraryKey||b.openLibraryKey,
+      googleBooksId:a.googleBooksId||b.googleBooksId
+    });
+  });
+  return [...map.values()].sort((a,b)=>{
+    const score=x=>
+      (x.language==="pt"?3:0)+
+      (x.isbn?2:0)+(x.coverUrl?2:0)+(x.totalPages?1:0)+(x.publisher?1:0)+(x.description?1:0);
+    return score(b)-score(a);
+  }).slice(0,12);
+}
+async function searchBooksOnline(query){
+  const q=(query||"").trim();
+  const status=document.getElementById("bookGlobalSearchStatus");
+  const host=document.getElementById("bookGlobalSearchResults");
+  if(q.length<2){
+    if(host) host.innerHTML="";
+    if(status) status.textContent="";
+    return;
+  }
+  if(bookSearchAbort) bookSearchAbort.abort();
+  bookSearchAbort=new AbortController();
+  if(status) status.textContent="Buscando em Open Library + Google Books...";
+
+  const isbnMode=looksLikeIsbn(q);
+  const isbn=cleanIsbn(q);
+  const fields="key,title,author_name,cover_i,first_publish_year,isbn,publisher,number_of_pages_median,subject";
+  const olQuery=isbnMode?`isbn:${isbn}`:q;
+  const googleQuery=isbnMode?`isbn:${isbn}`:q;
+
+  try{
+    const [olResult,googleResult]=await Promise.allSettled([
+      fetch(`${OPEN_LIBRARY_SEARCH}?q=${encodeURIComponent(olQuery)}&limit=10&fields=${encodeURIComponent(fields)}`,{signal:bookSearchAbort.signal})
+        .then(r=>{if(!r.ok) throw new Error(`OL ${r.status}`); return r.json();}),
+      fetch(`${GOOGLE_BOOKS_SEARCH}?q=${encodeURIComponent(googleQuery)}&maxResults=10&langRestrict=pt&printType=books`,{signal:bookSearchAbort.signal})
+        .then(r=>{if(!r.ok) throw new Error(`GB ${r.status}`); return r.json();})
+    ]);
+
+    const ol=olResult.status==="fulfilled"?(olResult.value?.docs||[]).map(normalizeOlDoc):[];
+    const gb=googleResult.status==="fulfilled"?(googleResult.value?.items||[]).map(normalizeGoogleDoc):[];
+    bookSearchResults=mergeBookResults([...ol,...gb]);
+    renderBookSearchResults();
+
+    const sources=[];
+    if(ol.length) sources.push("Open Library");
+    if(gb.length) sources.push("Google Books");
+    if(status) status.textContent=bookSearchResults.length
+      ? `${bookSearchResults.length} resultado(s) · ${sources.join(" + ")||"busca online"}`
+      : "Nenhum resultado encontrado. Tente título + autor ou ISBN.";
+  }catch(err){
+    if(err?.name==="AbortError") return;
+    if(status) status.textContent="Não foi possível pesquisar agora.";
+  }
+}
+function renderBookSearchResults(){
+  const host=document.getElementById("bookGlobalSearchResults");
+  if(!host) return;
+  host.innerHTML=bookSearchResults.map((b,i)=>`
+    <div class="book-search-result" data-book-search-index="${i}">
+      ${b.coverUrl?`<img src="${b.coverUrl}" alt="">`:`<div style="width:48px;height:68px;background:#eef1ef;border-radius:7px"></div>`}
+      <div>
+        <b>${b.title||"Sem título"}</b>
+        <span>${b.author||"Autor não informado"}${b.year?` · ${b.year}`:""}</span>
+        <span style="display:block">${b.publisher||""}${b.isbn?` · ISBN ${b.isbn}`:""}${b.totalPages?` · ${b.totalPages} pág.`:""}</span>
+        <span class="book-source">${b.source||"Online"}</span>
+      </div>
+    </div>`).join("");
+}
+async function selectOnlineBook(index){
+  const b=bookSearchResults[Number(index)];
+  if(!b) return;
+  openBookForm();
+  const setVal=(id,val)=>{const el=document.getElementById(id); if(el) el.value=val??"";};
+  setVal("bookTitleInput",b.title);
+  setVal("bookAuthorInput",b.author);
+  setVal("bookPublisherInput",b.publisher);
+  setVal("bookYearInput",b.year);
+  setVal("bookIsbnInput",b.isbn);
+  setVal("bookPagesInput",b.totalPages||"");
+  setVal("bookCoverInput",b.coverUrl);
+  setVal("bookDescriptionInput",b.description||"");
+  const wrap=document.getElementById("bookFormWrap");
+  if(wrap){
+    wrap.dataset.openLibraryKey=b.openLibraryKey||"";
+    wrap.dataset.googleBooksId=b.googleBooksId||"";
+    wrap.dataset.subjects=JSON.stringify(b.subjects||[]);
+  }
+
+  if(b.openLibraryKey && !b.description){
+    try{
+      const res=await fetch(`https://openlibrary.org${b.openLibraryKey}.json`);
+      if(res.ok){
+        const data=await res.json();
+        let desc=data?.description||"";
+        if(desc && typeof desc==="object") desc=desc.value||"";
+        if(desc) setVal("bookDescriptionInput",desc);
+        const subjects=Array.isArray(data?.subjects)?data.subjects.slice(0,12):(b.subjects||[]);
+        if(wrap) wrap.dataset.subjects=JSON.stringify(subjects);
+      }
+    }catch(e){}
+  }
+  const host=document.getElementById("bookGlobalSearchResults");
+  if(host) host.innerHTML="";
+}
+function recommendationSeeds(){
+  ensureLibrary();
+  const books=state.library.slice().sort((a,b)=>(Number(b.rating||0)-Number(a.rating||0)));
+  const subjectScore=new Map(), authorScore=new Map();
+  books.forEach(b=>{
+    const w=Math.max(1,Number(b.rating||0)) + (b.status==="concluido"?2:0) + (b.status==="lendo"?1:0);
+    (Array.isArray(b.subjects)?b.subjects:[]).slice(0,5).forEach(s=>subjectScore.set(s,(subjectScore.get(s)||0)+w));
+    if(b.author) authorScore.set(b.author,(authorScore.get(b.author)||0)+w);
+  });
+  const subjects=[...subjectScore.entries()].sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>x[0]);
+  const authors=[...authorScore.entries()].sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>x[0]);
+  return {subjects,authors};
+}
+async function refreshRecommendations(){
+  ensureLibrary();
+  const host=document.getElementById("recommendationsList");
+  if(host) host.innerHTML='<div class="muted">Buscando sugestões...</div>';
+  const existing=new Set(state.library.map(b=>(b.title||"").trim().toLowerCase()));
+  const {subjects,authors}=recommendationSeeds();
+  const queries=[];
+  subjects.forEach(s=>queries.push({q:`subject:"${s}"`,reason:`Tema: ${s}`}));
+  if(!queries.length) authors.forEach(a=>queries.push({q:`author:"${a}"`,reason:`Autor relacionado: ${a}`}));
+  if(!queries.length && state.library[0]?.title) queries.push({q:state.library[0].title,reason:"Baseado na sua biblioteca"});
+  if(!queries.length){
+    if(host) host.innerHTML='<div class="muted">Adicione e avalie alguns livros para gerar sugestões personalizadas.</div>';
+    return;
+  }
+  const picks=[];
+  for(const seed of queries.slice(0,2)){
+    try{
+      const fields="key,title,author_name,cover_i,first_publish_year,isbn,publisher,number_of_pages_median,subject";
+      const res=await fetch(`${OPEN_LIBRARY_SEARCH}?q=${encodeURIComponent(seed.q)}&limit=8&lang=pt&fields=${encodeURIComponent(fields)}`);
+      if(!res.ok) continue;
+      const data=await res.json();
+      for(const doc of (data?.docs||[])){
+        const b=normalizeOlDoc(doc);
+        if(!b.title || existing.has(b.title.trim().toLowerCase())) continue;
+        if(picks.some(x=>x.title.trim().toLowerCase()===b.title.trim().toLowerCase())) continue;
+        picks.push({...b,reason:seed.reason});
+        if(picks.length>=6) break;
+      }
+    }catch(e){}
+    if(picks.length>=6) break;
+  }
+  state.bookRecommendations=picks.slice(0,6);
+  persistQuiet();
+  renderRecommendations();
+}
+function renderRecommendations(){
+  const host=document.getElementById("recommendationsList");
+  if(!host) return;
+  const items=Array.isArray(state.bookRecommendations)?state.bookRecommendations:[];
+  if(!items.length){
+    host.innerHTML='<div class="muted">Toque em “Atualizar” para gerar sugestões.</div>';
+    return;
+  }
+  host.innerHTML=items.map((b,i)=>`
+    <div class="recommend-item">
+      ${b.coverUrl?`<img src="${b.coverUrl}" alt="">`:`<div style="width:54px;height:76px;background:#eef1ef;border-radius:8px"></div>`}
+      <div>
+        <h4>${b.title}</h4>
+        <p>${b.author||"Autor não informado"}</p>
+        <p>${b.reason||"Sugestão personalizada"}</p>
+        <button data-recommend-add="${i}">Adicionar a Quero ler</button>
+      </div>
+    </div>`).join("");
+}
+function addRecommendationToLibrary(index){
+  const b=(state.bookRecommendations||[])[Number(index)];
+  if(!b) return;
+  ensureLibrary();
+  if(state.library.some(x=>(x.title||"").trim().toLowerCase()===b.title.trim().toLowerCase())) return;
+  state.library.unshift({
+    id:makeId(),title:b.title,author:b.author,totalPages:b.totalPages||0,currentPage:0,
+    status:"quero_ler",rating:0,startDate:"",endDate:"",coverUrl:b.coverUrl||"",
+    notes:"",publisher:b.publisher||"",year:b.year||"",isbn:b.isbn||"",
+    description:"",openLibraryKey:b.openLibraryKey||"",subjects:b.subjects||[],
+    updatedAt:new Date().toISOString()
+  });
+  persist();
+}
+
+let bookFilter="lendo";
+let editingBookId=null;
+
+function ensureLibrary(){
+  if(!state.library) state.library=[];
+}
+function makeId(){
+  return "book_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,7);
+}
+function currentBook(){
+  ensureLibrary();
+  return state.library.find(b=>b.status==="lendo") || null;
+}
+function bookPct(book){
+  const total=Number(book.totalPages||0), cur=Number(book.currentPage||0);
+  if(!total) return 0;
+  return Math.max(0,Math.round(cur/total*100));
+}
+function starsText(n){
+  const x=Math.max(0,Math.min(5,Number(n||0)));
+  return "★".repeat(x)+"☆".repeat(5-x);
+}
+function openBookForm(bookId=null){
+  ensureStateShape();
+  ensureLibrary();
+  editingBookId=bookId;
+  const book=bookId?state.library.find(b=>b.id===bookId):null;
+  const formWrap=document.getElementById("bookFormWrap");
+  if(!formWrap) return;
+  formWrap.classList.remove("hidden");
+  const titleEl=document.getElementById("bookFormTitle");
+  if(titleEl) titleEl.textContent=book?"Editar livro":"Adicionar livro";
+  const setVal=(id,val)=>{
+    const el=document.getElementById(id);
+    if(el) el.value=val??"";
+  };
+  setVal("bookTitleInput",book?.title||"");
+  setVal("bookAuthorInput",book?.author||"");
+  setVal("bookPublisherInput",book?.publisher||"");
+  setVal("bookYearInput",book?.year||"");
+  setVal("bookIsbnInput",book?.isbn||"");
+  setVal("bookPagesInput",book?.totalPages||"");
+  setVal("bookCurrentInput",book?.currentPage||"");
+  setVal("bookStatusInput",book?.status||"lendo");
+  setVal("bookRatingInput",book?.rating||"");
+  setVal("bookStartDateInput",book?.startDate||"");
+  setVal("bookEndDateInput",book?.endDate||"");
+  setVal("bookCoverInput",book?.coverUrl||"");
+  setVal("bookDescriptionInput",book?.description||"");
+  setVal("bookNotesInput",book?.notes||"");
+  formWrap.dataset.openLibraryKey=book?.openLibraryKey||"";
+  formWrap.dataset.googleBooksId=book?.googleBooksId||"";
+  formWrap.dataset.subjects=JSON.stringify(book?.subjects||[]);
+  formWrap.scrollIntoView({behavior:"smooth",block:"start"});
+}
+function closeBookForm(){
+  document.getElementById("bookFormWrap").classList.add("hidden");
+  editingBookId=null;
+}
+function saveBook(){
+  ensureLibrary();
+  const title=document.getElementById("bookTitleInput").value.trim();
+  if(!title){alert("Informe o título do livro.");return}
+  const book={
+    id:editingBookId||makeId(),
+    title,
+    author:document.getElementById("bookAuthorInput").value.trim(),
+    publisher:document.getElementById("bookPublisherInput").value.trim(),
+    year:Number(document.getElementById("bookYearInput").value||0),
+    isbn:document.getElementById("bookIsbnInput").value.trim(),
+    totalPages:Number(document.getElementById("bookPagesInput").value||0),
+    currentPage:Number(document.getElementById("bookCurrentInput").value||0),
+    status:document.getElementById("bookStatusInput").value,
+    rating:Number(document.getElementById("bookRatingInput").value||0),
+    startDate:document.getElementById("bookStartDateInput").value,
+    endDate:document.getElementById("bookEndDateInput").value,
+    coverUrl:document.getElementById("bookCoverInput").value.trim(),
+    description:document.getElementById("bookDescriptionInput").value.trim(),
+    openLibraryKey:document.getElementById("bookFormWrap")?.dataset.openLibraryKey||"",
+    googleBooksId:document.getElementById("bookFormWrap")?.dataset.googleBooksId||"",
+    subjects:(()=>{try{return JSON.parse(document.getElementById("bookFormWrap")?.dataset.subjects||"[]")}catch(e){return []}})(),
+    notes:document.getElementById("bookNotesInput").value.trim(),
+    updatedAt:new Date().toISOString()
+  };
+  const idx=state.library.findIndex(b=>b.id===book.id);
+  if(idx>=0) state.library[idx]=book; else state.library.unshift(book);
+  if(book.status==="concluido" && !book.endDate) book.endDate=new Date().toISOString().slice(0,10);
+  persist();
+  closeBookForm();
+  renderLibrary();
+}
+function deleteBook(id){
+  if(!confirm("Excluir este livro da biblioteca?")) return;
+  state.library=(state.library||[]).filter(b=>b.id!==id);
+  persist();
+}
+function setBookFilter(filter){
+  bookFilter=filter;
+  document.querySelectorAll(".library-tab").forEach(x=>{
+    x.classList.toggle("active",x.dataset.bookFilter===filter);
+  });
+  renderLibrary();
+}
+function addPagesToBook(id,qty){
+  ensureLibrary();
+  const b=state.library.find(x=>x.id===id);
+  if(!b) return;
+  b.currentPage=Math.max(0,Math.min(Number(b.totalPages||999999),Number(b.currentPage||0)+qty));
+  if(b.totalPages && b.currentPage>=b.totalPages){
+    b.status="concluido";
+    if(!b.endDate) b.endDate=new Date().toISOString().slice(0,10);
+  }
+  b.updatedAt=new Date().toISOString();
+  day().pages=Number(day().pages||0)+Math.max(0,qty);
+  persist();
+}
+function quickReadCurrentBook(){
+  const b=currentBook();
+  if(!b){showPanel("biblioteca");return}
+  addPagesToBook(b.id,10);
+}
+function renderCurrentReadingHero(){
+  const host=document.getElementById("currentReadingHero");
+  if(!host) return;
+  const b=currentBook();
+  if(!b){
+    host.innerHTML=`<div class="library-empty">Nenhum livro em leitura agora.<br><button class="primary" style="margin-top:10px" data-book-action="open">Adicionar livro</button></div>`;
+    return;
+  }
+  const coverStyle=b.coverUrl?`style="background-image:url('${b.coverUrl.replace(/'/g,"")}')"`:"";
+  host.innerHTML=`<div class="current-reading-hero">
+    <div class="cover" ${coverStyle}>${b.coverUrl?"":b.title}</div>
+    <div>
+      <h3>${b.title}</h3>
+      <p>${b.author||"Autor não informado"}</p>
+      <div class="big-progress">${b.currentPage||0} de ${b.totalPages||0} páginas · ${bookPct(b)}%</div>
+      <div class="book-progress"><span style="width:${bookPct(b)}%"></span></div>
+      <div class="book-actions">
+        <button class="primary" data-book-add-pages="${b.id}" data-pages="10">+10 páginas</button>
+        <button data-book-edit="${b.id}">Editar</button>
+      </div>
+    </div>
+  </div>`;
+}
+function renderLibrary(){
+  ensureLibrary();
+  renderRecommendations();
+  renderCurrentReadingHero();
+  const grid=document.getElementById("libraryGrid");
+  if(!grid) return;
+  const items=state.library.filter(b=>bookFilter==="todos"||b.status===bookFilter);
+  if(!items.length){
+    grid.innerHTML=`<div class="library-empty">Nenhum livro nesta categoria.</div>`;
+    return;
+  }
+  grid.innerHTML=items.map(b=>{
+    const coverStyle=b.coverUrl?`style="background-image:url('${b.coverUrl.replace(/'/g,"")}')"`:"";
+    const statusLabel={lendo:"Lendo",quero_ler:"Quero ler",concluido:"Concluído",pausado:"Pausado"}[b.status]||b.status;
+    return `<div class="book-card">
+      <div class="book-cover-real" ${coverStyle}>${b.coverUrl?"":b.title}</div>
+      <div>
+        <h4>${b.title}</h4>
+        <p>${b.author||"Autor não informado"}</p>
+        <p>${statusLabel}</p>
+        ${b.totalPages?`<div class="book-progress"><span style="width:${bookPct(b)}%"></span></div><p>${b.currentPage||0}/${b.totalPages} pág. · ${bookPct(b)}%</p>`:""}
+        ${b.rating?`<div class="stars">${starsText(b.rating)}</div>`:""}
+        <div class="book-actions">
+          ${b.status==="lendo"?`<button class="primary" data-book-add-pages="${b.id}" data-pages="10">+10 pág.</button>`:""}
+          <button data-book-edit="${b.id}">Editar</button>
+          <button data-book-delete="${b.id}">Excluir</button>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+function syncBookHome(){
+  const b=currentBook();
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val};
+  if(!b){
+    set("currentBookTitle","Nenhum livro");
+    set("currentBookAuthor","Adicione um livro na Biblioteca");
+    set("currentBookProgress","0 de 0 páginas");
+    return;
+  }
+  set("currentBookTitle",b.title);
+  set("currentBookAuthor",b.author||"Autor não informado");
+  set("currentBookProgress",`${b.currentPage||0} de ${b.totalPages||0} páginas · ${bookPct(b)}%`);
+}
+
+
+
+let historyDateKey=null;
+
+function todayKey(){
+  const d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function ensureHistoryDate(){
+  if(!historyDateKey) historyDateKey=todayKey();
+  const input=document.getElementById("historyDateInput");
+  if(input && input.value!==historyDateKey) input.value=historyDateKey;
+}
+function setHistoryDate(value){
+  if(!value) return;
+  historyDateKey=value;
+  renderHistory();
+}
+function shiftHistoryDay(delta){
+  ensureHistoryDate();
+  const d=parseDayKey(historyDateKey);
+  if(!d) return;
+  d.setDate(d.getDate()+delta);
+  historyDateKey=dateKeyFromDate(d);
+  renderHistory();
+}
+function formatHistoryDate(dateKey){
+  const d=parseDayKey(dateKey);
+  if(!d) return dateKey;
+  return d.toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});
+}
+function historyMealTags(m){
+  return [
+    m.protein?"Proteína":null,
+    m.carb?"Carboidrato":null,
+    m.veg?"Vegetais":null,
+    m.fat?"Gordura boa":null
+  ].filter(Boolean);
+}
+async function hydrateHistoryMealPhotos(){
+  const imgs=[...document.querySelectorAll("img[data-history-photo-key]")];
+  for(const img of imgs){
+    try{
+      const blob=await getMealPhoto(img.dataset.historyPhotoKey);
+      if(blob){
+        img.src=URL.createObjectURL(blob);
+      }else{
+        img.style.display="none";
+      }
+    }catch(e){ img.style.display="none"; }
+  }
+}
+function renderHistory(){
+  ensureHistoryDate();
+  const host=document.getElementById("historyContent");
+  if(!host) return;
+  const d=(state.days||{})[historyDateKey];
+
+  const input=document.getElementById("historyDateInput");
+  if(input) input.value=historyDateKey;
+
+  if(!d){
+    host.innerHTML=`
+      <div class="history-card"><h3>${formatHistoryDate(historyDateKey)}</h3></div>
+      <div class="history-empty">Nenhum registro encontrado para este dia.</div>`;
+    return;
+  }
+
+  const meals=Array.isArray(d.mealEntries)?d.mealEntries:[];
+
+  const mealHtml=meals.length ? meals.map(m=>{
+    const tags=historyMealTags(m).map(t=>`<span class="history-tag">${t}</span>`).join("");
+    return `<div class="history-meal">
+      <div class="history-row"><b>${m.type||"Refeição"}</b><span>${m.time||""}</span></div>
+      ${m.description?`<div style="font-size:10px;margin-top:4px">${m.description}</div>`:""}
+      ${m.photoKey?`<img class="history-meal-photo" data-history-photo-key="${m.photoKey}" alt="Foto da refeição">`:""}
+      ${tags?`<div class="history-tags">${tags}</div>`:""}
+      ${m.note?`<div style="font-size:9px;color:var(--muted);margin-top:5px">${m.note}</div>`:""}
+    </div>`;
+  }).join("") : '<div style="font-size:10px;color:var(--muted)">Nenhuma refeição registrada.</div>';
+
+  const workoutLabel = d.workoutType==="free" && d.workoutActivity
+    ? `${d.workoutActivity} · ${d.workoutMinutes||0} min${d.workoutDistance?` · ${String(d.workoutDistance).replace(".",",")} km`:""}`
+    : d.workout
+      ? `Treino ${d.workout}${d.workoutStatus?` · ${d.workoutStatus}`:""}${Number(d.workoutCompletedCount||0)?` · ${d.workoutCompletedCount}/${d.workoutTotalCount||0} exercícios`:""}`
+      : "Sem treino";
+  const studyLabel = d.studyMinutes ? `${d.studyMinutes} min${d.studyTopic?` · ${d.studyTopic}`:""}` : "Sem estudo";
+  const weightLabel = d.weight ? `${Number(d.weight).toFixed(1).replace(".",",")} kg` : "—";
+
+  host.innerHTML=`
+    <div class="history-card">
+      <h3>${formatHistoryDate(historyDateKey)}</h3>
+      <div class="history-grid">
+        <div class="history-mini"><b>${Number(d.water||0).toFixed(1).replace(".",",")} L</b><span>Água</span></div>
+        <div class="history-mini"><b>${meals.length}</b><span>Refeições</span></div>
+        <div class="history-mini"><b>${Number(d.pages||0)}</b><span>Páginas</span></div>
+        <div class="history-mini"><b>${Number(d.studyMinutes||0)} min</b><span>Estudo</span></div>
+      </div>
+    </div>
+
+    <div class="history-card">
+      <h3>Resumo do dia</h3>
+      <div class="history-section">
+        <div class="history-row"><span>Treino</span><b>${workoutLabel}</b></div>
+        <div class="history-row"><span>Leitura</span><b>${Number(d.pages||0)} páginas</b></div>
+        <div class="history-row"><span>Estudo</span><b>${studyLabel}</b></div>
+        ${Array.isArray(d.studyEntries)&&d.studyEntries.length?`
+          <div class="history-section">
+            ${d.studyEntries.map(x=>`<div class="history-row"><span>${x.time||"—"} · ${x.topic||"Sem tema"}</span><b>${Number(x.minutes||0)} min</b></div>`).join("")}
+          </div>`:""}
+        <div class="history-row"><span>Peso</span><b>${weightLabel}</b></div>
+      </div>
+    </div>
+
+    <div class="history-card">
+      <h3>Alimentação</h3>
+      ${mealHtml}
+    </div>
+
+    <div class="history-card">
+      <h3>Vida espiritual</h3>
+      <div class="history-prayer">
+        <span class="${d.gospelRead?"done":""}">Evangelho ${d.gospelRead?"✓":""}</span>
+        <span class="${d.reflectionDone?"done":""}">Reflexão ${d.reflectionDone?"✓":""}</span>
+        <span class="${Array.isArray(d.rosaryEntries)&&d.rosaryEntries.length?"done":""}">Terço ${Array.isArray(d.rosaryEntries)&&d.rosaryEntries.length?"✓":""}</span>
+      </div>
+      ${Array.isArray(d.rosaryEntries)&&d.rosaryEntries.length?`
+        <div class="history-section">
+          ${d.rosaryEntries.map(x=>`<div class="history-row"><span>${x.time||"—"} · Terço</span><b>${ROSARY_MYSTERIES[x.type]?.title?.replace("Mistérios ","")||x.type||""}</b></div>`).join("")}
+        </div>`:""}
+      ${d.prayerIntention?`<div class="history-section"><div style="font-size:9px;color:var(--muted)">Intenção do dia</div><div style="font-size:10px;margin-top:5px">${d.prayerIntention}</div></div>`:""}
+    </div>
+
+    ${d.note?`<div class="history-card"><h3>Observação</h3><div style="font-size:10px">${d.note}</div></div>`:""}
+  `;
+  hydrateHistoryMealPhotos();
+}
+
+let evolutionRange=7;
+
+function parseDayKey(k){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(k))) return null;
+  const [y,m,d]=String(k).split("-").map(Number);
+  const dt=new Date(y,m-1,d);
+  if(dt.getFullYear()!==y || dt.getMonth()!==m-1 || dt.getDate()!==d) return null;
+  dt.setHours(0,0,0,0);
+  return dt;
+}
+function dateKeyFromDate(d){
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function recordedEvolutionDays(){
+  return Object.entries(state.days||{})
+    .map(([date,data])=>({date,data:data||{},dateObj:parseDayKey(date)}))
+    .filter(x=>x.dateObj)
+    .sort((a,b)=>a.dateObj-b.dateObj);
+}
+function getEvolutionDays(){
+  const recorded=recordedEvolutionDays();
+  if(evolutionRange==="all") return recorded;
+
+  const count=Number(evolutionRange)||7;
+  const map=new Map(recorded.map(x=>[x.date,x.data]));
+  const result=[];
+  const today=new Date(); today.setHours(0,0,0,0);
+
+  for(let i=count-1;i>=0;i--){
+    const d=new Date(today);
+    d.setDate(today.getDate()-i);
+    const key=dateKeyFromDate(d);
+    result.push({date:key,data:map.get(key)||{},dateObj:d});
+  }
+  return result;
+}
+function dayAdherence(d){
+  const g=goals();
+  const checks=[
+    Math.min(1,Number(d.water||0)/g.water),
+    Math.min(1,Number(d.mealsCount||0)/g.meals),
+    (d.workoutCompleted || d.workoutStatus==="completo" || d.workoutStatus==="parcial")?1:0,
+    Math.min(1,Number(d.pages||0)/g.reading),
+    Math.min(1,Number(d.studyMinutes||0)/g.study),
+    [d.gospelRead,d.reflectionDone].filter(Boolean).length/2
+  ];
+  return Math.round(checks.reduce((a,b)=>a+b,0)/checks.length*100);
+}
+function shortDateLabel(dateStr){
+  const d=parseDayKey(dateStr);
+  return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}`;
+}
+function setEvolutionRange(range){
+  evolutionRange=range;
+  document.querySelectorAll("[data-evo-range]").forEach(x=>{
+    const raw=x.dataset.evoRange;
+    const selected=(evolutionRange==="all" && raw==="all") || (String(evolutionRange)===raw);
+    x.classList.toggle("active",selected);
+  });
+  const label=document.getElementById("evoPeriodLabel");
+  if(label){
+    label.textContent=evolutionRange==="all"
+      ? "Período: histórico geral"
+      : `Período: últimos ${evolutionRange} dias`;
+  }
+  renderEvolution();
+ renderHistory();
+}
+function renderBars(hostId,items,valueFn,maxVal,className=""){
+  const host=document.getElementById(hostId);
+  const displayItems=items.length>14 ? items.filter((_,i)=>i%Math.ceil(items.length/14)===0 || i===items.length-1) : items;
+  if(!host) return;
+  if(!displayItems.length){
+    host.innerHTML='<div class="library-empty" style="width:100%">Sem registros no período.</div>';
+    return;
+  }
+  host.innerHTML=displayItems.map(it=>{
+    const v=Math.max(0,Number(valueFn(it)||0));
+    const pct=maxVal?Math.max(2,Math.min(100,v/maxVal*100)):2;
+    return `<div class="evo-bar-wrap"><div class="evo-bar ${className}" style="height:${pct}%"></div><span class="evo-label">${shortDateLabel(it.date)}</span></div>`;
+  }).join("");
+}
+function calcStreak(items){
+  if(!items.length) return 0;
+  const byDate=new Map(items.map(x=>[x.date,dayAdherence(x.data)]));
+  let d=new Date(); d.setHours(0,0,0,0);
+  let streak=0;
+  for(let i=0;i<366;i++){
+    const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    if((byDate.get(key)||0)>=60){streak++;d.setDate(d.getDate()-1);}
+    else break;
+  }
+  return streak;
+}
+function renderEvolution(){
+  const items=getEvolutionDays();
+  const data=items.map(x=>x.data);
+  const n=data.length||1;
+  const g=goals();
+  const avg=a=>a.length?a.reduce((s,v)=>s+v,0)/a.length:0;
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val};
+
+  const adherenceVals=data.map(dayAdherence);
+  set("evoAdherence",`${Math.round(avg(adherenceVals))}%`);
+
+  const workouts=data.filter(d=>d.workoutCompleted || d.workoutStatus==="completo" || d.workoutStatus==="parcial").length;
+  set("evoWorkoutCount",String(workouts));
+  set("evoWorkoutWeek",String(workouts));
+
+  const studyTotal=data.reduce((s,d)=>{
+    const entries=Array.isArray(d.studyEntries)?d.studyEntries:[];
+    const value=entries.length?entries.reduce((x,e)=>x+Number(e.minutes||0),0):Number(d.studyMinutes||0);
+    return s+value;
+  },0);
+  set("evoStudyMinutes",`${Math.round(studyTotal)} min`);
+  set("evoStudyAvg",`${Math.round(studyTotal/n)} min`);
+
+  const pagesTotal=data.reduce((s,d)=>s+Number(d.pages||0),0);
+  set("evoPages",`${Math.round(pagesTotal)} pág.`);
+  set("evoReadAvg",String(Math.round(pagesTotal/n)));
+
+  const waters=data.map(d=>Number(d.water||0));
+  set("evoWaterAvg",`${avg(waters).toFixed(1).replace(".",",")} L`);
+  set("evoWaterGoal",`${Math.round(data.filter(d=>Number(d.water||0)>=g.water).length/n*100)}%`);
+  set("evoWaterGoalLabel",`Dias na meta de ${String(g.water).replace(".",",")} L`);
+
+  set("evoMealsGoal",`${Math.round(data.filter(d=>Number(d.mealsCount||0)>=g.meals).length/n*100)}%`);
+
+  const prayerPct=data.map(d=>[d.gospelRead,d.reflectionDone].filter(Boolean).length/2*100);
+  set("evoPrayerAvg",`${Math.round(avg(prayerPct))}%`);
+  set("evoGospelRead",`${Math.round(data.filter(d=>d.gospelRead).length/n*100)}%`);
+  
+  set("evoStreak",`${calcStreak(items)} dias`);
+
+  const insightHost=document.getElementById("evoInsights");
+  if(insightHost){
+    const waterAvg=avg(waters);
+    const studyAvg=studyTotal/n;
+    const readAvg=pagesTotal/n;
+    const workoutGoalForPeriod=evolutionRange==="7"
+      ? g.workoutsWeek
+      : evolutionRange==="30"
+        ? Math.round(g.workoutsWeek*30/7)
+        : null;
+    const weightItemsForInsight=items.filter(it=>Number(it.data.weight||0)>0);
+    let weightText="Peso sem registros suficientes no período.";
+    if(weightItemsForInsight.length>=2){
+      const first=Number(weightItemsForInsight[0].data.weight);
+      const last=Number(weightItemsForInsight[weightItemsForInsight.length-1].data.weight);
+      const diff=last-first;
+      weightText=`Peso: ${diff===0?"sem variação":`${diff>0?"+":""}${diff.toFixed(1).replace(".",",")} kg`} no período.`;
+    }
+    const lines=[
+      `Treinos: ${workouts}${workoutGoalForPeriod?` de aproximadamente ${workoutGoalForPeriod} previstos pela sua meta`:""} .`,
+      `Água: média de ${waterAvg.toFixed(1).replace(".",",")} L/dia, meta ${String(g.water).replace(".",",")} L.`,
+      `Leitura: média de ${Math.round(readAvg)} páginas/dia, meta ${g.reading}.`,
+      `Estudo: média de ${Math.round(studyAvg)} min/dia, meta ${g.study} min.`,
+      weightText
+    ];
+    insightHost.innerHTML=lines.map(x=>`<div class="evo-insight">${x.replace(" .",".")}</div>`).join("");
+  }
+
+  renderBars("evoConsistencyChart",items,it=>dayAdherence(it.data),100,"");
+  renderBars("evoWaterChart",items,it=>Number(it.data.water||0),g.water,"alt");
+
+  const weightItems=items.filter(it=>Number(it.data.weight||0)>0);
+  if(weightItems.length){
+    const weights=weightItems.map(it=>Number(it.data.weight));
+    const latest=weights[weights.length-1];
+    const change=latest-weights[0];
+    set("evoWeightLatest",`${latest.toFixed(1).replace(".",",")} kg`);
+    set("evoWeightChange",`${change>0?"+":""}${change.toFixed(1).replace(".",",")} kg`);
+    const min=Math.min(...weights),max=Math.max(...weights),span=Math.max(.1,max-min);
+    const host=document.getElementById("evoWeightChart");
+    if(host){
+      const step=Math.max(1,Math.ceil(weightItems.length/14));
+      const visual=weightItems.map((it,i)=>({it,v:weights[i],i}))
+        .filter((x,idx)=>idx%step===0 || idx===weightItems.length-1);
+      host.innerHTML=visual.map(({it,v})=>{
+        const pct=15+((v-min)/span)*85;
+        return `<div class="evo-bar-wrap"><div class="evo-bar orange" style="height:${pct}%"></div><span class="evo-label">${shortDateLabel(it.date)}</span></div>`;
+      }).join("");
+    }
+  }else{
+    set("evoWeightLatest","—");
+    set("evoWeightChange","—");
+    const host=document.getElementById("evoWeightChart");
+    if(host) host.innerHTML='<div class="library-empty" style="width:100%">Sem registros de peso no período.</div>';
+  }
+}
+
+function getActivePanelId(){
+  return document.querySelector(".panel.active")?.id || "hoje";
+}
+function renderActivePanel(){
+  const id=getActivePanelId();
+  try{
+    if(id==="treinos") renderWorkouts();
+    else if(id==="biblioteca") renderLibrary();
+    else if(id==="evolucao") renderEvolution();
+    else if(id==="historico") renderHistory();
+    else if(id==="backup" || id==="conta") renderBackupStatus();
+    else if(id==="alimentacao") renderFood();
+    else if(id==="oracoes") renderPrayers();
+    else if(id==="areaDetail"){
+      // Mantém a área dinâmica aberta atualizada sem reconstruir outras telas.
+    }
+  }catch(err){
+    console.error("Falha ao atualizar painel ativo",id,err);
+  }
+}
+function renderFast(){
+  ensureStateShape();
+  const d=day();
+  const setValue=(id,val)=>{const el=document.getElementById(id); if(el && document.activeElement!==el) el.value=val;};
+  const setText=(id,val)=>{const el=document.getElementById(id); if(el) el.textContent=val;};
+
+  setValue("workout",d.workout||"");
+  setValue("cardio",d.cardio||"");
+  setText("waterText",Number(d.water||0).toFixed(1));
+  setValue("pages",d.pages||"");
+  setValue("studyTopic",d.studyTopic||"");
+  setValue("weight",d.weight||"");
+  setValue("screenTime",d.screenTime||"");
+  setValue("instagramTime",d.instagramTime||"");
+  setValue("note",d.note||"");
+
+  document.querySelectorAll(".toggle").forEach(t=>{
+    if(t.dataset.key) t.classList.toggle("on",!!d[t.dataset.key]);
+  });
+
+  // Somente componentes leves e visíveis em várias telas.
+  renderTodayProgress();
+  renderApprovedHome();
+  renderDailyInspiration();
+  renderDailyWeight();
+  renderGoals();
+  syncBookHome();
+  renderPrayers();
+  renderActivePanel();
+}
+function render(){
+  renderFast();
+}
+
+document.querySelectorAll("[data-evo-range]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const raw=btn.dataset.evoRange;
+    setEvolutionRange(raw==="all" ? "all" : Number(raw));
+  });
+});
+
+document.addEventListener("click",async e=>{
+  const panelBtn=e.target.closest("[data-open-panel]");
+  if(panelBtn){
+    const target=panelBtn.dataset.openPanel;
+    if(target) showPanel(target);
+    return;
+  }
+
+  const areaBtn=e.target.closest("[data-open-area]");
+  if(areaBtn){
+    const target=areaBtn.dataset.openArea;
+    if(target) showArea(target);
+    return;
+  }
+
+  const mealAction=e.target.closest("[data-meal-action]");
+  if(mealAction){
+    const action=mealAction.dataset.mealAction;
+    if(action==="open") openMealForm();
+    else if(action==="close") closeMealForm();
+    else if(action==="photo") pickMealPhoto();
+    else if(action==="clear-photo") clearMealPhoto();
+    else if(action==="save") await saveMeal();
+    return;
+  }
+
+  const mealDelete=e.target.closest("[data-meal-delete]");
+  if(mealDelete){
+    const id=mealDelete.dataset.mealDelete;
+    if(id) await deleteMeal(id);
+    return;
+  }
+
+  const homeAction=e.target.closest("[data-home-action]");
+  if(homeAction){
+    if(homeAction.dataset.homeAction==="weight"){
+      document.getElementById("dailyWeightInput")?.focus();
+      document.getElementById("dailyWeightInput")?.scrollIntoView({behavior:"smooth",block:"center"});
+    }
+    return;
+  }
+
+  const sessionExercise=e.target.closest("[data-session-exercise]");
+  if(sessionExercise){
+    toggleSessionExercise(Number(sessionExercise.dataset.sessionExercise));
+    return;
+  }
+
+  const workoutFinish=e.target.closest("[data-workout-finish]");
+  if(workoutFinish){
+    finishWorkoutSession(workoutFinish.dataset.workoutFinish==="auto"?"":workoutFinish.dataset.workoutFinish);
+    return;
+  }
+
+  const workoutCancel=e.target.closest("[data-workout-cancel]");
+  if(workoutCancel){
+    cancelWorkoutSession();
+    return;
+  }
+
+  const searchResult=e.target.closest("[data-book-search-index]");
+  if(searchResult){
+    await selectOnlineBook(Number(searchResult.dataset.bookSearchIndex));
+    return;
+  }
+
+  const recommendAdd=e.target.closest("[data-recommend-add]");
+  if(recommendAdd){
+    addRecommendationToLibrary(Number(recommendAdd.dataset.recommendAdd));
+    return;
+  }
+
+  const measureDelete=e.target.closest("[data-measure-delete]");
+  if(measureDelete){
+    deleteMeasurement(measureDelete.dataset.measureDelete);
+    return;
+  }
+
+  const bookAction=e.target.closest("[data-book-action]");
+  if(bookAction){
+    if(e.__bookActionHandled) return;
+    const action=bookAction.dataset.bookAction;
+    if(action==="open") openBookForm();
+    else if(action==="close") closeBookForm();
+    else if(action==="save") saveBook();
+    else if(action==="quickread") quickReadCurrentBook();
+    return;
+  }
+
+  const bookFilter=e.target.closest("[data-book-filter]");
+  if(bookFilter){
+    setBookFilter(bookFilter.dataset.bookFilter);
+    return;
+  }
+
+  const addPages=e.target.closest("[data-book-add-pages]");
+  if(addPages){
+    addPagesToBook(addPages.dataset.bookAddPages, Number(addPages.dataset.pages||10));
+    return;
+  }
+
+  const editBookBtn=e.target.closest("[data-book-edit]");
+  if(editBookBtn){
+    openBookForm(editBookBtn.dataset.bookEdit);
+    return;
+  }
+
+  const deleteBookBtn=e.target.closest("[data-book-delete]");
+  if(deleteBookBtn){
+    deleteBook(deleteBookBtn.dataset.bookDelete);
+    return;
+  }
+
+  const poemReaderAction=e.target.closest("[data-poem-reader]");
+  if(poemReaderAction){
+    const action=poemReaderAction.dataset.poemReader;
+    if(action==="close") closePoemReader();
+    else if(action==="read"){ day().poemRead=true; persist(); renderDailyInspiration(); closePoemReader(); }
+    return;
+  }
+
+  const inspirationFeedback=e.target.closest("[data-inspiration-feedback]");
+  if(inspirationFeedback){ handleInspirationFeedback(inspirationFeedback.dataset.inspirationFeedback); return; }
+  const inspirationAction=e.target.closest("[data-inspiration-action]");
+  if(inspirationAction){ handleInspirationAction(inspirationAction.dataset.inspirationAction); return; }
+
+  const reflectionToggle=e.target.closest("[data-reflection-toggle]");
+  if(reflectionToggle){
+    toggleReflectionDone();
+    return;
+  }
+
+  const mysteryType=e.target.closest("[data-mystery-type]");
+  if(mysteryType){
+    selectMysteryType(mysteryType.dataset.mysteryType);
+    return;
+  }
+
+  const rosaryAction=e.target.closest("[data-rosary-action]");
+  if(rosaryAction){
+    if(rosaryAction.dataset.rosaryAction==="register") registerRosary();
+    return;
+  }
+
+  const prayerAction=e.target.closest("[data-prayer-action]");
+  if(prayerAction){
+    if(prayerAction.dataset.prayerAction==="save-intention") savePrayerIntention();
+    else if(prayerAction.dataset.prayerAction==="save-reflection") savePersonalReflection();
+    return;
+  }
+
+  const gospelAction=e.target.closest("[data-gospel-action]");
+  if(gospelAction){
+    if(gospelAction.dataset.gospelAction==="reload") loadDailyGospel(true);
+    else if(gospelAction.dataset.gospelAction==="toggle-read") toggleGospelRead();
+    return;
+  }
+
+  const studyDelete=e.target.closest("[data-study-delete]");
+  if(studyDelete){
+    if(confirm("Excluir esta sessão de estudo?")) deleteStudyEntry(studyDelete.dataset.studyDelete);
+    return;
+  }
+
+  const areaAction=e.target.closest("[data-area-action]");
+  if(areaAction){
+    const action=areaAction.dataset.areaAction;
+    if(action==="water-plus"){ changeWater(0.5); showArea("agua"); }
+    else if(action==="water-minus"){ changeWater(-0.5); showArea("agua"); }
+    else if(action==="study-save") saveStudyArea();
+    return;
+  }
+
+  const waterBtn=e.target.closest("[data-quick-water],[data-water-change]");
+  if(waterBtn){
+    quickWater(Number(waterBtn.dataset.quickWater||waterBtn.dataset.waterChange||0.5));
+    return;
+  }
+
+  const readBtn=e.target.closest("[data-quick-read]");
+  if(readBtn){
+    quickRead(Number(readBtn.dataset.quickRead||10));
+    return;
+  }
+});
+
+["historyOpenBtnAreas","historyOpenBtnHome"].forEach(id=>{
+  const btn=document.getElementById(id);
+  if(btn) btn.addEventListener("click",()=>showPanel("historico"));
+});
+const historyPrevBtn=document.getElementById("historyPrevBtn");
+if(historyPrevBtn) historyPrevBtn.addEventListener("click",()=>shiftHistoryDay(-1));
+const historyNextBtn=document.getElementById("historyNextBtn");
+if(historyNextBtn) historyNextBtn.addEventListener("click",()=>shiftHistoryDay(1));
+const historyDateInput=document.getElementById("historyDateInput");
+if(historyDateInput) historyDateInput.addEventListener("change",e=>setHistoryDate(e.target.value));
+
+const runDiagnosticsBtn=document.getElementById("runDiagnosticsBtn");
+if(runDiagnosticsBtn) runDiagnosticsBtn.addEventListener("click",()=>runDiagnostics());
+
+document.querySelectorAll("[data-book-action]").forEach(btn=>{
+  btn.addEventListener("click",e=>{
+    e.__bookActionHandled=true;
+    const action=btn.dataset.bookAction;
+    if(action==="open") openBookForm();
+    else if(action==="close") closeBookForm();
+    else if(action==="save") saveBook();
+    else if(action==="quickread") quickReadCurrentBook();
+  });
+});
+
+const bookGlobalSearchInput=document.getElementById("bookGlobalSearchInput");
+if(bookGlobalSearchInput){
+  bookGlobalSearchInput.addEventListener("input",e=>{
+    clearTimeout(bookSearchTimer);
+    const q=e.target.value;
+    bookSearchTimer=setTimeout(()=>searchBooksOnline(q),750);
+  });
+}
+const refreshRecommendationsBtn=document.getElementById("refreshRecommendationsBtn");
+if(refreshRecommendationsBtn) refreshRecommendationsBtn.addEventListener("click",()=>refreshRecommendations());
+
+const saveProfileBtn=document.getElementById("saveProfileBtn");
+if(saveProfileBtn) saveProfileBtn.addEventListener("click",()=>saveProfile());
+const saveMeasurementBtn=document.getElementById("saveMeasurementBtn");
+if(saveMeasurementBtn) saveMeasurementBtn.addEventListener("click",()=>saveMeasurement());
+
+const saveDailyWeightBtn=document.getElementById("saveDailyWeightBtn");
+if(saveDailyWeightBtn) saveDailyWeightBtn.addEventListener("click",()=>saveDailyWeight());
+
+const saveGoalsBtn=document.getElementById("saveGoalsBtn");
+if(saveGoalsBtn) saveGoalsBtn.addEventListener("click",()=>saveGoals());
+
+document.querySelectorAll("[data-workout-plan]").forEach(btn=>{
+  btn.addEventListener("click",()=>selectWorkoutPlan(btn.dataset.workoutPlan));
+});
+const startWorkoutBtn=document.getElementById("startWorkoutBtn");
+if(startWorkoutBtn) startWorkoutBtn.addEventListener("click",()=>startWorkoutSession());
+
+document.querySelectorAll("[data-workout-mode]").forEach(btn=>{
+  btn.addEventListener("click",()=>setWorkoutMode(btn.dataset.workoutMode));
+});
+const saveFreeWorkoutBtn=document.getElementById("saveFreeWorkoutBtn");
+if(saveFreeWorkoutBtn) saveFreeWorkoutBtn.addEventListener("click",()=>saveFreeWorkout());
+
+
+const mealPhotoInput=document.getElementById("mealPhotoInput");
+if(mealPhotoInput) mealPhotoInput.addEventListener("change",e=>handleMealPhotoSelected(e.target.files?.[0]));
+
+
+
+
+let selectedWorkoutMode="plan";
+
+function setWorkoutMode(mode){
+  selectedWorkoutMode=mode==="free"?"free":"plan";
+  document.querySelectorAll("[data-workout-mode]").forEach(btn=>{
+    btn.classList.toggle("active",btn.dataset.workoutMode===selectedWorkoutMode);
+  });
+  const planned=document.getElementById("plannedWorkoutForm");
+  const free=document.getElementById("freeWorkoutForm");
+  if(planned) planned.style.display=selectedWorkoutMode==="plan"?"block":"none";
+  if(free) free.style.display=selectedWorkoutMode==="free"?"grid":"none";
+}
+
+function saveFreeWorkout(){
+  ensureWorkoutSessions();
+  const activity=(document.getElementById("freeWorkoutActivity")?.value||"").trim();
+  const minutes=Number(document.getElementById("freeWorkoutMinutes")?.value||0);
+  const distanceRaw=String(document.getElementById("freeWorkoutDistance")?.value||"").replace(",",".");
+  const distance=distanceRaw?Number(distanceRaw):0;
+  const note=(document.getElementById("freeWorkoutNote")?.value||"").trim();
+
+  if(!activity){
+    alert("Informe a atividade do treino.");
+    return;
+  }
+  if(!minutes || minutes<1){
+    alert("Informe a duração do treino em minutos.");
+    return;
+  }
+
+  const now=new Date();
+  const session={
+    id:"ws_"+Date.now().toString(36),
+    date:today,
+    plan:"Livre",
+    type:"free",
+    activity,
+    minutes:Math.round(minutes),
+    distance:distance>0?Math.round(distance*100)/100:0,
+    note,
+    status:"completed",
+    result:"completo",
+    startedAt:new Date(now.getTime()-minutes*60000).toISOString(),
+    endedAt:now.toISOString(),
+    completedCount:1,
+    totalCount:1,
+    exercises:[{
+      index:0,
+      name:activity,
+      prescription:`${Math.round(minutes)} min`,
+      done:true
+    }]
+  };
+
+  state.workoutSessions.unshift(session);
+
+  const d=day();
+  d.workout="Livre";
+  d.workoutType="free";
+  d.workoutActivity=activity;
+  d.workoutMinutes=Math.round(minutes);
+  d.workoutDistance=session.distance;
+  d.workoutNote=note;
+  d.workoutStatus="completo";
+  d.workoutCompleted=true;
+  d.workoutCompletedCount=1;
+  d.workoutTotalCount=1;
+
+  persist();
+
+  ["freeWorkoutActivity","freeWorkoutMinutes","freeWorkoutDistance","freeWorkoutNote"].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value="";
+  });
+
+  renderWorkoutSession();
+  renderWorkoutHistory();
+}
+
+let selectedWorkoutPlan="";
+
+function ensureWorkoutSessions(){
+  if(!Array.isArray(state.workoutSessions)) state.workoutSessions=[];
+}
+function activeWorkoutSession(){
+  ensureWorkoutSessions();
+  return state.workoutSessions.find(x=>x.date===today && x.status==="active")||null;
+}
+function workoutTitle(plan){
+  return plan==="A"?"Peito / tríceps / postura":
+         plan==="B"?"Pernas / core":
+         plan==="C"?"Costas / postura":
+         plan==="D"?"Ombros / pernas":
+         plan==="Livre"?"Atividade livre":"";
+}
+function selectWorkoutPlan(plan){
+  if(!workouts[plan]) return;
+  selectedWorkoutPlan=plan;
+  document.querySelectorAll("[data-workout-plan]").forEach(btn=>btn.classList.toggle("active",btn.dataset.workoutPlan===plan));
+}
+function startWorkoutSession(){
+  const plan=selectedWorkoutPlan || day().workout || "A";
+  if(!workouts[plan]) return;
+  ensureWorkoutSessions();
+
+  const existing=activeWorkoutSession();
+  if(existing){
+    selectedWorkoutPlan=existing.plan;
+    renderWorkoutSession();
+    return;
+  }
+
+  const session={
+    id:"ws_"+Date.now().toString(36),
+    date:today,
+    plan,
+    status:"active",
+    startedAt:new Date().toISOString(),
+    endedAt:"",
+    result:"",
+    exercises:workouts[plan].map((it,i)=>({
+      index:i,
+      name:it[0],
+      prescription:it[1],
+      instructions:it[2],
+      group:it[3],
+      done:false
+    }))
+  };
+  state.workoutSessions.unshift(session);
+  const d=day();
+  d.workout=plan;
+  d.workoutStatus="active";
+  persist();
+  selectedWorkoutPlan=plan;
+  renderWorkoutSession();
+  renderWorkoutHistory();
+}
+function toggleSessionExercise(index){
+  const s=activeWorkoutSession();
+  if(!s) return;
+  const ex=s.exercises.find(x=>Number(x.index)===Number(index));
+  if(!ex) return;
+  ex.done=!ex.done;
+  persistQuiet();
+  renderWorkoutSession();
+}
+function exerciseVideoUrl(name){
+  return `https://www.youtube.com/results?search_query=${encodeURIComponent(name+" execução correta musculação")}`;
+}
+function finishWorkoutSession(result){
+  const s=activeWorkoutSession();
+  if(!s) return;
+  const done=s.exercises.filter(x=>x.done).length;
+  const total=s.exercises.length;
+  let finalResult=result;
+  if(!finalResult) finalResult=done===total?"completo":done>0?"parcial":"interrompido";
+
+  s.status="completed";
+  s.result=finalResult;
+  s.endedAt=new Date().toISOString();
+  s.completedCount=done;
+  s.totalCount=total;
+
+  const d=day();
+  d.workout=s.plan;
+  d.workoutStatus=finalResult;
+  d.workoutCompleted=finalResult==="completo";
+  d.workoutCompletedCount=done;
+  d.workoutTotalCount=total;
+
+  persist();
+  renderWorkoutSession();
+  renderWorkoutHistory();
+}
+function cancelWorkoutSession(){
+  const s=activeWorkoutSession();
+  if(!s) return;
+  if(!confirm("Cancelar esta sessão de treino?")) return;
+  s.status="cancelled";
+  s.result="cancelado";
+  s.endedAt=new Date().toISOString();
+  const d=day();
+  d.workoutStatus="cancelado";
+  persist();
+  renderWorkoutSession();
+  renderWorkoutHistory();
+}
+function workoutElapsedLabel(session){
+  if(!session?.startedAt) return "";
+  const start=new Date(session.startedAt);
+  const end=session.endedAt?new Date(session.endedAt):new Date();
+  const min=Math.max(0,Math.round((end-start)/60000));
+  return `${min} min`;
+}
+function renderWorkoutSession(){
+  ensureWorkoutSessions();
+  const host=document.getElementById("workoutSessionHost");
+  if(!host) return;
+
+  const active=activeWorkoutSession();
+  const todayCompleted=state.workoutSessions.find(x=>x.date===today && x.status==="completed");
+
+  if(!active){
+    if(todayCompleted){
+      const total=todayCompleted.totalCount||todayCompleted.exercises?.length||0;
+      const done=todayCompleted.completedCount??todayCompleted.exercises?.filter(x=>x.done).length??0;
+      const title=todayCompleted.type==="free"
+        ? (todayCompleted.activity||"Treino livre")
+        : `Treino ${todayCompleted.plan}`;
+      host.innerHTML=`<div class="session-banner">
+        <div class="session-head"><div><b>${title} finalizado</b><div class="muted">${todayCompleted.type==="free"?"Treino livre":workoutTitle(todayCompleted.plan)}</div></div><span class="tag">${todayCompleted.result||"concluído"}</span></div>
+        <div class="session-summary-list">
+          ${todayCompleted.type==="free"
+            ? `<div class="session-summary-item"><span>Duração</span><b>${todayCompleted.minutes||0} min</b></div>
+               ${todayCompleted.distance?`<div class="session-summary-item"><span>Distância</span><b>${String(todayCompleted.distance).replace(".",",")} km</b></div>`:""}`
+            : `<div class="session-summary-item"><span>Exercícios</span><b>${done}/${total}</b></div>
+               <div class="session-summary-item"><span>Duração</span><b>${workoutElapsedLabel(todayCompleted)}</b></div>`}
+        </div>
+      </div>`;
+    }else{
+      host.innerHTML='<div class="muted" style="padding:8px 2px">Nenhum treino iniciado hoje.</div>';
+    }
+    return;
+  }
+
+  selectedWorkoutPlan=active.plan;
+  document.querySelectorAll("[data-workout-plan]").forEach(btn=>btn.classList.toggle("active",btn.dataset.workoutPlan===active.plan));
+
+  const done=active.exercises.filter(x=>x.done).length;
+  const total=active.exercises.length;
+  const pct=Math.round(done/Math.max(1,total)*100);
+
+  host.innerHTML=`
+    <div class="session-banner">
+      <div class="session-head">
+        <div><b>Treino ${active.plan} em andamento</b><div class="muted">${workoutTitle(active.plan)} · ${workoutElapsedLabel(active)}</div></div>
+        <span class="tag">${done}/${total}</span>
+      </div>
+      <div class="session-progress"><span style="width:${Math.min(100,pct)}%"></span></div>
+    </div>
+
+    ${active.exercises.map((ex,i)=>{
+      const k=`${today}_${active.plan}_${ex.index}`;
+      const log=state.exerciseLogs[k]||{};
+      let previousLoad="";
+      const prevKeys=Object.keys(state.exerciseLogs).filter(x=>x.endsWith(`_${active.plan}_${ex.index}`)&&x!==k).sort();
+      if(prevKeys.length) previousLoad=state.exerciseLogs[prevKeys[prevKeys.length-1]]?.load||"";
+
+      return `<div class="exercise-step ${ex.done?"done":""}">
+        <div class="exercise-step-head">
+          <button class="exercise-check ${ex.done?"done":""}" data-session-exercise="${ex.index}" type="button">${ex.done?"✓":i+1}</button>
+          <div>
+            <div class="exercise-name">${ex.name}</div>
+            <div class="exercise-prescription">${ex.prescription} · ${ex.group||""}</div>
+          </div>
+          <span class="tag">${ex.done?"Feito":"Pendente"}</span>
+        </div>
+
+        <div class="exercise-howto">
+          <b>Como executar</b>
+          ${ex.instructions}
+        </div>
+
+        <div class="exercise-grid" style="margin-top:8px">
+          <input data-k="${k}" data-f="load" placeholder="${previousLoad?`Carga anterior ${previousLoad}`:"Carga"}" value="${log.load||""}">
+          <input data-k="${k}" data-f="reps" placeholder="Reps realizadas" value="${log.reps||""}">
+          <input data-k="${k}" data-f="note" placeholder="Observação" value="${log.note||""}">
+        </div>
+
+        <div class="exercise-actions">
+          <button data-session-exercise="${ex.index}" type="button">${ex.done?"Desmarcar":"✓ Concluir exercício"}</button>
+          <a class="soft-action" href="${exerciseVideoUrl(ex.name)}" target="_blank" rel="noopener noreferrer">▶ Ver execução</a>
+        </div>
+      </div>`;
+    }).join("")}
+
+    <div class="session-footer">
+      <b>Finalizar treino</b>
+      <div class="muted" style="margin-top:4px">Você pode concluir mesmo se não tiver feito todos os exercícios.</div>
+      <div class="exercise-actions">
+        <button class="primary" data-workout-finish="auto" type="button">Finalizar</button>
+        <button data-workout-finish="parcial" type="button">Marcar parcial</button>
+        <button data-workout-cancel type="button">Cancelar</button>
+      </div>
+    </div>`;
+
+  host.querySelectorAll("input[data-k]").forEach(inp=>inp.addEventListener("input",()=>{
+    const k=inp.dataset.k,f=inp.dataset.f;
+    if(!state.exerciseLogs[k]) state.exerciseLogs[k]={};
+    state.exerciseLogs[k][f]=inp.value;
+    persistQuiet();
+  }));
+}
+function renderWorkoutHistory(){
+  ensureWorkoutSessions();
+  const host=document.getElementById("workoutHistoryList");
+  if(!host) return;
+  const items=state.workoutSessions.filter(x=>x.status==="completed").slice(0,12);
+  if(!items.length){
+    host.innerHTML='<div class="muted">Nenhum treino finalizado ainda.</div>';
+    return;
+  }
+  host.innerHTML=items.map(s=>{
+    const done=s.completedCount??s.exercises?.filter(x=>x.done).length??0;
+    const total=s.totalCount||s.exercises?.length||0;
+    if(s.type==="free"){
+      return `<div class="workout-history-item">
+        <div style="display:flex;justify-content:space-between;gap:10px"><b>${s.date.split("-").reverse().join("/")} · ${s.activity||"Treino livre"}</b><span>livre</span></div>
+        <div style="margin-top:5px;font-size:9px">${s.minutes||0} min${s.distance?` · ${String(s.distance).replace(".",",")} km`:""}${s.note?` · ${s.note}`:""}</div>
+      </div>`;
+    }
+    return `<div class="workout-history-item">
+      <div style="display:flex;justify-content:space-between;gap:10px"><b>${s.date.split("-").reverse().join("/")} · Treino ${s.plan}</b><span>${s.result||""}</span></div>
+      <div style="margin-top:5px;font-size:9px">${done}/${total} exercícios · ${workoutElapsedLabel(s)}</div>
+    </div>`;
+  }).join("");
+}
+function saveDailyWeight(){
+  const input=document.getElementById("dailyWeightInput");
+  const value=Number(String(input?.value||"").replace(",","."));
+  if(!value || value<20 || value>400) return;
+
+  const d=day();
+  d.weight=Math.round(value*10)/10;
+
+  if(!state.profile || typeof state.profile!=="object") state.profile={heightCm:"",goalWeight:"",measurements:[]};
+  if(!Array.isArray(state.profile.measurements)) state.profile.measurements=[];
+
+  const existing=state.profile.measurements.find(x=>x.date===today && Number(x.weight||0)>0 && !x.waist && !x.abdomen && !x.chest && !x.arm && !x.thigh && !x.hip);
+  if(existing){
+    existing.weight=d.weight;
+    existing.createdAt=new Date().toISOString();
+  }else{
+    state.profile.measurements.push({
+      id:"measure_"+Date.now().toString(36),
+      date:today,
+      weight:d.weight,
+      waist:0,abdomen:0,chest:0,arm:0,thigh:0,hip:0,
+      createdAt:new Date().toISOString()
+    });
+  }
+  state.profile.measurements.sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  persist();
+  if(input) input.value="";
+}
+function renderDailyWeight(){
+  const d=day();
+  const label=document.getElementById("dailyWeightLabel");
+  if(label) label.textContent=d.weight?`${Number(d.weight).toFixed(1).replace(".",",")} kg registrado hoje`:"Ainda não registrado";
+}
+
+function renderWorkouts(){
+ const c=document.getElementById("workouts");
+ if(!c) return;
+ c.innerHTML="";
+ Object.entries(workouts).forEach(([name,items])=>{
+   const wrap=document.createElement("div");wrap.className="card";wrap.style.marginBottom="12px";
+   wrap.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><h3>Treino ${name}</h3><span class="tag">${workoutTitle(name)}</span></div>`;
+   items.forEach((it,i)=>{
+     const k=`${today}_${name}_${i}`,v=state.exerciseLogs[k]||{};
+     let previousLoad="";
+     const prevKeys=Object.keys(state.exerciseLogs).filter(x=>x.endsWith(`_${name}_${i}`)&&x!==k).sort();
+     if(prevKeys.length){ previousLoad=state.exerciseLogs[prevKeys[prevKeys.length-1]]?.load||""; }
+     const row=document.createElement("div");
+     row.className="exercise";
+     row.innerHTML=`<b>${it[0]}</b><div class="exercise-top"><div class="muted">${it[1]} · ${it[3]||""}</div><div class="last-load">${previousLoad?`Última carga: ${previousLoad}`:"Sem carga anterior"}</div></div><div class="exercise-grid"><input data-k="${k}" data-f="load" placeholder="Carga atual" value="${v.load||""}"><input data-k="${k}" data-f="reps" placeholder="Reps" value="${v.reps||""}"><input data-k="${k}" data-f="note" placeholder="Observação" value="${v.note||""}"></div>`;
+     wrap.appendChild(row);
+   });
+   c.appendChild(wrap);
+ });
+ c.querySelectorAll("input[data-k]").forEach(inp=>inp.addEventListener("input",()=>{
+   const k=inp.dataset.k,f=inp.dataset.f;
+   if(!state.exerciseLogs[k]) state.exerciseLogs[k]={};
+   state.exerciseLogs[k][f]=inp.value;
+   persistQuiet();
+ }));
+ renderWorkoutSession();
+ renderWorkoutHistory();
+}
+renderWorkouts();
+
+function weekDates(){const d=new Date();const n=(d.getDay()+6)%7;const m=new Date(d);m.setDate(d.getDate()-n);return Array.from({length:7},(_,i)=>{const x=new Date(m);x.setDate(m.getDate()+i);return x.toISOString().slice(0,10)})}
+function renderKpis(){
+ let tr=0,en=0,ld=0,pg=0,wa=0,wt=0,li=0,weights=[];
+ weekDates().forEach(k=>{const v=state.days[k]||{};if(v.workout&&v.workout!=="Descanso")tr++;if(v.english)en++;if(v.leadership)ld++;pg+=Number(v.pages||0);if(Number(v.water||0)>=3)wa++;if(v.weight){wt++;weights.push(Number(v.weight))}if(v.linkedin)li=1});
+ const avg=weights.length?(weights.reduce((a,b)=>a+b,0)/weights.length).toFixed(1):"—";
+ const arr=[["Treinos",`${tr}/4`,tr/4],["Inglês",`${en}/3`,en/3],["PNL",`${ld}/2`,ld/2],["Leitura",`${pg}/70`,pg/70],["Água",`${wa}/7`,wa/7],["Pesagens",`${wt}/2`,wt/2],["LinkedIn",`${li}/1`,li],["Peso médio",avg==="—"?"—":avg+" kg",0]];
+ document.getElementById("kpis").innerHTML=arr.map(x=>`<div class="kpi"><span class="muted">${x[0]}</span><strong>${x[1]}</strong>${x[0]!=="Peso médio"?`<div class="bar"><span style="width:${Math.min(100,x[2]*100)}%"></span></div>`:""}</div>`).join("");
+}
+
+
+function isValidBackupState(obj){
+  return !!obj && typeof obj==="object" &&
+    !!obj.days && typeof obj.days==="object" && !Array.isArray(obj.days);
+}
+function formatDateTime(value){
+  if(!value) return "—";
+  const d=new Date(value);
+  if(Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
+}
+function markLocalSaved(){
+  localStorage.setItem("rotinaLastLocalSave",new Date().toISOString());
+}
+
+async function runDiagnostics(){
+  const host=document.getElementById("diagnosticsResult");
+  if(!host) return;
+  host.innerHTML='<div class="diag-item"><span>Executando…</span><b>...</b></div>';
+
+  const checks=[];
+  const add=(name,ok,detail="")=>checks.push({name,ok,detail});
+
+  try{
+    const requiredPanels=["hoje","areas","alimentacao","biblioteca","oracoes","evolucao","historico","perfil","conta","backup"];
+    add("Telas principais",requiredPanels.every(id=>!!document.getElementById(id)));
+  }catch(e){add("Telas principais",false);}
+
+  try{
+    const probe="diag_"+Date.now();
+    localStorage.setItem(probe,"ok");
+    const ok=localStorage.getItem(probe)==="ok";
+    localStorage.removeItem(probe);
+    add("Armazenamento local",ok);
+  }catch(e){add("Armazenamento local",false);}
+
+  try{
+    const db=await openPhotoDb();
+    add("Banco local de fotos",!!db);
+    try{db.close();}catch(e){}
+  }catch(e){add("Banco local de fotos",false);}
+
+  add("Estrutura dos dados",!!state && typeof state==="object" && !!state.days && !!state.exerciseLogs);
+  add("Metas configuráveis",!!state.goals && Number(state.goals.water)>0 && Number(state.goals.study)>0);
+  ensureWorkoutSessions();
+  add("Sessões de treino",Array.isArray(state.workoutSessions));
+  add("Supabase configurado",!!(cfg?.supabaseUrl && cfg?.supabaseAnonKey), mode==="cloud"?"modo nuvem":"modo local");
+  add("Usuário autenticado",mode!=="cloud" || !!user);
+
+  host.innerHTML=checks.map(c=>`
+    <div class="diag-item">
+      <span>${c.name}${c.detail?` · ${c.detail}`:""}</span>
+      <b class="${c.ok?"diag-ok":"diag-warn"}">${c.ok?"OK":"Verificar"}</b>
+    </div>`).join("");
+}
+
+
+function ensureProfile(){
+  if(!state.profile || typeof state.profile!=="object") state.profile={heightCm:"",goalWeight:"",measurements:[]};
+  if(!Array.isArray(state.profile.measurements)) state.profile.measurements=[];
+}
+function saveProfile(){
+  ensureProfile();
+  state.profile.heightCm=Number(document.getElementById("profileHeightInput")?.value||0);
+  state.profile.goalWeight=Number(document.getElementById("profileGoalWeightInput")?.value||0);
+  persist();
+}
+function saveMeasurement(){
+  ensureProfile();
+  const val=id=>Number(document.getElementById(id)?.value||0);
+  const date=document.getElementById("measureDateInput")?.value||todayKey();
+  const entry={
+    id:"measure_"+Date.now().toString(36),
+    date,
+    weight:val("measureWeightInput"),
+    waist:val("measureWaistInput"),
+    abdomen:val("measureAbdomenInput"),
+    chest:val("measureChestInput"),
+    arm:val("measureArmInput"),
+    thigh:val("measureThighInput"),
+    hip:val("measureHipInput"),
+    createdAt:new Date().toISOString()
+  };
+  if(!Object.entries(entry).some(([k,v])=>!["id","date","createdAt"].includes(k) && Number(v)>0)) return;
+  state.profile.measurements.push(entry);
+  state.profile.measurements.sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  if(entry.weight>0){
+    if(!state.days[date]) state.days[date]={};
+    state.days[date].weight=entry.weight;
+  }
+  persist();
+  renderProfile();
+}
+function deleteMeasurement(id){
+  ensureProfile();
+  if(!confirm("Excluir esta medição?")) return;
+  state.profile.measurements=state.profile.measurements.filter(x=>x.id!==id);
+  persist();
+  renderProfile();
+}
+function renderProfile(){
+  ensureProfile();
+  const setVal=(id,val)=>{const el=document.getElementById(id);if(el && document.activeElement!==el)el.value=val??""};
+  setVal("profileHeightInput",state.profile.heightCm||"");
+  setVal("profileGoalWeightInput",state.profile.goalWeight||"");
+  setVal("measureDateInput",document.getElementById("measureDateInput")?.value||todayKey());
+  const host=document.getElementById("measurementList");
+  if(!host) return;
+  const items=state.profile.measurements.slice().reverse().slice(0,30);
+  if(!items.length){
+    host.innerHTML='<div class="muted">Nenhuma medição registrada ainda.</div>';
+    return;
+  }
+  const labels={weight:"Peso",waist:"Cintura",abdomen:"Abdômen",chest:"Peitoral",arm:"Braço",thigh:"Coxa",hip:"Quadril"};
+  host.innerHTML=items.map(x=>{
+    const tags=Object.entries(labels).filter(([k])=>Number(x[k]||0)>0).map(([k,l])=>{
+      const unit=k==="weight"?"kg":"cm";
+      return `<span class="measure-tag">${l}: ${Number(x[k]).toFixed(1).replace(".",",")} ${unit}</span>`;
+    }).join("");
+    return `<div class="measure-item">
+      <div class="measure-head"><b>${x.date.split("-").reverse().join("/")}</b><button data-measure-delete="${x.id}">Excluir</button></div>
+      <div class="measure-tags">${tags}</div>
+    </div>`;
+  }).join("");
+}
+
+function renderBackupStatus(){
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  set("backupDaysCount",String(Object.keys(state.days||{}).filter(k=>/^\d{4}-\d{2}-\d{2}$/.test(k)).length));
+  set("backupBooksCount",String(Array.isArray(state.library)?state.library.length:0));
+  set("backupLocalTime",formatDateTime(localStorage.getItem("rotinaLastLocalSave")));
+  set("backupCloudTime",formatDateTime(localStorage.getItem("rotinaLastCloudSync")));
+  set("accountModeLabel",mode==="cloud"?"Nuvem":"Local");
+  set("accountSyncLabel",formatDateTime(localStorage.getItem("rotinaLastCloudSync")));
+}
+
+async function syncCloud(){
+ const backupMsg=document.getElementById("backupMsg");
+ if(!supabase||!user){
+   if(backupMsg) backupMsg.textContent="Entre na conta para sincronizar com a nuvem.";
+   return;
+ }
+ const status=document.getElementById("syncStatus");
+ if(status){status.textContent="Sincronizando…";status.className="status online";}
+ const payload={user_id:user.id,data:state,updated_at:new Date().toISOString()};
+ const {error}=await supabase.from("user_state").upsert(payload,{onConflict:"user_id"});
+ if(error){
+   if(status){status.textContent="Erro de sync";status.className="status offline";}
+   if(backupMsg) backupMsg.textContent="Não foi possível sincronizar agora.";
+ }else{
+   const now=new Date().toISOString();
+   localStorage.setItem("rotinaLastCloudSync",now);
+   if(status){status.textContent="Sincronizado";status.className="status online";}
+   if(backupMsg) backupMsg.textContent="Sincronização concluída.";
+ }
+ renderBackupStatus();
+}
+async function loadCloud(){
+ if(!supabase||!user)return;
+ const {data,error}=await supabase.from("user_state").select("data").eq("user_id",user.id).maybeSingle();
+ if(data?.data){state=data.data;ensureStateShape();persist()}
+}
+function enterApp(local=false){
+ document.getElementById("authScreen").classList.add("hidden");
+ document.getElementById("mainApp").classList.remove("hidden");
+ document.getElementById("nav").classList.remove("hidden");
+ mode=local?"local":"cloud";
+ document.getElementById("syncStatus").textContent=local?"Local":"Sincronizando…";
+ document.getElementById("syncStatus").className="status "+(local?"offline":"online");
+ document.getElementById("accountInfo").textContent=local?"Modo local — sem conta conectada.":`Conectado como ${user?.email||""}`;
+ render();
+}
+document.getElementById("localBtn").onclick=()=>enterApp(true);
+
+const resetOverlay=document.getElementById("resetOverlay");
+const resetMsg=document.getElementById("resetMsg");
+function openResetModal(){
+  if(!resetOverlay)return;
+  resetOverlay.classList.remove("hidden");
+  resetMsg.textContent="";
+  document.getElementById("newPassword").value="";
+  document.getElementById("newPasswordConfirm").value="";
+}
+function closeResetModal(){if(resetOverlay)resetOverlay.classList.add("hidden");}
+
+document.getElementById("forgotPasswordBtn").onclick=async()=>{
+  const msg=document.getElementById("authMsg");
+  if(!supabase){msg.textContent="Supabase ainda não configurado.";return}
+  const email=document.getElementById("email").value.trim();
+  if(!email){msg.textContent="Digite seu e-mail primeiro.";return}
+  const btn=document.getElementById("forgotPasswordBtn");
+  btn.disabled=true;
+  msg.textContent="Enviando link de recuperação…";
+  try{
+    const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin});
+    if(error)throw error;
+    msg.textContent="Link de recuperação enviado. Confira seu e-mail.";
+  }catch(err){
+    msg.textContent=err?.message||"Não foi possível enviar o link de recuperação.";
+  }finally{btn.disabled=false;}
+};
+
+document.getElementById("cancelResetBtn").onclick=closeResetModal;
+document.getElementById("saveNewPasswordBtn").onclick=async()=>{
+  if(!supabase)return;
+  const p1=document.getElementById("newPassword").value;
+  const p2=document.getElementById("newPasswordConfirm").value;
+  if(p1.length<6){resetMsg.textContent="A senha deve ter pelo menos 6 caracteres.";return}
+  if(p1!==p2){resetMsg.textContent="As senhas não conferem.";return}
+  const btn=document.getElementById("saveNewPasswordBtn");
+  btn.disabled=true; resetMsg.textContent="Salvando…";
+  try{
+    const {data,error}=await supabase.auth.updateUser({password:p1});
+    if(error)throw error;
+    user=data.user||user;
+    closeResetModal();
+    if(user){enterApp(false);await loadCloud();}
+  }catch(err){
+    resetMsg.textContent=err?.message||"Não foi possível atualizar a senha.";
+  }finally{btn.disabled=false;}
+};
+
+if(supabase){
+  supabase.auth.onAuthStateChange((event,session)=>{
+    if(event==="PASSWORD_RECOVERY")openResetModal();
+  });
+}
+
+document.getElementById("loginBtn").onclick=async()=>{
+ const btn=document.getElementById("loginBtn");
+ const msg=document.getElementById("authMsg");
+ if(!supabase){msg.textContent="Supabase ainda não configurado.";return}
+ const email=document.getElementById("email").value.trim();
+ const password=document.getElementById("password").value;
+ if(!email||!password){msg.textContent="Preencha e-mail e senha.";return}
+ btn.disabled=true;
+ btn.textContent="Entrando...";
+ msg.textContent="";
+ try{
+   const {data,error}=await supabase.auth.signInWithPassword({email,password});
+   if(error) throw error;
+   user=data.user;
+   enterApp(false);
+   await loadCloud();
+ }catch(err){
+   msg.textContent=err?.message||"Não foi possível entrar.";
+ }finally{
+   btn.disabled=false;
+   btn.textContent="Entrar";
+ }
+};
+document.getElementById("signupBtn").onclick=async()=>{
+ if(!supabase){document.getElementById("authMsg").textContent="Supabase ainda não configurado.";return}
+ const email=document.getElementById("email").value,password=document.getElementById("password").value;
+ const {data,error}=await supabase.auth.signUp({email,password});
+ document.getElementById("authMsg").textContent=error?error.message:"Conta criada. Verifique seu e-mail se a confirmação estiver habilitada.";
+};
+document.getElementById("logoutBtn").onclick=async()=>{if(supabase&&user)await supabase.auth.signOut();location.reload()};
+document.getElementById("cloudUrl").value=cfg.supabaseUrl||"";
+document.getElementById("cloudAnonKey").value=cfg.supabaseAnonKey||"";
+
+document.getElementById("saveCloudBtn").onclick=()=>{
+  const supabaseUrl=document.getElementById("cloudUrl").value.trim();
+  const supabaseAnonKey=document.getElementById("cloudAnonKey").value.trim();
+  if(!supabaseUrl||!supabaseAnonKey){
+    document.getElementById("cloudConfigMsg").textContent="Preencha os dois campos.";
+    return;
+  }
+  localStorage.setItem("rotinaCloudConfig",JSON.stringify({supabaseUrl,supabaseAnonKey}));
+  document.getElementById("cloudConfigMsg").textContent="Configuração salva. O app será recarregado.";
+  setTimeout(()=>location.reload(),700);
+};
+document.getElementById("clearCloudBtn").onclick=()=>{
+  localStorage.removeItem("rotinaCloudConfig");
+  document.getElementById("cloudConfigMsg").textContent="Configuração removida. O app será recarregado.";
+  setTimeout(()=>location.reload(),500);
+};
+
+document.getElementById("exportBtn").onclick=()=>{
+ const stamp=today.replaceAll("-","");
+ const payload={
+   app:"Minha Rotina",
+   version:"V40.3",
+   exportedAt:new Date().toISOString(),
+   state
+ };
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download=`minha_rotina_backup_${stamp}.json`;a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+ const msg=document.getElementById("backupMsg");
+ if(msg) msg.textContent="Backup exportado. Guarde o arquivo em um local seguro.";
+};
+document.getElementById("importFile").onchange=async e=>{
+ const f=e.target.files[0];if(!f)return;
+ const msg=document.getElementById("backupMsg");
+ try{
+   const txt=await f.text();
+   const parsed=JSON.parse(txt);
+   const imported=parsed?.state||parsed;
+   if(!isValidBackupState(imported)) throw new Error("estrutura inválida");
+
+   // snapshot local automático antes da substituição
+   localStorage.setItem("rotinaPreImportBackup",JSON.stringify(state));
+   state=imported;
+   if(!state.days) state.days={};
+   if(!state.exerciseLogs) state.exerciseLogs={};
+   if(!state.days[today]) state.days[today]={};
+   persist();
+   if(msg) msg.textContent="Backup importado com sucesso. Uma cópia do estado anterior foi preservada neste aparelho.";
+ }catch(err){
+   if(msg) msg.textContent="Arquivo de backup inválido ou incompatível.";
+ }finally{
+   e.target.value="";
+   renderBackupStatus();
+ }
+};
+const migratePhotosBtn=document.getElementById("migratePhotosBtn"); if(migratePhotosBtn)migratePhotosBtn.onclick=()=>migrateLocalMealPhotos();
+document.getElementById("syncBtn").onclick=()=>syncCloud();
+document.getElementById("openBackupBtn").onclick=()=>showPanel("backup");
+
+document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showPanel(b.dataset.target));
+
+let deferredPrompt;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;document.getElementById("installBtn").classList.remove("hidden")});
+document.getElementById("installBtn").onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;document.getElementById("installBtn").classList.add("hidden")}};
+
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");
+
+if(supabase){
+ const {data}=await supabase.auth.getSession();
+ if(data.session){user=data.session.user;enterApp(false);await loadCloud()}
+}
+renderFast();
+renderBackupStatus();
+
+
+// V16: bridge entre o módulo JavaScript e os botões inline da interface.
+Object.assign(window,{
+  showPanel,
+  showArea,
+  registerMeal,
+  quickWater,
+  quickRead,
+  quickReadCurrentBook,
+  openBookForm,
+  closeBookForm,
+  saveBook,
+  setBookFilter,
+  addPagesToBook,
+  deleteBook,
+  togglePrayer,
+  savePrayerIntention,
+  renderPrayers,
+  loadDailyGospel,
+  toggleGospelRead,
+  setEvolutionRange,
+  renderEvolution,
+  setHistoryDate,
+  shiftHistoryDay,
+  renderHistory,
+  openMealForm,
+  closeMealForm,
+  pickMealPhoto,
+  clearMealPhoto,
+  saveMeal,
+  deleteMeal,
+  renderFood,
+  day,
+  persist
+});
+</script>
+
+<div id="poemReaderOverlay" class="poem-reader-overlay" aria-hidden="true">
+  <article class="poem-reader" role="dialog" aria-modal="true" aria-labelledby="poemReaderTitle">
+    <div class="poem-reader-head">
+      <div><h2 id="poemReaderTitle">Poema do dia</h2><small id="poemReaderMeta"></small></div>
+      <button class="poem-reader-close" type="button" data-poem-reader="close" aria-label="Fechar">×</button>
+    </div>
+    <div id="poemReaderText" class="poem-reader-text"></div>
+    <div class="poem-reader-footer"><button data-poem-reader="read">✓ Marcar como lido</button></div>
+  </article>
+</div>
+<script>
+const poemReaderOverlay=document.getElementById("poemReaderOverlay");
+if(poemReaderOverlay) poemReaderOverlay.addEventListener("click",e=>{ if(e.target===poemReaderOverlay) closePoemReader(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closePoemReader(); });
+</script>
+</body>
+</html>
+```
