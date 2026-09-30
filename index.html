@@ -1,3 +1,4 @@
+```
 <!DOCTYPE html>
 
 <html lang="pt-BR">
@@ -7,7 +8,7 @@
 <meta content="#173f37" name="theme-color"/>
 <link href="manifest.json" rel="manifest"/>
 <link href="icon-192.png" rel="apple-touch-icon"/>
-<title>Minha Rotina — V3</title>
+<title>Minha Rotina — V40.3</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#172033;--muted:#6b7280;--line:#e5e7eb;
@@ -569,7 +570,7 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V40.1 · Cloud</div>
+<div class="status offline" id="syncStatus">V40.3 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -1438,8 +1439,8 @@ function renderWeekSummary(){
   const el=document.getElementById("weekSummary");
   if(!el) return;
   el.innerHTML=items.map(([label,v,t])=>{
-    const pct=Math.min(100,Math.round(v/t*100));
-    return `<div class="week-stat"><b>${v}/${t}</b><small>${label}</small><div class="mini-track"><span style="width:${pct}%"></span></div></div>`;
+    const pct=Math.round(v/t*100);
+    return `<div class="week-stat"><b>${v}/${t} · ${pct}%</b><small>${label}</small><div class="mini-track"><span style="width:${Math.min(100,pct)}%"></span></div></div>`;
   }).join("");
 }
 
@@ -1535,15 +1536,15 @@ function renderApprovedHome(){
   const workoutDone=!!(d.workoutCompleted || d.workoutStatus==="completo" || d.workoutStatus==="parcial");
   const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val};
   set("homeWater",`${water.toFixed(1).replace(".",",")} / ${Number(g.water).toFixed(1).replace(".",",")} L`);
-  set("homeWaterPct",`${Math.round(water/g.water*100)}%`);
+  set("homeWaterPct",`${Math.max(0,Math.round(water/g.water*100))}%`);
   set("homeMeals",`${meals} / ${g.meals}`);
-  set("homeMealsPct",`${Math.round(meals/g.meals*100)}%`);
+  set("homeMealsPct",`${Math.max(0,Math.round(meals/g.meals*100))}%`);
   set("homeWorkout",`${workoutDone?1:0} / 1`);
   set("homeWorkoutPct",workoutDone?"100%":"0%");
   set("homeReading",`${pages} / ${g.reading}`);
-  set("homeReadingPct",`${Math.round(pages/g.reading*100)}%`);
+  set("homeReadingPct",`${Math.max(0,Math.round(pages/g.reading*100))}%`);
   set("homeStudy",`${study} / ${g.study} min`);
-  set("homeStudyPct",`${Math.round(study/g.study*100)}%`);
+  set("homeStudyPct",`${Math.max(0,Math.round(study/g.study*100))}%`);
   set("foodHeadline",`${meals} de ${g.meals} refeições registradas`);
   set("macroProtein",`${d.proteinCount||0}/${g.meals}`);
   set("macroCarb",`${d.carbCount||0}/${g.meals}`);
@@ -3531,7 +3532,7 @@ function renderWorkoutSession(){
         <div><b>Treino ${active.plan} em andamento</b><div class="muted">${workoutTitle(active.plan)} · ${workoutElapsedLabel(active)}</div></div>
         <span class="tag">${done}/${total}</span>
       </div>
-      <div class="session-progress"><span style="width:${pct}%"></span></div>
+      <div class="session-progress"><span style="width:${Math.min(100,pct)}%"></span></div>
     </div>
 
     ${active.exercises.map((ex,i)=>{
@@ -3965,7 +3966,7 @@ document.getElementById("exportBtn").onclick=()=>{
  const stamp=today.replaceAll("-","");
  const payload={
    app:"Minha Rotina",
-   version:"V40",
+   version:"V40.3",
    exportedAt:new Date().toISOString(),
    state
  };
@@ -4073,3 +4074,4 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape") closePoemReader();
 </script>
 </body>
 </html>
+```
