@@ -1,3 +1,9 @@
+# Minha Rotina V40
+
+V40 inclui: metas acima de 100%, nova Vida Espiritual, Minha Reflexão, Inspiração do Dia (poema + música), feedback de preferências e suporte a fotos de refeições no Supabase Storage com fallback local.
+
+Antes de publicar a V40, execute `SUPABASE_V40.sql` no SQL Editor do Supabase para habilitar o bucket privado `meal-photos`. Depois do login, use Dados & Backup > Migrar fotos locais para a nuvem no aparelho que contém as fotos antigas.
+
 # Minha Rotina — V3 (PWA + sincronização preparada)
 
 ## Novidades

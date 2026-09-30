@@ -497,6 +497,22 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 }
 </style>
 
+
+<style id="v40-inspiration-spiritual">
+.inspiration-card,.personal-reflection,.personal-prayer,.reflection-video{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:10px}
+.inspiration-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px}
+.inspiration-item{background:#f8faf9;border-radius:13px;padding:11px;min-height:150px;display:flex;flex-direction:column;gap:6px}
+.inspiration-item .quote{font-family:Georgia,serif;font-size:12px;line-height:1.55;white-space:pre-line}
+.inspiration-item small{color:var(--muted);line-height:1.4}
+.inspiration-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.inspiration-actions a,.inspiration-actions button{font-size:9px;padding:7px 8px;border-radius:9px;text-decoration:none}
+.inspiration-actions a{border:1px solid var(--line);color:var(--text);font-weight:800;background:#fff}
+.inspiration-actions button.selected{background:var(--accent);color:#fff;border-color:var(--accent)}
+.personal-reflection textarea,.personal-prayer textarea{width:100%;min-height:86px;resize:vertical;margin-top:8px}
+.spiritual-section-title{margin:14px 0 5px;font-size:12px}
+.reflection-video a{display:inline-block;margin-top:8px;font-weight:800;color:var(--accent);text-decoration:none}
+@media(max-width:760px){.inspiration-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <div class="app" id="authScreen">
@@ -519,7 +535,7 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V39.1 · Cloud</div>
+<div class="status offline" id="syncStatus">V40 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -565,6 +581,19 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 <span class="prayer-status">✓</span>
 </button>
 
+<div class="inspiration-card" id="dailyInspirationHome">
+  <div class="section-head"><div><span class="section-icon teal">✨</span><b>Inspiração do dia</b><small>Poema e música para acompanhar seu dia</small></div></div>
+  <div class="inspiration-grid">
+    <div class="inspiration-item">
+      <b>📖 Poema do dia</b><div class="quote" id="poemTextHome"></div><small id="poemMetaHome"></small>
+      <div class="inspiration-actions"><button data-inspiration-feedback="poem:like">👍 Gostei</button><button data-inspiration-feedback="poem:dislike">👎</button><button data-inspiration-action="poem-read">Marcar lido</button></div>
+    </div>
+    <div class="inspiration-item">
+      <b>🎵 Música do dia</b><strong id="songTitleHome"></strong><small id="songArtistHome"></small>
+      <div class="inspiration-actions"><a id="songSpotifyHome" target="_blank" rel="noopener">Spotify</a><a id="songYoutubeHome" target="_blank" rel="noopener">YouTube</a><button data-inspiration-feedback="song:like">👍 Gostei</button><button data-inspiration-feedback="song:dislike">👎</button><button data-inspiration-action="song-heard">Marcar ouvida</button></div>
+    </div>
+  </div>
+</div>
 
 <div class="quick-actions">
   <button class="quick-action" type="button" data-water-change="0.5"><span>💧</span>+0,5 L</button>
@@ -714,106 +743,31 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 </section>
 
 <section class="panel" id="oracoes">
-<div class="section-title">
-<h2>Vida espiritual</h2>
-<span>Evangelho, reflexão e terço</span>
-</div>
-
-<div class="prayer-hero">
-<small>Versículo do dia</small>
-<blockquote id="dailyVerseText">“Tudo posso naquele que me fortalece.”</blockquote>
-<cite id="dailyVerseRef">Filipenses 4,13</cite>
-</div>
-
-<div class="spiritual-goals">
-<div class="spiritual-goals-head">
-<div>
-<b>Meta espiritual de hoje</b>
-<div class="muted" style="margin-top:3px">Evangelho + reflexão</div>
-</div>
-<span id="prayerProgressText">0/2</span>
-</div>
-<div class="spiritual-goals-line"><span id="prayerProgressBar" style="width:0%"></span></div>
-</div>
-
+<div class="section-title"><h2>Vida espiritual</h2><span>Um espaço para oração e reflexão</span></div>
+<div class="prayer-hero"><small>Versículo do dia</small><blockquote id="dailyVerseText">“Tudo posso naquele que me fortalece.”</blockquote><cite id="dailyVerseRef">Filipenses 4,13</cite></div>
 <div class="gospel-card">
-<div class="gospel-head">
-<div>
-<span class="gospel-chip">📖 Evangelho do dia</span>
-<h3 id="gospelReference" style="margin-top:7px">Carregando...</h3>
-<small id="gospelLiturgicalDay">Buscando a liturgia de hoje</small>
+  <div class="gospel-head"><div><span class="gospel-chip">📖 Evangelho de hoje</span><h3 id="gospelReference" style="margin-top:7px">Carregando...</h3><small id="gospelLiturgicalDay">Buscando a liturgia de hoje</small></div><button data-gospel-action="reload">Atualizar</button></div>
+  <div class="gospel-status" id="gospelStatus">Conectando à fonte da liturgia...</div>
+  <div class="gospel-full" id="gospelText">O Evangelho será carregado quando houver conexão.</div>
+  <div class="gospel-actions"><button class="gospel-read" data-gospel-action="toggle-read" id="gospelReadBtn">Marcar Evangelho como lido</button></div>
+  <div class="gospel-source" id="gospelSource">Fonte: liturgia diária online.</div>
 </div>
-<button data-gospel-action="reload">Atualizar</button>
-</div>
-
-<div class="gospel-status" id="gospelStatus">Conectando à fonte da liturgia...</div>
-
-<div class="gospel-box">
-<b>Resumo</b>
-<p id="gospelSummary">Aguardando o Evangelho do dia.</p>
-</div>
-
-<div class="gospel-full" id="gospelText">O texto completo do Evangelho será carregado quando houver conexão.</div>
-
-<div class="gospel-actions">
-<button class="gospel-read" data-gospel-action="toggle-read" id="gospelReadBtn">Marcar Evangelho como lido</button>
-</div>
-<div class="gospel-source" id="gospelSource">Fonte: liturgia diária online.</div>
-</div>
-
 <div class="reflection-card" id="dailyReflectionCard">
-<div class="reflection-head">
-<div>
-<span class="gospel-chip">💭 Reflexão do dia</span>
-<h3 style="margin:7px 0 0">Levar a Palavra para a vida</h3>
+  <div class="reflection-head"><div><span class="gospel-chip">💭 Entenda o Evangelho</span><h3 style="margin:7px 0 0">Mensagem central</h3></div><button class="prayer-check" data-reflection-toggle id="reflectionDoneBtn">✓</button></div>
+  <div class="reflection-text" id="dailyReflectionText">A explicação será apresentada após o carregamento do Evangelho.</div>
+  <div class="gospel-box" style="margin-top:9px"><b>Para levar para o dia</b><p id="gospelApplication">Aguardando o Evangelho do dia.</p></div>
 </div>
-<button class="prayer-check" data-reflection-toggle id="reflectionDoneBtn">✓</button>
-</div>
-<div class="reflection-text" id="dailyReflectionText">
-A reflexão será apresentada após o carregamento do Evangelho.
-</div>
-<div class="gospel-box" style="margin-top:9px">
-<b>Aplicação prática</b>
-<p id="gospelApplication">Aguardando o Evangelho do dia.</p>
-</div>
-</div>
-
+<div class="reflection-video"><span class="gospel-chip">▶️ Reflexão em vídeo</span><h3 style="margin:7px 0 0">Ouça uma reflexão sobre a Palavra</h3><small>Busca priorizada para Frei Gilson. Confirme o tema do vídeo antes de associá-lo ao Evangelho do dia.</small><a id="reflectionVideoLink" target="_blank" rel="noopener">Buscar reflexão de hoje no YouTube</a></div>
+<div class="personal-reflection"><span class="gospel-chip">✍️ Minha reflexão</span><h3 style="margin:7px 0 0">O que Deus falou comigo hoje?</h3><textarea id="personalReflectionInput" placeholder="Escreva uma ou duas frases para formar seu diário espiritual."></textarea><button class="primary" data-prayer-action="save-reflection" style="margin-top:8px;width:100%">Salvar reflexão</button></div>
+<div class="personal-prayer"><span class="gospel-chip">🙏 Minha oração</span><h3 style="margin:7px 0 0">Oração para o dia</h3><div class="reflection-text" id="personalPrayerText">Senhor, obrigado pela vida e pelas oportunidades deste dia. Protege minha família, meus deslocamentos e minha saúde. Dá-me sabedoria e discernimento nas decisões, serenidade nas dificuldades e bênçãos no trabalho. Ensina-me a liderar com humildade, ouvir com atenção e fazer o bem às pessoas que eu encontrar. Amém.</div></div>
 <div class="rosary-card">
-<div class="rosary-head">
-<div>
-<span class="gospel-chip">📿 Terço</span>
-<h3 style="margin:7px 0 0">Mistérios do Rosário</h3>
-<div class="muted">Extra: registrar o terço não altera sua meta diária.</div>
+  <div class="rosary-head"><div><span class="gospel-chip">📿 Terço</span><h3 style="margin:7px 0 0">Mistérios do Rosário</h3><div class="muted">Registro opcional, sem transformar oração em obrigação.</div></div><span class="tag" id="todayRosaryMysteryLabel">Hoje</span></div>
+  <div class="rosary-today" id="todayRosaryMysteryText"></div>
+  <div class="mystery-tabs"><button type="button" data-mystery-type="gozosos">Gozosos</button><button type="button" data-mystery-type="luminosos">Luminosos</button><button type="button" data-mystery-type="dolorosos">Dolorosos</button><button type="button" data-mystery-type="gloriosos">Gloriosos</button></div>
+  <div id="mysteryList" class="mystery-list"></div><div class="rosary-actions"><button class="primary" type="button" data-rosary-action="register">✓ Registrar terço rezado</button></div>
+  <div style="margin-top:12px"><b style="font-size:11px">Últimos registros</b><div id="rosaryHistory" class="rosary-history"></div></div>
 </div>
-<span class="tag" id="todayRosaryMysteryLabel">Hoje</span>
-</div>
-
-<div class="rosary-today" id="todayRosaryMysteryText"></div>
-
-<div class="mystery-tabs">
-<button type="button" data-mystery-type="gozosos">Gozosos</button>
-<button type="button" data-mystery-type="luminosos">Luminosos</button>
-<button type="button" data-mystery-type="dolorosos">Dolorosos</button>
-<button type="button" data-mystery-type="gloriosos">Gloriosos</button>
-</div>
-
-<div id="mysteryList" class="mystery-list"></div>
-
-<div class="rosary-actions">
-<button class="primary" type="button" data-rosary-action="register">✓ Registrar terço rezado</button>
-</div>
-
-<div style="margin-top:12px">
-<b style="font-size:11px">Últimos registros</b>
-<div id="rosaryHistory" class="rosary-history"></div>
-</div>
-</div>
-
-<div class="prayer-intention">
-<b>Intenção de hoje</b>
-<textarea id="prayerIntentionInput" placeholder="Por quem ou por qual intenção você quer rezar hoje?"></textarea>
-<button class="primary" data-prayer-action="save-intention" style="margin-top:8px;width:100%">Salvar intenção</button>
-</div>
+<div class="prayer-intention"><b>Intenção de hoje</b><textarea id="prayerIntentionInput" placeholder="Por quem ou por qual intenção você quer rezar hoje?"></textarea><button class="primary" data-prayer-action="save-intention" style="margin-top:8px;width:100%">Salvar intenção</button></div>
 </section>
 
 <section class="panel" id="alimentacao">
@@ -1012,9 +966,8 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 </label>
 <button id="syncBtn">Sincronizar agora</button>
 </div>
-<div class="backup-warning">
-      O backup JSON inclui os dados da rotina, biblioteca e histórico. As fotos das refeições continuam armazenadas somente neste aparelho nesta versão.
-    </div>
+<div class="backup-warning">O backup JSON inclui os dados da rotina, biblioteca e histórico. Na V40, novas fotos tentam usar o Supabase Storage quando você está conectado e mantêm fallback local.</div>
+<div class="backup-actions" style="margin-top:8px"><button id="migratePhotosBtn">Migrar fotos locais para a nuvem</button></div>
 <div class="muted" id="backupMsg" style="margin-top:10px"></div>
 </div>
 </section>
@@ -1548,15 +1501,15 @@ function renderApprovedHome(){
   const workoutDone=!!(d.workoutCompleted || d.workoutStatus==="completo" || d.workoutStatus==="parcial");
   const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val};
   set("homeWater",`${water.toFixed(1).replace(".",",")} / ${Number(g.water).toFixed(1).replace(".",",")} L`);
-  set("homeWaterPct",`${Math.min(100,Math.round(water/g.water*100))}%`);
+  set("homeWaterPct",`${Math.round(water/g.water*100)}%`);
   set("homeMeals",`${meals} / ${g.meals}`);
-  set("homeMealsPct",`${Math.min(100,Math.round(meals/g.meals*100))}%`);
+  set("homeMealsPct",`${Math.round(meals/g.meals*100)}%`);
   set("homeWorkout",`${workoutDone?1:0} / 1`);
   set("homeWorkoutPct",workoutDone?"100%":"0%");
   set("homeReading",`${pages} / ${g.reading}`);
-  set("homeReadingPct",`${Math.min(100,Math.round(pages/g.reading*100))}%`);
+  set("homeReadingPct",`${Math.round(pages/g.reading*100)}%`);
   set("homeStudy",`${study} / ${g.study} min`);
-  set("homeStudyPct",`${Math.min(100,Math.round(study/g.study*100))}%`);
+  set("homeStudyPct",`${Math.round(study/g.study*100)}%`);
   set("foodHeadline",`${meals} de ${g.meals} refeições registradas`);
   set("macroProtein",`${d.proteinCount||0}/${g.meals}`);
   set("macroCarb",`${d.carbCount||0}/${g.meals}`);
@@ -1576,6 +1529,34 @@ function renderApprovedHome(){
 
 
 
+
+const DAILY_POEMS=[
+  {title:"Mar Português",author:"Fernando Pessoa",text:"Ó mar salgado, quanto do teu sal\nSão lágrimas de Portugal!"},
+  {title:"Soneto",author:"Luís de Camões",text:"Amor é fogo que arde sem se ver;\nÉ ferida que dói, e não se sente."},
+  {title:"Canção do Exílio",author:"Gonçalves Dias",text:"Minha terra tem palmeiras,\nOnde canta o Sabiá."},
+  {title:"Autopsicografia",author:"Fernando Pessoa",text:"O poeta é um fingidor.\nFinge tão completamente\nQue chega a fingir que é dor\nA dor que deveras sente."},
+  {title:"Meus oito anos",author:"Casimiro de Abreu",text:"Oh! que saudades que tenho\nDa aurora da minha vida."},
+  {title:"Via Láctea",author:"Olavo Bilac",text:"Ora (direis) ouvir estrelas! Certo\nPerdeste o senso!"},
+  {title:"Versos Íntimos",author:"Augusto dos Anjos",text:"Vês! Ninguém assistiu ao formidável\nEnterro de tua última quimera."}
+];
+const DAILY_SONGS=[
+  {title:"Tocando em Frente",artist:"Almir Sater"},{title:"Dias Melhores",artist:"Jota Quest"},{title:"É Preciso Saber Viver",artist:"Titãs"},{title:"Anunciação",artist:"Alceu Valença"},{title:"O Sol",artist:"Vitor Kley"},{title:"Paciência",artist:"Lenine"},{title:"A Estrada",artist:"Cidade Negra"},{title:"Andar com Fé",artist:"Gilberto Gil"},{title:"Velha Infância",artist:"Tribalistas"},{title:"Epitáfio",artist:"Titãs"},{title:"Deus e Eu no Sertão",artist:"Victor & Leo"},{title:"Enquanto Houver Sol",artist:"Titãs"}
+];
+function inspirationIndex(len,offset=0){ const d=new Date(); const start=new Date(d.getFullYear(),0,0); return (Math.floor((d-start)/86400000)+offset)%len; }
+function renderDailyInspiration(){
+  const d=day(), poem=DAILY_POEMS[inspirationIndex(DAILY_POEMS.length)], song=DAILY_SONGS[inspirationIndex(DAILY_SONGS.length,3)];
+  const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val};
+  set("poemTextHome",poem.text); set("poemMetaHome",`${poem.title} · ${poem.author} · domínio público/trecho`);
+  set("songTitleHome",song.title); set("songArtistHome",song.artist);
+  const q=encodeURIComponent(`${song.title} ${song.artist}`);
+  const sp=document.getElementById("songSpotifyHome"), yt=document.getElementById("songYoutubeHome");
+  if(sp) sp.href=`https://open.spotify.com/search/${q}`; if(yt) yt.href=`https://www.youtube.com/results?search_query=${q}`;
+  document.querySelectorAll("[data-inspiration-feedback]").forEach(b=>{ const [kind,val]=b.dataset.inspirationFeedback.split(":"); b.classList.toggle("selected",d[`${kind}Feedback`]===val); });
+  const pr=document.querySelector('[data-inspiration-action="poem-read"]'); if(pr) pr.textContent=d.poemRead?"✓ Lido":"Marcar lido";
+  const sh=document.querySelector('[data-inspiration-action="song-heard"]'); if(sh) sh.textContent=d.songHeard?"✓ Ouvida":"Marcar ouvida";
+}
+function handleInspirationFeedback(raw){ const [kind,val]=raw.split(":"); day()[`${kind}Feedback`]=day()[`${kind}Feedback`]===val?null:val; persist(); }
+function handleInspirationAction(action){ if(action==="poem-read") day().poemRead=!day().poemRead; if(action==="song-heard") day().songHeard=!day().songHeard; persist(); }
 
 const LITURGY_API_BASE="https://liturgia.up.railway.app/v2/";
 
@@ -1859,6 +1840,12 @@ function savePrayerIntention(){
   if(input) d.prayerIntention=input.value.trim();
   persist();
 }
+function savePersonalReflection(){
+  const d=day();
+  const input=document.getElementById("personalReflectionInput");
+  if(input) d.personalReflection=input.value.trim();
+  persist();
+}
 function renderPrayers(){
   const d=day();
   const verse=verseForToday();
@@ -1867,9 +1854,6 @@ function renderPrayers(){
   set("dailyVerseRef",verse.ref);
 
   const goalsDone=[!!d.gospelRead,!!d.reflectionDone].filter(Boolean).length;
-  set("prayerProgressText",`${goalsDone}/2`);
-  const bar=document.getElementById("prayerProgressBar");
-  if(bar) bar.style.width=`${Math.round(goalsDone/2*100)}%`;
 
   const reflectionBtn=document.getElementById("reflectionDoneBtn");
   if(reflectionBtn){
@@ -1881,6 +1865,13 @@ function renderPrayers(){
 
   const input=document.getElementById("prayerIntentionInput");
   if(input && document.activeElement!==input) input.value=d.prayerIntention||"";
+  const personal=document.getElementById("personalReflectionInput");
+  if(personal && document.activeElement!==personal) personal.value=d.personalReflection||"";
+  const video=document.getElementById("reflectionVideoLink");
+  if(video){
+    const ref=document.getElementById("gospelReference")?.textContent||"Evangelho de hoje";
+    video.href=`https://www.youtube.com/results?search_query=${encodeURIComponent(`Frei Gilson reflexão ${ref}`)}`;
+  }
 
   const homeVerse=document.querySelector(".verse-card strong");
   const homeRef=document.querySelector(".verse-card span");
@@ -1893,7 +1884,7 @@ function renderPrayers(){
   const prayerStatus=document.querySelector(".prayer-status");
   const prayerCopy=document.querySelector(".prayer-copy small");
   if(prayerStatus) prayerStatus.textContent=goalsDone===2?"✓":`${goalsDone}/2`;
-  if(prayerCopy) prayerCopy.textContent=goalsDone===2?"Meta espiritual concluída hoje.":"Evangelho + reflexão do dia.";
+  if(prayerCopy) prayerCopy.textContent=d.gospelRead?"Evangelho lido hoje.":"Evangelho, reflexão e oração para o dia.";
 }
 
 let pendingMealPhotoBlob=null;
@@ -2015,19 +2006,46 @@ function closeMealForm(){
   }
   clearMealPhoto();
 }
+async function uploadMealPhotoCloud(mealId,blob){
+  if(!supabase||!user||mode!=="cloud") return null;
+  const path=`${user.id}/${mealId}.jpg`;
+  const {error}=await supabase.storage.from("meal-photos").upload(path,blob,{contentType:"image/jpeg",upsert:true});
+  if(error) throw error;
+  return path;
+}
+async function signedMealPhotoUrl(path){
+  if(!supabase||!user||!path) return null;
+  const {data,error}=await supabase.storage.from("meal-photos").createSignedUrl(path,3600);
+  if(error) return null; return data?.signedUrl||null;
+}
+async function removeMealPhotoCloud(path){ if(!supabase||!user||!path)return; await supabase.storage.from("meal-photos").remove([path]); }
+async function migrateLocalMealPhotos(){
+  if(!supabase||!user||mode!=="cloud"){alert("Entre na sua conta antes de migrar as fotos.");return;}
+  let moved=0,failed=0;
+  for(const [date,d] of Object.entries(state.days||{})){
+    for(const m of (d.mealEntries||[])){
+      if(m.photoPath||!m.photoKey) continue;
+      try{ const blob=await getMealPhoto(m.photoKey); if(!blob) continue; m.photoPath=await uploadMealPhotoCloud(m.id,blob); moved++; }catch(e){failed++;}
+    }
+  }
+  persist(); alert(`Migração concluída: ${moved} foto(s) na nuvem${failed?`, ${failed} falha(s)`:""}.`);
+}
+
 async function saveMeal(){
   ensureMeals();
   const d=day();
   const mealId="meal_"+Date.now().toString(36);
-  let photoKey=null;
+  let photoKey=null, photoPath=null;
   if(pendingMealPhotoBlob){
     photoKey=`meal-photo:${mealId}`;
-    try{await putMealPhoto(photoKey,pendingMealPhotoBlob);}
-    catch(e){photoKey=null;alert("A refeição será salva sem a foto, pois não foi possível armazená-la.");}
+    try{await putMealPhoto(photoKey,pendingMealPhotoBlob);}catch(e){photoKey=null;}
+    try{photoPath=await uploadMealPhotoCloud(mealId,pendingMealPhotoBlob);}catch(e){console.warn("Foto ficou apenas localmente",e);}
+    if(!photoKey&&!photoPath) alert("A refeição será salva sem a foto, pois não foi possível armazená-la.");
   }
   const entry={
     id:mealId,
     photoKey,
+    photoPath,
     type:document.getElementById("mealTypeInput").value,
     time:document.getElementById("mealTimeInput").value,
     description:document.getElementById("mealDescInput").value.trim(),
@@ -2068,26 +2086,21 @@ async function deleteMeal(id){
   const ok=confirm("Excluir esta refeição?");
   if(!ok) return;
 
-  if(found?.photoKey){
-    try{await removeMealPhoto(found.photoKey);}catch(e){}
-  }
+  if(found?.photoKey){ try{await removeMealPhoto(found.photoKey);}catch(e){} }
+  if(found?.photoPath){ try{await removeMealPhotoCloud(found.photoPath);}catch(e){} }
   d.mealEntries=d.mealEntries.filter(x=>x.id!==id);
   recalcMeals(d);
   persist();
 }
 async function hydrateMealPhotos(){
-  const imgs=[...document.querySelectorAll("img[data-meal-photo-key]")];
+  const imgs=[...document.querySelectorAll("img[data-meal-photo-key],img[data-meal-photo-path]")];
   for(const img of imgs){
-    const key=img.dataset.mealPhotoKey;
-    if(!key||img.dataset.loaded==="1") continue;
+    const key=img.dataset.mealPhotoKey, path=img.dataset.mealPhotoPath;
+    if(img.dataset.loaded==="1") continue;
     try{
-      const blob=await getMealPhoto(key);
-      if(blob){
-        img.src=URL.createObjectURL(blob);
-        img.dataset.loaded="1";
-      }else{
-        img.style.display="none";
-      }
+      if(path){ const remote=await signedMealPhotoUrl(path); if(remote){img.src=remote;img.dataset.loaded="1";continue;} }
+      if(key){ const blob=await getMealPhoto(key); if(blob){img.src=URL.createObjectURL(blob);img.dataset.loaded="1";continue;} }
+      img.style.display="none";
     }catch(e){img.style.display="none";}
   }
 }
@@ -2110,7 +2123,7 @@ function renderFood(){
       .filter(Boolean).map(t=>`<span class="meal-tag">${t}</span>`).join("");
     return `<div class="meal-item">
       <div class="meal-top"><h4>${m.type}</h4><small>${m.time||""}</small></div>
-      ${m.photoKey?`<img class="meal-photo" data-meal-photo-key="${m.photoKey}" alt="Foto da refeição">`:""}
+      ${(m.photoKey||m.photoPath)?`<img class="meal-photo" data-meal-photo-key="${m.photoKey||""}" data-meal-photo-path="${m.photoPath||""}" alt="Foto da refeição">`:""}
       ${m.description?`<p style="font-size:11px;margin:7px 0 0">${m.description}</p>`:""}
       <div class="meal-tags">${tags}</div>
       ${m.note?`<p style="font-size:10px;color:var(--muted);margin:7px 0 0">${m.note}</p>`:""}
@@ -2408,7 +2421,7 @@ function currentBook(){
 function bookPct(book){
   const total=Number(book.totalPages||0), cur=Number(book.currentPage||0);
   if(!total) return 0;
-  return Math.max(0,Math.min(100,Math.round(cur/total*100)));
+  return Math.max(0,Math.round(cur/total*100));
 }
 function starsText(n){
   const x=Math.max(0,Math.min(5,Number(n||0)));
@@ -2953,6 +2966,7 @@ function renderFast(){
   // Somente componentes leves e visíveis em várias telas.
   renderTodayProgress();
   renderApprovedHome();
+  renderDailyInspiration();
   renderDailyWeight();
   renderGoals();
   syncBookHome();
@@ -3083,6 +3097,11 @@ document.addEventListener("click",async e=>{
     return;
   }
 
+  const inspirationFeedback=e.target.closest("[data-inspiration-feedback]");
+  if(inspirationFeedback){ handleInspirationFeedback(inspirationFeedback.dataset.inspirationFeedback); return; }
+  const inspirationAction=e.target.closest("[data-inspiration-action]");
+  if(inspirationAction){ handleInspirationAction(inspirationAction.dataset.inspirationAction); return; }
+
   const reflectionToggle=e.target.closest("[data-reflection-toggle]");
   if(reflectionToggle){
     toggleReflectionDone();
@@ -3104,6 +3123,7 @@ document.addEventListener("click",async e=>{
   const prayerAction=e.target.closest("[data-prayer-action]");
   if(prayerAction){
     if(prayerAction.dataset.prayerAction==="save-intention") savePrayerIntention();
+    else if(prayerAction.dataset.prayerAction==="save-reflection") savePersonalReflection();
     return;
   }
 
@@ -3826,7 +3846,7 @@ document.getElementById("exportBtn").onclick=()=>{
  const stamp=today.replaceAll("-","");
  const payload={
    app:"Minha Rotina",
-   version:"V26",
+   version:"V40",
    exportedAt:new Date().toISOString(),
    state
  };
@@ -3861,6 +3881,7 @@ document.getElementById("importFile").onchange=async e=>{
    renderBackupStatus();
  }
 };
+const migratePhotosBtn=document.getElementById("migratePhotosBtn"); if(migratePhotosBtn)migratePhotosBtn.onclick=()=>migrateLocalMealPhotos();
 document.getElementById("syncBtn").onclick=()=>syncCloud();
 document.getElementById("openBackupBtn").onclick=()=>showPanel("backup");
 
