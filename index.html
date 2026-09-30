@@ -513,6 +513,14 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 .reflection-video a{display:inline-block;margin-top:8px;font-weight:800;color:var(--accent);text-decoration:none}
 @media(max-width:760px){.inspiration-grid{grid-template-columns:1fr}}
 </style>
+
+<style id="v40-1-password-reset">
+.auth-link{border:0;background:transparent;color:var(--accent);font-weight:800;font-size:11px;padding:7px 0;cursor:pointer;text-decoration:underline}
+.reset-overlay{position:fixed;inset:0;background:rgba(0,0,0,.38);display:grid;place-items:center;padding:18px;z-index:10000}
+.reset-card{width:min(420px,100%);background:#fff;border-radius:18px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.22)}
+.reset-card h3{margin:0 0 7px;font-size:18px}.reset-card p{font-size:11px;line-height:1.5;color:var(--muted)}
+.reset-card input{width:100%;margin:6px 0}.reset-actions{display:flex;gap:8px;margin-top:8px}.reset-actions button{flex:1}
+</style>
 </head>
 <body>
 <div class="app" id="authScreen">
@@ -528,14 +536,28 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 <button class="primary" id="loginBtn">Entrar</button>
 <button id="signupBtn">Criar conta</button>
 </div>
+<button class="auth-link" id="forgotPasswordBtn" type="button">Esqueci minha senha</button>
 <button class="soft" id="localBtn" style="margin-top:10px;width:100%">Continuar em modo local</button>
 <div class="muted" id="authMsg" style="margin-top:10px"></div>
 </div>
 </div>
+<div class="reset-overlay hidden" id="resetOverlay">
+  <div class="reset-card">
+    <h3>Redefinir senha</h3>
+    <p>Digite uma nova senha para sua conta. Depois de salvar, você poderá continuar usando a mesma conta e acessar seus dados existentes.</p>
+    <input id="newPassword" type="password" placeholder="Nova senha" autocomplete="new-password"/>
+    <input id="newPasswordConfirm" type="password" placeholder="Confirme a nova senha" autocomplete="new-password"/>
+    <div class="reset-actions">
+      <button id="cancelResetBtn">Cancelar</button>
+      <button class="primary" id="saveNewPasswordBtn">Salvar senha</button>
+    </div>
+    <div class="muted" id="resetMsg" style="margin-top:9px"></div>
+  </div>
+</div>
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V40 · Cloud</div>
+<div class="status offline" id="syncStatus">V40.1 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -3791,6 +3813,60 @@ function enterApp(local=false){
  render();
 }
 document.getElementById("localBtn").onclick=()=>enterApp(true);
+
+const resetOverlay=document.getElementById("resetOverlay");
+const resetMsg=document.getElementById("resetMsg");
+function openResetModal(){
+  if(!resetOverlay)return;
+  resetOverlay.classList.remove("hidden");
+  resetMsg.textContent="";
+  document.getElementById("newPassword").value="";
+  document.getElementById("newPasswordConfirm").value="";
+}
+function closeResetModal(){if(resetOverlay)resetOverlay.classList.add("hidden");}
+
+document.getElementById("forgotPasswordBtn").onclick=async()=>{
+  const msg=document.getElementById("authMsg");
+  if(!supabase){msg.textContent="Supabase ainda não configurado.";return}
+  const email=document.getElementById("email").value.trim();
+  if(!email){msg.textContent="Digite seu e-mail primeiro.";return}
+  const btn=document.getElementById("forgotPasswordBtn");
+  btn.disabled=true;
+  msg.textContent="Enviando link de recuperação…";
+  try{
+    const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin});
+    if(error)throw error;
+    msg.textContent="Link de recuperação enviado. Confira seu e-mail.";
+  }catch(err){
+    msg.textContent=err?.message||"Não foi possível enviar o link de recuperação.";
+  }finally{btn.disabled=false;}
+};
+
+document.getElementById("cancelResetBtn").onclick=closeResetModal;
+document.getElementById("saveNewPasswordBtn").onclick=async()=>{
+  if(!supabase)return;
+  const p1=document.getElementById("newPassword").value;
+  const p2=document.getElementById("newPasswordConfirm").value;
+  if(p1.length<6){resetMsg.textContent="A senha deve ter pelo menos 6 caracteres.";return}
+  if(p1!==p2){resetMsg.textContent="As senhas não conferem.";return}
+  const btn=document.getElementById("saveNewPasswordBtn");
+  btn.disabled=true; resetMsg.textContent="Salvando…";
+  try{
+    const {data,error}=await supabase.auth.updateUser({password:p1});
+    if(error)throw error;
+    user=data.user||user;
+    closeResetModal();
+    if(user){enterApp(false);await loadCloud();}
+  }catch(err){
+    resetMsg.textContent=err?.message||"Não foi possível atualizar a senha.";
+  }finally{btn.disabled=false;}
+};
+
+if(supabase){
+  supabase.auth.onAuthStateChange((event,session)=>{
+    if(event==="PASSWORD_RECOVERY")openResetModal();
+  });
+}
 
 document.getElementById("loginBtn").onclick=async()=>{
  const btn=document.getElementById("loginBtn");
