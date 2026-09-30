@@ -534,6 +534,20 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 .reset-card h3{margin:0 0 7px;font-size:18px}.reset-card p{font-size:11px;line-height:1.5;color:var(--muted)}
 .reset-card input{width:100%;margin:6px 0}.reset-actions{display:flex;gap:8px;margin-top:8px}.reset-actions button{flex:1}
 </style>
+
+<style id="v41-meu-dia">
+.meu-dia-card{margin:10px 0;background:linear-gradient(145deg,#ffffff,#f5faf7);border:1px solid var(--line);border-radius:18px;padding:12px;box-shadow:0 6px 20px rgba(15,23,42,.05)}
+.meu-dia-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:9px}
+.meu-dia-head b{font-size:14px}.meu-dia-head small{font-size:9px;color:var(--muted)}
+.meu-dia-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.meu-dia-item{border:1px solid var(--line);background:#fff;border-radius:13px;padding:9px;display:flex;align-items:center;gap:8px;text-align:left;cursor:pointer}
+.meu-dia-item .md-icon{font-size:19px;line-height:1}.meu-dia-item .md-copy{min-width:0;display:grid;gap:2px;flex:1}
+.meu-dia-item .md-copy b{font-size:10px}.meu-dia-item .md-copy small{font-size:9px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meu-dia-item .md-pct{font-size:9px;font-weight:900;color:var(--accent);white-space:nowrap}
+.meu-dia-item.done{border-color:#b9d9cc;background:#f5fbf8}
+@media(max-width:520px){.meu-dia-grid{grid-template-columns:1fr 1fr}.meu-dia-item{padding:8px}}
+</style>
+
 </head>
 <body>
 <div class="app" id="authScreen">
@@ -593,6 +607,34 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 </div>
 <div class="today-progress-track"><span id="todayProgressBar" style="width:0%"></span></div>
 </div>
+
+<div class="meu-dia-card" id="meuDiaCard">
+  <div class="meu-dia-head">
+    <div><b>Meu Dia</b><small id="meuDiaSummary">0 de 6 áreas</small></div>
+    <small>visão rápida</small>
+  </div>
+  <div class="meu-dia-grid">
+    <button class="meu-dia-item" data-open-area="agua" type="button">
+      <span class="md-icon">💧</span><span class="md-copy"><b>Água</b><small id="mdWater">0 / 0 L</small></span><span class="md-pct" id="mdWaterPct">0%</span>
+    </button>
+    <button class="meu-dia-item" data-open-panel="biblioteca" type="button">
+      <span class="md-icon">📖</span><span class="md-copy"><b>Leitura</b><small id="mdReading">0 páginas</small></span><span class="md-pct" id="mdReadingPct">0%</span>
+    </button>
+    <button class="meu-dia-item" data-open-area="estudo" type="button">
+      <span class="md-icon">🎓</span><span class="md-copy"><b>Estudo</b><small id="mdStudy">0 min</small></span><span class="md-pct" id="mdStudyPct">0%</span>
+    </button>
+    <button class="meu-dia-item" data-open-area="treino" type="button">
+      <span class="md-icon">🏋️</span><span class="md-copy"><b>Treino</b><small id="mdWorkout">Pendente</small></span><span class="md-pct" id="mdWorkoutPct">0%</span>
+    </button>
+    <button class="meu-dia-item" data-open-panel="oracoes" type="button">
+      <span class="md-icon">🙏</span><span class="md-copy"><b>Espiritualidade</b><small id="mdSpiritual">Evangelho</small></span><span class="md-pct" id="mdSpiritualPct">0%</span>
+    </button>
+    <button class="meu-dia-item" type="button" data-inspiration-action="song-heard">
+      <span class="md-icon">🎵</span><span class="md-copy"><b>Música</b><small id="mdSong">Não ouvida</small></span><span class="md-pct" id="mdSongPct">0%</span>
+    </button>
+  </div>
+</div>
+
 <div class="metric-strip">
 <button class="metric-box" data-open-area="agua">
 <span class="metric-emoji">💧</span><b>Água</b><small id="homeWater">0,0 / 3,0 L</small><em id="homeWaterPct">0%</em>
@@ -1526,6 +1568,29 @@ function showArea(area){
   if(host) host.innerHTML=content;
   showPanel("areaDetail");
 }
+
+function renderMeuDia(){
+  const d=day(), g=goals();
+  const water=Number(d.water||0), pages=Number(d.pages||0), study=Number(d.studyMinutes||0);
+  const workoutDone=!!(d.workoutCompleted || d.workoutStatus==="completo" || d.workoutStatus==="parcial");
+  const gospelDone=!!d.gospelRead, songDone=!!d.songHeard;
+  const pct=(v,goal)=>goal>0?Math.max(0,Math.round(v/goal*100)):0;
+  const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val};
+  const mark=(id,done)=>{const e=document.getElementById(id); if(e)e.closest(".meu-dia-item")?.classList.toggle("done",!!done)};
+  const wp=pct(water,Number(g.water)||3), rp=pct(pages,Number(g.reading)||1), sp=pct(study,Number(g.study)||30);
+  const trp=workoutDone?100:0, spp=gospelDone?100:0, songp=songDone?100:0;
+  set("mdWater",`${water.toFixed(1).replace(".",",")} / ${Number(g.water||3).toFixed(1).replace(".",",")} L`);
+  set("mdWaterPct",`${wp}%`); set("mdReading",`${pages} páginas`); set("mdReadingPct",`${rp}%`);
+  set("mdStudy",`${study} min`); set("mdStudyPct",`${sp}%`);
+  set("mdWorkout",workoutDone?"Concluído":"Pendente"); set("mdWorkoutPct",`${trp}%`);
+  set("mdSpiritual",gospelDone?"Evangelho lido":"Evangelho pendente"); set("mdSpiritualPct",`${spp}%`);
+  set("mdSong",songDone?"Ouvida":"Não ouvida"); set("mdSongPct",`${songp}%`);
+  mark("mdWaterPct",wp>=100); mark("mdReadingPct",rp>=100); mark("mdStudyPct",sp>=100);
+  mark("mdWorkoutPct",trp>=100); mark("mdSpiritualPct",spp>=100); mark("mdSongPct",songp>=100);
+  const complete=[wp>=100,rp>=100,sp>=100,trp>=100,spp>=100,songp>=100].filter(Boolean).length;
+  set("meuDiaSummary",`${complete} de 6 áreas concluídas`);
+}
+
 function renderApprovedHome(){
   const d=day();
   const g=goals();
@@ -3023,6 +3088,7 @@ function renderFast(){
 
   // Somente componentes leves e visíveis em várias telas.
   renderTodayProgress();
+  renderMeuDia();
   renderApprovedHome();
   renderDailyInspiration();
   renderDailyWeight();
