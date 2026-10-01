@@ -578,7 +578,7 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 <div class="app hidden" id="mainApp">
 <div class="topbar">
 <div class="brand"><h1>Minha Rotina</h1><p id="dateLabel"></p></div>
-<div class="status offline" id="syncStatus">V43 · Cloud</div>
+<div class="status offline" id="syncStatus">V43.1 · Cloud</div>
 </div>
 <section class="panel active" id="hoje">
 <div class="hero hero-photo">
@@ -1140,7 +1140,13 @@ async function initSupabase(){
 }
 await initSupabase();
 
-const today=new Date().toISOString().slice(0,10);
+function localDateKey(date=new Date()){
+  const y=date.getFullYear();
+  const m=String(date.getMonth()+1).padStart(2,"0");
+  const d=String(date.getDate()).padStart(2,"0");
+  return `${y}-${m}-${d}`;
+}
+const today=localDateKey();
 document.getElementById("dateLabel").textContent=new Intl.DateTimeFormat("pt-BR",{weekday:"long",day:"2-digit",month:"long"}).format(new Date());
 let state=JSON.parse(localStorage.getItem("rotinaV3")||'{"days":{},"exerciseLogs":{}}');
 if(!state.days)state.days={};if(!state.exerciseLogs)state.exerciseLogs={};if(!state.days[today])state.days[today]={};
@@ -2557,7 +2563,7 @@ function saveBook(){
   };
   const idx=state.library.findIndex(b=>b.id===book.id);
   if(idx>=0) state.library[idx]=book; else state.library.unshift(book);
-  if(book.status==="concluido" && !book.endDate) book.endDate=new Date().toISOString().slice(0,10);
+  if(book.status==="concluido" && !book.endDate) book.endDate=localDateKey();
   persist();
   closeBookForm();
   renderLibrary();
@@ -2581,7 +2587,7 @@ function addPagesToBook(id,qty){
   b.currentPage=Math.max(0,Math.min(Number(b.totalPages||999999),Number(b.currentPage||0)+qty));
   if(b.totalPages && b.currentPage>=b.totalPages){
     b.status="concluido";
-    if(!b.endDate) b.endDate=new Date().toISOString().slice(0,10);
+    if(!b.endDate) b.endDate=localDateKey();
   }
   b.updatedAt=new Date().toISOString();
   day().pages=Number(day().pages||0)+Math.max(0,qty);
@@ -3683,7 +3689,7 @@ function renderWorkouts(){
 }
 renderWorkouts();
 
-function weekDates(){const d=new Date();const n=(d.getDay()+6)%7;const m=new Date(d);m.setDate(d.getDate()-n);return Array.from({length:7},(_,i)=>{const x=new Date(m);x.setDate(m.getDate()+i);return x.toISOString().slice(0,10)})}
+function weekDates(){const d=new Date();const n=(d.getDay()+6)%7;const m=new Date(d);m.setDate(d.getDate()-n);return Array.from({length:7},(_,i)=>{const x=new Date(m);x.setDate(m.getDate()+i);return localDateKey(x)})}
 function renderKpis(){
  let tr=0,en=0,ld=0,pg=0,wa=0,wt=0,li=0,weights=[];
  weekDates().forEach(k=>{const v=state.days[k]||{};if(v.workout&&v.workout!=="Descanso")tr++;if(v.english)en++;if(v.leadership)ld++;pg+=Number(v.pages||0);if(Number(v.water||0)>=3)wa++;if(v.weight){wt++;weights.push(Number(v.weight))}if(v.linkedin)li=1});
@@ -3852,7 +3858,19 @@ async function syncCloud(){
 async function loadCloud(){
  if(!supabase||!user)return;
  const {data,error}=await supabase.from("user_state").select("data").eq("user_id",user.id).maybeSingle();
- if(data?.data){state=data.data;ensureStateShape();persist()}
+ if(error){
+   console.error("Falha ao carregar dados da nuvem:",error);
+   const status=document.getElementById("syncStatus");
+   if(status){status.textContent="Dados locais";status.className="status offline";}
+   return;
+ }
+ if(data?.data){
+   state=data.data;
+   ensureStateShape();
+   persist();
+ }else{
+   console.warn("Nenhum estado salvo na nuvem. Dados locais preservados.");
+ }
 }
 function enterApp(local=false){
  document.getElementById("authScreen").classList.add("hidden");
