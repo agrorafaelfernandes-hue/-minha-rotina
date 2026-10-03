@@ -6,9 +6,12 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <meta content="#173f37" name="theme-color"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="default" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="Minha Rotina" name="apple-mobile-web-app-title"/>
 <link href="manifest.json" rel="manifest"/>
 <link href="icon-192.png" rel="apple-touch-icon"/>
-<title>Minha Rotina — V3</title>
+<title>Minha Rotina</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#172033;--muted:#6b7280;--line:#e5e7eb;
@@ -612,7 +615,7 @@ button:active,[data-open-panel]:active,[data-open-area]:active{
 <span class="metric-emoji">🏋️</span><b>Treino</b><small id="homeWorkout">0 / 1</small><em id="homeWorkoutPct">0%</em>
 </button>
 <button class="metric-box" data-open-panel="biblioteca">
-<span class="metric-emoji">📖</span><b>Leitura</b><small id="homeReading">0 / 70</small><em id="homeReadingPct">0%</em>
+<span class="metric-emoji">📖</span><b>Leitura</b><small id="homeReading">0 / 10</small><em id="homeReadingPct">0%</em>
 </button>
 <button class="metric-box" data-open-area="estudo">
 <span class="metric-emoji">🎓</span><b>Estudo</b><small id="homeStudy">0 / 30 min</small><em id="homeStudyPct">0%</em>
@@ -967,7 +970,7 @@ Registro simples e flexível para acompanhar a qualidade das refeições, sem co
 <div class="evo-mini"><b id="evoWorkoutWeek">0</b><span>Treinos no período</span></div>
 <div class="evo-mini"><b id="evoReadAvg">0</b><span>Páginas/dia</span></div>
 <div class="evo-mini"><b id="evoStudyAvg">0 min</b><span>Estudo/dia</span></div>
-<div class="evo-mini"><b id="evoMealsGoal">0%</b><span>Dias com 3 refeições</span></div>
+<div class="evo-mini"><b id="evoMealsGoal">0%</b><span id="evoMealsGoalLabel">Dias na meta de refeições</span></div>
 </div>
 </div>
 <div class="evo-card">
@@ -1134,8 +1137,10 @@ const cfg={
 let supabase=null, user=null, mode="local";
 async function initSupabase(){
   if(cfg.supabaseUrl&&cfg.supabaseAnonKey){
-    const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");
-    supabase=createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
+    await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm").then(
+      ({createClient})=>{supabase=createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);},
+      error=>console.warn("Supabase indisponível; iniciando em modo local.",error)
+    );
   }
 }
 await initSupabase();
@@ -1146,8 +1151,11 @@ function localDateKey(date=new Date()){
   const d=String(date.getDate()).padStart(2,"0");
   return `${y}-${m}-${d}`;
 }
-const today=localDateKey();
-document.getElementById("dateLabel").textContent=new Intl.DateTimeFormat("pt-BR",{weekday:"long",day:"2-digit",month:"long"}).format(new Date());
+let today=localDateKey();
+function updateDateLabel(){
+  document.getElementById("dateLabel").textContent=new Intl.DateTimeFormat("pt-BR",{weekday:"long",day:"2-digit",month:"long"}).format(new Date());
+}
+updateDateLabel();
 let state=JSON.parse(localStorage.getItem("rotinaV3")||'{"days":{},"exerciseLogs":{}}');
 if(!state.days)state.days={};if(!state.exerciseLogs)state.exerciseLogs={};if(!state.days[today])state.days[today]={};
 
@@ -1201,7 +1209,7 @@ function saveGoals(){
     study:n("goalStudyInput"),
     workoutsWeek:n("goalWorkoutInput")
   };
-  if(next.water<0.5 || next.meals<1 || next.reading<1 || next.study<5 || next.workoutsWeek<1){
+  if(next.water<0.5 || next.water>10 || next.meals<1 || next.meals>8 || next.reading<1 || next.reading>500 || next.study<5 || next.study>600 || next.workoutsWeek<1 || next.workoutsWeek>14){
     const st=document.getElementById("goalsStatus");
     if(st) st.textContent="Revise os valores das metas.";
     return;
@@ -1252,7 +1260,22 @@ D:[
 ]
 };
 
-function day(){return state.days[today]}
+function ensureActiveDate(){
+  const current=localDateKey();
+  if(current===today) return false;
+  today=current;
+  if(!state.days[today] || typeof state.days[today]!=="object") state.days[today]={};
+  updateDateLabel();
+  return true;
+}
+function currentDateKey(){ensureActiveDate();return today;}
+function day(){ensureActiveDate();return state.days[today]}
+function refreshActiveDate(){
+  if(!ensureActiveDate()) return;
+  selectedMysteryType="";
+  renderFast();
+  if(getActivePanelId()==="oracoes") Promise.resolve(loadDailyGospel(false)).catch(error=>console.error("Evangelho",error));
+}
 function persistQuiet(){
   localStorage.setItem("rotinaV3",JSON.stringify(state));
   markLocalSaved();
@@ -1374,7 +1397,7 @@ function changeWater(delta){
   ensureAreaLogs(d);
   const amount=Number(delta||0);
   const current=Number(d.water||0);
-  const next=Math.max(0,Math.min(6,Math.round((current+amount)*10)/10));
+  const next=Math.max(0,Math.round((current+amount)*10)/10);
   const applied=Math.round((next-current)*10)/10;
   d.water=next;
   if(applied!==0){
@@ -1421,18 +1444,14 @@ function quickRead(amount=10){ day().pages=Math.max(0,Number(day().pages||0)+(Nu
 function quickEnglish(){ day().english=!day().english; persist(); }
 function quickLeadership(){ day().leadership=!day().leadership; persist(); }
 
+function isWorkoutCounted(d={}){
+  if(d.workoutCompleted || d.workoutStatus==="completo") return true;
+  if(d.workoutStatus!=="parcial") return false;
+  return d.workoutCompletedCount==null || Number(d.workoutCompletedCount)>0;
+}
 function renderTodayProgress(){
   const v=day();
-  const spiritualGoal=!!v.gospelRead && !!v.reflectionDone;
-  const checks=[
-    !!(v.workoutCompleted || v.workoutStatus==="completo" || v.workoutStatus==="parcial"),
-    Number(v.water||0)>=goals().water,
-    Number(v.mealsCount||0)>=goals().meals,
-    Number(v.pages||0)>=goals().reading,
-    Number(v.studyMinutes||0)>=goals().study,
-    spiritualGoal
-  ];
-  const pct=Math.round(checks.filter(Boolean).length/checks.length*100);
+  const pct=dayAdherence(v);
   const text=document.getElementById("todayProgressText");
   const bar=document.getElementById("todayProgressBar");
   if(text) text.textContent=`${pct}%`;
@@ -1510,10 +1529,11 @@ function showArea(area){
   let content="";
 
   if(area==="agua"){
+    const g=goals();
     content=`
       <div class="area-card">
         <h3>Água</h3>
-        <p><b>${Number(d.water||0).toFixed(1).replace(".",",")} L</b> de 3,0 L</p>
+        <p><b>${Number(d.water||0).toFixed(1).replace(".",",")} L</b> de ${Number(g.water).toFixed(1).replace(".",",")} L</p>
         <div class="row">
           <button data-area-action="water-minus">−0,5 L</button>
           <button class="primary" data-area-action="water-plus">+0,5 L</button>
@@ -1524,11 +1544,12 @@ function showArea(area){
     showPanel("treinos");
     return;
   }else if(area==="estudo"){
+    const g=goals();
     ensureAreaLogs(d);
     content=`
       <div class="area-card">
         <h3>Estudo</h3>
-        <p><b>${Number(d.studyMinutes||0)} min</b> acumulados hoje · meta 30 min</p>
+        <p><b>${Number(d.studyMinutes||0)} min</b> acumulados hoje · meta ${g.study} min</p>
         <input id="studyMinutesArea" type="number" min="1" inputmode="numeric" placeholder="Minutos desta sessão">
         <input id="studyTopicArea" placeholder="Tema estudado" style="margin-top:8px">
         <button class="primary" style="margin-top:8px;width:100%" data-area-action="study-save">Salvar sessão</button>
@@ -1547,7 +1568,7 @@ function renderApprovedHome(){
   const meals=Number(d.mealsCount||0);
   const pages=Number(d.pages||0);
   const study=Number(d.studyMinutes||0);
-  const workoutDone=!!(d.workoutCompleted || d.workoutStatus==="completo" || d.workoutStatus==="parcial");
+  const workoutDone=isWorkoutCounted(d);
   const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val};
   set("homeWater",`${water.toFixed(1).replace(".",",")} / ${Number(g.water).toFixed(1).replace(".",",")} L`);
   set("homeWaterPct",`${Math.round(water/g.water*100)}%`);
@@ -1836,7 +1857,7 @@ function registerRosary(){
   const now=new Date();
   state.rosaryEntries.unshift({
     id:"rosary_"+Date.now().toString(36),
-    date:today,
+    date:currentDateKey(),
     time:`${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`,
     type,
     title:ROSARY_MYSTERIES[type].title,
@@ -2178,11 +2199,12 @@ async function hydrateMealPhotos(){
 }
 function renderFood(){
   const d=day(); ensureMeals();
+  const g=goals();
   const entries=d.mealEntries;
   const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
-  set("foodMealsCount",`${entries.length}/3`);
-  set("foodProteinCount",`${entries.filter(x=>x.protein).length}/3`);
-  set("foodVegCount",`${entries.filter(x=>x.veg).length}/3`);
+  set("foodMealsCount",`${entries.length}/${g.meals}`);
+  set("foodProteinCount",`${entries.filter(x=>x.protein).length}/${g.meals}`);
+  set("foodVegCount",`${entries.filter(x=>x.veg).length}/${g.meals}`);
   set("foodWaterLink",`${Number(d.water||0).toFixed(1).replace(".",",")} L`);
   const list=document.getElementById("mealList");
   if(!list) return;
@@ -2584,13 +2606,21 @@ function addPagesToBook(id,qty){
   ensureLibrary();
   const b=state.library.find(x=>x.id===id);
   if(!b) return;
-  b.currentPage=Math.max(0,Math.min(Number(b.totalPages||999999),Number(b.currentPage||0)+qty));
+  const requested=Math.max(0,Number(qty||0));
+  if(!requested) return;
+  const previousPage=Math.max(0,Number(b.currentPage||0));
+  const totalPages=Math.max(0,Number(b.totalPages||0));
+  const nextPage=totalPages
+    ? Math.min(totalPages,previousPage+requested)
+    : previousPage+requested;
+  const effectivePages=Math.max(0,nextPage-previousPage);
+  b.currentPage=nextPage;
   if(b.totalPages && b.currentPage>=b.totalPages){
     b.status="concluido";
     if(!b.endDate) b.endDate=localDateKey();
   }
   b.updatedAt=new Date().toISOString();
-  day().pages=Number(day().pages||0)+Math.max(0,qty);
+  day().pages=Number(day().pages||0)+effectivePages;
   persist();
 }
 function quickReadCurrentBook(){
@@ -2706,15 +2736,32 @@ function historyMealTags(m){
   ].filter(Boolean);
 }
 async function hydrateHistoryMealPhotos(){
-  const imgs=[...document.querySelectorAll("img[data-history-photo-key]")];
+  const imgs=[...document.querySelectorAll("img[data-history-photo-key],img[data-history-photo-path]")];
   for(const img of imgs){
+    const key=img.dataset.historyPhotoKey;
+    const path=img.dataset.historyPhotoPath;
     try{
-      const blob=await getMealPhoto(img.dataset.historyPhotoKey);
-      if(blob){
-        img.src=URL.createObjectURL(blob);
-      }else{
-        img.style.display="none";
+      if(path){
+        const remote=await signedMealPhotoUrl(path);
+        if(!img.isConnected) continue;
+        if(remote){
+          img.src=remote;
+          img.dataset.loaded="1";
+          continue;
+        }
       }
+      if(key){
+        const blob=await getMealPhoto(key);
+        if(!img.isConnected) continue;
+        if(blob){
+          const localUrl=URL.createObjectURL(blob);
+          img.src=localUrl;
+          img.dataset.historyObjectUrl=localUrl;
+          img.dataset.loaded="1";
+          continue;
+        }
+      }
+      if(img.isConnected) img.style.display="none";
     }catch(e){ img.style.display="none"; }
   }
 }
@@ -2722,6 +2769,7 @@ function renderHistory(){
   ensureHistoryDate();
   const host=document.getElementById("historyContent");
   if(!host) return;
+  host.querySelectorAll("img[data-history-object-url]").forEach(img=>URL.revokeObjectURL(img.dataset.historyObjectUrl));
   const d=(state.days||{})[historyDateKey];
 
   const input=document.getElementById("historyDateInput");
@@ -2741,7 +2789,7 @@ function renderHistory(){
     return `<div class="history-meal">
       <div class="history-row"><b>${m.type||"Refeição"}</b><span>${m.time||""}</span></div>
       ${m.description?`<div style="font-size:10px;margin-top:4px">${m.description}</div>`:""}
-      ${m.photoKey?`<img class="history-meal-photo" data-history-photo-key="${m.photoKey}" alt="Foto da refeição">`:""}
+      ${(m.photoKey||m.photoPath)?`<img class="history-meal-photo" data-history-photo-key="${m.photoKey||""}" data-history-photo-path="${m.photoPath||""}" alt="Foto da refeição">`:""}
       ${tags?`<div class="history-tags">${tags}</div>`:""}
       ${m.note?`<div style="font-size:9px;color:var(--muted);margin-top:5px">${m.note}</div>`:""}
     </div>`;
@@ -2845,7 +2893,7 @@ function dayAdherence(d){
   const checks=[
     Math.min(1,Number(d.water||0)/g.water),
     Math.min(1,Number(d.mealsCount||0)/g.meals),
-    (d.workoutCompleted || d.workoutStatus==="completo" || d.workoutStatus==="parcial")?1:0,
+    isWorkoutCounted(d)?1:0,
     Math.min(1,Number(d.pages||0)/g.reading),
     Math.min(1,Number(d.studyMinutes||0)/g.study),
     [d.gospelRead,d.reflectionDone].filter(Boolean).length/2
@@ -2909,7 +2957,7 @@ function renderEvolution(){
   const adherenceVals=data.map(dayAdherence);
   set("evoAdherence",`${Math.round(avg(adherenceVals))}%`);
 
-  const workouts=data.filter(d=>d.workoutCompleted || d.workoutStatus==="completo" || d.workoutStatus==="parcial").length;
+  const workouts=data.filter(isWorkoutCounted).length;
   set("evoWorkoutCount",String(workouts));
   set("evoWorkoutWeek",String(workouts));
 
@@ -2931,6 +2979,7 @@ function renderEvolution(){
   set("evoWaterGoalLabel",`Dias na meta de ${String(g.water).replace(".",",")} L`);
 
   set("evoMealsGoal",`${Math.round(data.filter(d=>Number(d.mealsCount||0)>=g.meals).length/n*100)}%`);
+  set("evoMealsGoalLabel",`Dias na meta de ${g.meals} ${g.meals===1?"refeição":"refeições"}`);
 
   const prayerPct=data.map(d=>[d.gospelRead,d.reflectionDone].filter(Boolean).length/2*100);
   set("evoPrayerAvg",`${Math.round(avg(prayerPct))}%`);
@@ -3322,6 +3371,7 @@ function setWorkoutMode(mode){
 }
 
 function saveFreeWorkout(){
+  const workoutDate=currentDateKey();
   ensureWorkoutSessions();
   const activity=(document.getElementById("freeWorkoutActivity")?.value||"").trim();
   const minutes=Number(document.getElementById("freeWorkoutMinutes")?.value||0);
@@ -3341,7 +3391,7 @@ function saveFreeWorkout(){
   const now=new Date();
   const session={
     id:"ws_"+Date.now().toString(36),
-    date:today,
+    date:workoutDate,
     plan:"Livre",
     type:"free",
     activity,
@@ -3393,7 +3443,7 @@ function ensureWorkoutSessions(){
 }
 function activeWorkoutSession(){
   ensureWorkoutSessions();
-  return state.workoutSessions.find(x=>x.date===today && x.status==="active")||null;
+  return state.workoutSessions.find(x=>x.status==="active")||null;
 }
 function workoutTitle(plan){
   return plan==="A"?"Peito / tríceps / postura":
@@ -3408,6 +3458,7 @@ function selectWorkoutPlan(plan){
   document.querySelectorAll("[data-workout-plan]").forEach(btn=>btn.classList.toggle("active",btn.dataset.workoutPlan===plan));
 }
 function startWorkoutSession(){
+  const workoutDate=currentDateKey();
   const plan=selectedWorkoutPlan || day().workout || "A";
   if(!workouts[plan]) return;
   ensureWorkoutSessions();
@@ -3421,7 +3472,7 @@ function startWorkoutSession(){
 
   const session={
     id:"ws_"+Date.now().toString(36),
-    date:today,
+    date:workoutDate,
     plan,
     status:"active",
     startedAt:new Date().toISOString(),
@@ -3471,7 +3522,8 @@ function finishWorkoutSession(result){
   s.completedCount=done;
   s.totalCount=total;
 
-  const d=day();
+  if(!state.days[s.date] || typeof state.days[s.date]!=="object") state.days[s.date]={};
+  const d=state.days[s.date];
   d.workout=s.plan;
   d.workoutStatus=finalResult;
   d.workoutCompleted=finalResult==="completo";
@@ -3489,7 +3541,8 @@ function cancelWorkoutSession(){
   s.status="cancelled";
   s.result="cancelado";
   s.endedAt=new Date().toISOString();
-  const d=day();
+  if(!state.days[s.date] || typeof state.days[s.date]!=="object") state.days[s.date]={};
+  const d=state.days[s.date];
   d.workoutStatus="cancelado";
   persist();
   renderWorkoutSession();
@@ -3508,7 +3561,7 @@ function renderWorkoutSession(){
   if(!host) return;
 
   const active=activeWorkoutSession();
-  const todayCompleted=state.workoutSessions.find(x=>x.date===today && x.status==="completed");
+  const todayCompleted=state.workoutSessions.find(x=>x.date===currentDateKey() && x.status==="completed");
 
   if(!active){
     if(todayCompleted){
@@ -3550,7 +3603,7 @@ function renderWorkoutSession(){
     </div>
 
     ${active.exercises.map((ex,i)=>{
-      const k=`${today}_${active.plan}_${ex.index}`;
+      const k=`${active.date}_${active.plan}_${ex.index}`;
       const log=state.exerciseLogs[k]||{};
       let previousLoad="";
       const prevKeys=Object.keys(state.exerciseLogs).filter(x=>x.endsWith(`_${active.plan}_${ex.index}`)&&x!==k).sort();
@@ -3626,6 +3679,7 @@ function renderWorkoutHistory(){
   }).join("");
 }
 function saveDailyWeight(){
+  const weightDate=currentDateKey();
   const input=document.getElementById("dailyWeightInput");
   const value=Number(String(input?.value||"").replace(",","."));
   if(!value || value<20 || value>400) return;
@@ -3636,14 +3690,14 @@ function saveDailyWeight(){
   if(!state.profile || typeof state.profile!=="object") state.profile={heightCm:"",goalWeight:"",measurements:[]};
   if(!Array.isArray(state.profile.measurements)) state.profile.measurements=[];
 
-  const existing=state.profile.measurements.find(x=>x.date===today && Number(x.weight||0)>0 && !x.waist && !x.abdomen && !x.chest && !x.arm && !x.thigh && !x.hip);
+  const existing=state.profile.measurements.find(x=>x.date===weightDate && Number(x.weight||0)>0 && !x.waist && !x.abdomen && !x.chest && !x.arm && !x.thigh && !x.hip);
   if(existing){
     existing.weight=d.weight;
     existing.createdAt=new Date().toISOString();
   }else{
     state.profile.measurements.push({
       id:"measure_"+Date.now().toString(36),
-      date:today,
+      date:weightDate,
       weight:d.weight,
       waist:0,abdomen:0,chest:0,arm:0,thigh:0,hip:0,
       createdAt:new Date().toISOString()
@@ -3660,6 +3714,7 @@ function renderDailyWeight(){
 }
 
 function renderWorkouts(){
+ const workoutDate=currentDateKey();
  const c=document.getElementById("workouts");
  if(!c) return;
  c.innerHTML="";
@@ -3667,7 +3722,7 @@ function renderWorkouts(){
    const wrap=document.createElement("div");wrap.className="card";wrap.style.marginBottom="12px";
    wrap.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><h3>Treino ${name}</h3><span class="tag">${workoutTitle(name)}</span></div>`;
    items.forEach((it,i)=>{
-     const k=`${today}_${name}_${i}`,v=state.exerciseLogs[k]||{};
+     const k=`${workoutDate}_${name}_${i}`,v=state.exerciseLogs[k]||{};
      let previousLoad="";
      const prevKeys=Object.keys(state.exerciseLogs).filter(x=>x.endsWith(`_${name}_${i}`)&&x!==k).sort();
      if(prevKeys.length){ previousLoad=state.exerciseLogs[prevKeys[prevKeys.length-1]]?.load||""; }
@@ -3794,7 +3849,19 @@ function saveMeasurement(){
 function deleteMeasurement(id){
   ensureProfile();
   if(!confirm("Excluir esta medição?")) return;
+  const found=state.profile.measurements.find(x=>x.id===id);
+  if(!found) return;
+  const weightedSameDay=state.profile.measurements.filter(x=>x.date===found.date && Number(x.weight||0)>0);
+  const latestWeighted=weightedSameDay[weightedSameDay.length-1];
+  const dailyWeight=Number(state.days?.[found.date]?.weight||0);
+  const safelyLinked=Number(found.weight||0)>0 && latestWeighted?.id===found.id && Math.abs(dailyWeight-Number(found.weight))<0.001;
   state.profile.measurements=state.profile.measurements.filter(x=>x.id!==id);
+  if(safelyLinked){
+    const remaining=state.profile.measurements.filter(x=>x.date===found.date && Number(x.weight||0)>0);
+    const replacement=remaining[remaining.length-1];
+    if(replacement) state.days[found.date].weight=Number(replacement.weight);
+    else delete state.days[found.date].weight;
+  }
   persist();
   renderProfile();
 }
@@ -3989,7 +4056,7 @@ document.getElementById("clearCloudBtn").onclick=()=>{
 };
 
 document.getElementById("exportBtn").onclick=()=>{
- const stamp=today.replaceAll("-","");
+ const stamp=currentDateKey().replaceAll("-","");
  const payload={
    app:"Minha Rotina",
    version:"V40",
@@ -4017,7 +4084,8 @@ document.getElementById("importFile").onchange=async e=>{
    state=imported;
    if(!state.days) state.days={};
    if(!state.exerciseLogs) state.exerciseLogs={};
-   if(!state.days[today]) state.days[today]={};
+   const importDate=currentDateKey();
+   if(!state.days[importDate]) state.days[importDate]={};
    persist();
    if(msg) msg.textContent="Backup importado com sucesso. Uma cópia do estado anterior foi preservada neste aparelho.";
  }catch(err){
@@ -4033,11 +4101,19 @@ document.getElementById("openBackupBtn").onclick=()=>showPanel("backup");
 
 document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showPanel(b.dataset.target));
 
+setInterval(refreshActiveDate,30000);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")refreshActiveDate();});
+window.addEventListener("focus",refreshActiveDate);
+
 let deferredPrompt;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;document.getElementById("installBtn").classList.remove("hidden")});
 document.getElementById("installBtn").onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;document.getElementById("installBtn").classList.add("hidden")}};
 
-if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js",{updateViaCache:"none"})
+    .then(registration=>registration.update())
+    .catch(error=>console.warn("Service Worker indisponível.",error));
+}
 
 if(supabase){
  const {data}=await supabase.auth.getSession();
